@@ -21,7 +21,7 @@ jobs:
           MARKET_ENDPOINT: ${{ vars.MARKET_ENDPOINT || format('{0}/', steps.pages.outputs.base_url) }}
           MARKET_HOMEPAGE: ${{ vars.MARKET_HOMEPAGE || format('{0}/{1}', github.server_url, github.repository) }}
         run: go run ./cmd/nsc-market --official --endpoint "$MARKET_ENDPOINT" --homepage "$MARKET_HOMEPAGE" --output dist/market
-      - uses: actions/upload-pages-artifact@v4
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: dist/market
   deploy:
