@@ -7,7 +7,7 @@ require (
 	github.com/distribution/reference v0.6.0
 	github.com/docker/go-connections v0.8.1
 	github.com/go-acme/lego/v4 v4.34.0
-	github.com/go-chi/chi/v5 v5.3.2
+	github.com/go-chi/chi/v5 v5.5.0
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.11.0
