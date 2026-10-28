@@ -1,0 +1,34 @@
+{
+  "name": "pgAdmin",
+  "version": "9.17",
+  "description": "pgAdmin — Compose template with persistent storage and explicit credentials",
+  "variables": [
+    {
+      "key": "PGADMIN_DEFAULT_EMAIL",
+      "required": true,
+      "description": "Initial administrator email",
+      "pattern": "^[^@ ]+@[^@ ]+[.][^@ ]+$"
+    },
+    {
+      "key": "PGADMIN_DEFAULT_PASSWORD",
+      "required": true,
+      "description": "Initial administrator password",
+      "secret": true,
+      "min_length": 16
+    },
+    {
+      "key": "DATABASE_NETWORK",
+      "required": true,
+      "description": "Existing database Docker network, e.g. mypostgres_default"
+    }
+  ],
+  "recommended_domains": [
+    {
+      "service": "pgadmin",
+      "host": "pgadmin.example.com",
+      "path": "/",
+      "target_port": 80,
+      "tls_mode": "managed"
+    }
+  ]
+}

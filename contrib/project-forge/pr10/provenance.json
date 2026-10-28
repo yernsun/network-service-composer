@@ -1,0 +1,19 @@
+{
+  "reviewed_at": "2026-10-13T00:31:07.000457+08:00",
+  "repository": "yernsun/project-forge",
+  "head_sha": "99eb3e96087f30e932323854afcf0af5c6a81398",
+  "base_sha": "2d06880fbec05e9abe82724a59c6dd30142e9953",
+  "patches": {
+    "frontend-pr10.patch": {
+      "sha256": "f3f0bee86cd55562affb216bf826aaf01be067cb32735533fca01e85247c17dc",
+      "bytes": 62965
+    },
+    "python-baseline.patch": {
+      "sha256": "5cb08085f6ce32d1b78c2c43ded380ccbe7d3f7013d59d84572ffcdec4b15297",
+      "bytes": 3068
+    }
+  },
+  "original_evidence_archive_sha256": "ac8f26b473a3674a788d78be03d6f2e909c329c2e5c23dc39986b66c2cfdfac5",
+  "raw_evidence_storage": "ignored local coverage storage; raw operator paths and runtime logs are not public repository inputs",
+  "verification_scope": "Historical Linux local verification of Project Forge patches; no NSC runtime change and no Project Forge remote update."
+}

@@ -1,0 +1,19 @@
+{
+  "frontend": {
+    "branches": 50
+  },
+  "backend": {
+    "branches": 80,
+    "include": [
+      "internal/**/*.go",
+      "cmd/nsc-controller/**/*.go",
+      "cmd/nsc-agent/**/*.go"
+    ]
+  },
+  "incremental": {
+    "statements": 90,
+    "branches": 90
+  },
+  "active_scope": "backend-service",
+  "initial_commit": "full-coverage-baseline"
+}

@@ -1,0 +1,19 @@
+{
+  "extends": "@tsconfig/node22/tsconfig.json",
+  "include": [
+    "vite.config.ts",
+    "eslint.config.js",
+    "playwright.workspace.config.ts",
+    "playwright.demo.config.ts",
+    "playwright.system.config.ts"
+  ],
+  "compilerOptions": {
+    "composite": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "types": [
+      "node"
+    ],
+    "noEmit": true
+  }
+}

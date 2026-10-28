@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "review": "Visual inspection: product logos and synthetic demo screenshots only; historical installation captures excluded.",
+  "files": {
+    "docs/brand/nsc-logo-preview.png": "8621759cc48ad62a859782d19872ce9e0c191ed4968b9bb255f8bc9dd5dc0610",
+    "docs/brand/nsc-logo.png": "d536279af34e0b5cb1ed8c4163a5bf6f1531465fb39c2907c4f0c79645cb2739",
+    "docs/brand/nsc-mark.png": "4aea93701fde74e0365d94190d65871f4f10d8d0f125813e5f16e36567bef168",
+    "docs/screenshots/14-demo-deployment-success.png": "ac3720a9e510cdfd2c4724e25d1ebbe770f8043820276cfbbcc935092442efd1",
+    "docs/screenshots/15-demo-deployment-partial.png": "d6cdffee5a0fcd80f8317970bb019dac6ca28bde40ea2caa509626f3a3c5fdd8",
+    "docs/screenshots/16-demo-deployment-unknown-recovered.png": "30ac671625f44a4811beea45ce66745c088bbd68a9d7e11bcf50c67b7c0ef4c9",
+    "docs/screenshots/17-demo-route-editor.png": "0f6dafb365483b8d5e5069a1173ff661c4d9ea44d2f87075a38e177802743718",
+    "docs/screenshots/18-demo-project-created.png": "78bbf88843541c0b6e2d9e657f080c8f86aee4ca861ee802534a239c59d1a5fe",
+    "docs/screenshots/19-demo-mobile-menu.png": "d44c4b49c078f06d496e418738ca4e6a23f110aca22ea3a0e6648aa0f89bfc19"
+  }
+}

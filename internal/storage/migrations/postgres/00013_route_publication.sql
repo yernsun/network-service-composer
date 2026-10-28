@@ -1,0 +1,12 @@
+-- +goose Up
+ALTER TABLE routes ALTER COLUMN service_id DROP NOT NULL;
+ALTER TABLE routes ADD COLUMN kind TEXT NOT NULL DEFAULT 'proxy';
+ALTER TABLE routes ADD COLUMN match_kind TEXT NOT NULL DEFAULT 'prefer';
+ALTER TABLE routes ADD COLUMN external_url TEXT NOT NULL DEFAULT '';
+ALTER TABLE routes ADD COLUMN response_code INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE routes ADD COLUMN response_value TEXT NOT NULL DEFAULT '';
+ALTER TABLE routes ADD COLUMN read_timeout_seconds INTEGER NOT NULL DEFAULT 60;
+ALTER TABLE routes ADD COLUMN connect_timeout_seconds INTEGER NOT NULL DEFAULT 5;
+
+-- +goose Down
+SELECT 1;

@@ -1,0 +1,38 @@
+# syntax=docker/dockerfile:1.10@sha256:865e5dd094beca432e8c0a1d5e1c465db5f998dca4e439981029b3b81fb39ed5
+ARG GO_IMAGE=golang:1.27.3-alpine3.24@sha256:d200d2dd76b03a99b52651fd1325aff7dcd35422c35c01bac56571b0507f3deb
+ARG NGINX_IMAGE=nginx:1.31.5-alpine3.24@sha256:72ba65eb42c10344912a84ff42408db7d34f2feb642204570ab8fc5ffd29f1d3
+
+FROM ${GO_IMAGE} AS build
+WORKDIR /src
+COPY go.mod go.sum ./
+RUN --mount=type=cache,target=/go/pkg/mod go mod download
+COPY . .
+ARG TARGETOS=linux
+ARG TARGETARCH
+ARG VERSION=dev
+RUN --mount=type=cache,target=/root/.cache/go-build \
+    CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
+    go build -trimpath -buildvcs=false -ldflags="-s -w -X main.version=${VERSION}" -o /out/nsc-agent ./cmd/nsc-agent
+
+FROM ${NGINX_IMAGE}
+RUN apk upgrade --no-cache \
+    && apk add --no-cache ca-certificates \
+    && rm -f /etc/nginx/conf.d/default.conf /etc/nginx/nginx.conf \
+    && mkdir -p /etc/nsc /var/lib/nsc/generations /var/cache/nginx \
+    && touch /etc/nginx/nginx.conf \
+    && chown nginx:nginx /etc/nginx/nginx.conf \
+    && chown -R nginx:nginx /etc/nsc /var/lib/nsc /var/cache/nginx \
+    && chmod 0750 /etc/nsc /var/lib/nsc /var/lib/nsc/generations /var/cache/nginx
+COPY --from=build /out/nsc-agent /usr/local/bin/nsc-agent
+COPY LICENSE NOTICE THIRD_PARTY_NOTICES.md /usr/share/licenses/nsc/
+COPY third_party /usr/share/licenses/nsc/third_party/
+RUN chmod -R a+rX /usr/share/licenses/nsc
+USER nginx
+EXPOSE 80 443 443/udp
+STOPSIGNAL SIGTERM
+ARG SOURCE_REVISION=unknown
+ARG SOURCE_FINGERPRINT=unknown
+LABEL org.opencontainers.image.revision=$SOURCE_REVISION
+LABEL org.nsc.source.fingerprint=$SOURCE_FINGERPRINT
+ENTRYPOINT ["/usr/local/bin/nsc-agent"]
+CMD ["--config", "/etc/nsc/agent.yaml"]

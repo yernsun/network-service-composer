@@ -1,0 +1,33 @@
+{
+  "name": "phpMyAdmin",
+  "version": "5.2.3-apache",
+  "description": "phpMyAdmin — Compose template with persistent storage and explicit credentials",
+  "variables": [
+    {
+      "key": "PMA_HOST",
+      "required": true,
+      "description": "Existing MySQL service DNS"
+    },
+    {
+      "key": "PMA_PORT",
+      "required": false,
+      "description": "MySQL port",
+      "default": "3306",
+      "pattern": "^[0-9]{1,5}$"
+    },
+    {
+      "key": "DATABASE_NETWORK",
+      "required": true,
+      "description": "Existing database Docker network, e.g. mysqlapp_default"
+    }
+  ],
+  "recommended_domains": [
+    {
+      "service": "phpmyadmin",
+      "host": "phpmyadmin.example.com",
+      "path": "/",
+      "target_port": 80,
+      "tls_mode": "managed"
+    }
+  ]
+}

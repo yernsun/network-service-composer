@@ -1,0 +1,1654 @@
+{
+  "schema_version": 1,
+  "marketplace": {
+    "id": "nsc-community",
+    "name": {
+      "en": "NSC Community Market"
+    },
+    "endpoint": "https://example.github.io/nsc-market/",
+    "homepage": "https://github.com/yernsun/network-service-composer",
+    "default_locale": "en",
+    "locales": [
+      "en",
+      "ja",
+      "de",
+      "zh-CN",
+      "zh-TW",
+      "fr",
+      "ru",
+      "es"
+    ],
+    "docs": {
+      "getting-started": {
+        "title": {
+          "en": "Getting started",
+          "ja": "はじめに",
+          "de": "Erste Schritte",
+          "zh-CN": "开始使用",
+          "zh-TW": "開始使用",
+          "fr": "Premiers pas",
+          "ru": "Начало работы",
+          "es": "Primeros pasos"
+        },
+        "files": {
+          "en": "docs/en/getting-started.md",
+          "ja": "docs/ja/getting-started.md",
+          "de": "docs/de/getting-started.md",
+          "zh-CN": "docs/zh-CN/getting-started.md",
+          "zh-TW": "docs/zh-TW/getting-started.md",
+          "fr": "docs/fr/getting-started.md",
+          "ru": "docs/ru/getting-started.md",
+          "es": "docs/es/getting-started.md"
+        },
+        "revision": "cbcab0bc25f8bbbec9c5988cea66b01edc9a300353c0f762f99bc213b5191844",
+        "translations": {
+          "en": "cbcab0bc25f8bbbec9c5988cea66b01edc9a300353c0f762f99bc213b5191844",
+          "ja": "cbcab0bc25f8bbbec9c5988cea66b01edc9a300353c0f762f99bc213b5191844",
+          "de": "cbcab0bc25f8bbbec9c5988cea66b01edc9a300353c0f762f99bc213b5191844",
+          "zh-CN": "cbcab0bc25f8bbbec9c5988cea66b01edc9a300353c0f762f99bc213b5191844",
+          "zh-TW": "cbcab0bc25f8bbbec9c5988cea66b01edc9a300353c0f762f99bc213b5191844",
+          "fr": "cbcab0bc25f8bbbec9c5988cea66b01edc9a300353c0f762f99bc213b5191844",
+          "ru": "cbcab0bc25f8bbbec9c5988cea66b01edc9a300353c0f762f99bc213b5191844",
+          "es": "cbcab0bc25f8bbbec9c5988cea66b01edc9a300353c0f762f99bc213b5191844"
+        }
+      }
+    }
+  },
+  "apps": [
+    {
+      "id": "redis",
+      "name": {
+        "en": "Redis"
+      },
+      "description": {
+        "en": "Redis cache with AOF persistence; authenticate on port 6379. Data: /data.",
+        "zh-CN": "Redis 缓存启用 AOF 持久化；连接 6379 端口需要认证。数据：/data。",
+        "zh-TW": "Redis 快取啟用 AOF 持久化；連線 6379 連接埠需要驗證。資料：/data。",
+        "ja": "AOF 永続化付き Redis キャッシュ。6379 番ポートで認証します。データ: /data。",
+        "de": "Redis-Cache mit AOF-Persistenz; Anmeldung an Port 6379. Daten: /data.",
+        "fr": "Cache Redis avec persistance AOF ; authentification sur le port 6379. Données : /data.",
+        "ru": "Кеш Redis с сохранением AOF; авторизация на порту 6379. Данные: /data.",
+        "es": "Caché Redis con persistencia AOF; autenticación en el puerto 6379. Datos: /data."
+      },
+      "versions": [
+        {
+          "version": "7.4.11-alpine",
+          "files": {
+            "compose": "redis/compose.yaml",
+            "readme": {
+              "en": "redis/docs/en/README.md",
+              "ja": "redis/docs/ja/README.md",
+              "de": "redis/docs/de/README.md",
+              "zh-CN": "redis/docs/zh-CN/README.md",
+              "zh-TW": "redis/docs/zh-TW/README.md",
+              "fr": "redis/docs/fr/README.md",
+              "ru": "redis/docs/ru/README.md",
+              "es": "redis/docs/es/README.md"
+            },
+            "manuals": {
+              "operations": {
+                "title": {
+                  "en": "Installation and maintenance",
+                  "ja": "インストールと保守",
+                  "de": "Installation und Wartung",
+                  "zh-CN": "安装与维护",
+                  "zh-TW": "安裝與維護",
+                  "fr": "Installation et maintenance",
+                  "ru": "Установка и обслуживание",
+                  "es": "Instalación y mantenimiento"
+                },
+                "files": {
+                  "en": "redis/docs/en/operations.md",
+                  "ja": "redis/docs/ja/operations.md",
+                  "de": "redis/docs/de/operations.md",
+                  "zh-CN": "redis/docs/zh-CN/operations.md",
+                  "zh-TW": "redis/docs/zh-TW/operations.md",
+                  "fr": "redis/docs/fr/operations.md",
+                  "ru": "redis/docs/ru/operations.md",
+                  "es": "redis/docs/es/operations.md"
+                },
+                "revision": "7d0720db3fd1d970b00d6a1c792e7867082ae39044909ec3030f3201914e58bb",
+                "translations": {
+                  "en": "7d0720db3fd1d970b00d6a1c792e7867082ae39044909ec3030f3201914e58bb",
+                  "ja": "7d0720db3fd1d970b00d6a1c792e7867082ae39044909ec3030f3201914e58bb",
+                  "de": "7d0720db3fd1d970b00d6a1c792e7867082ae39044909ec3030f3201914e58bb",
+                  "zh-CN": "7d0720db3fd1d970b00d6a1c792e7867082ae39044909ec3030f3201914e58bb",
+                  "zh-TW": "7d0720db3fd1d970b00d6a1c792e7867082ae39044909ec3030f3201914e58bb",
+                  "fr": "7d0720db3fd1d970b00d6a1c792e7867082ae39044909ec3030f3201914e58bb",
+                  "ru": "7d0720db3fd1d970b00d6a1c792e7867082ae39044909ec3030f3201914e58bb",
+                  "es": "7d0720db3fd1d970b00d6a1c792e7867082ae39044909ec3030f3201914e58bb"
+                }
+              }
+            },
+            "env_example": "redis/.env.example",
+            "readme_revision": "eb789f2353cdce7944e985d88881d48f1fc109c54edfbd2c060f1aa3e33cf5f7",
+            "readme_translations": {
+              "en": "eb789f2353cdce7944e985d88881d48f1fc109c54edfbd2c060f1aa3e33cf5f7",
+              "ja": "eb789f2353cdce7944e985d88881d48f1fc109c54edfbd2c060f1aa3e33cf5f7",
+              "de": "eb789f2353cdce7944e985d88881d48f1fc109c54edfbd2c060f1aa3e33cf5f7",
+              "zh-CN": "eb789f2353cdce7944e985d88881d48f1fc109c54edfbd2c060f1aa3e33cf5f7",
+              "zh-TW": "eb789f2353cdce7944e985d88881d48f1fc109c54edfbd2c060f1aa3e33cf5f7",
+              "fr": "eb789f2353cdce7944e985d88881d48f1fc109c54edfbd2c060f1aa3e33cf5f7",
+              "ru": "eb789f2353cdce7944e985d88881d48f1fc109c54edfbd2c060f1aa3e33cf5f7",
+              "es": "eb789f2353cdce7944e985d88881d48f1fc109c54edfbd2c060f1aa3e33cf5f7"
+            }
+          },
+          "variables": [
+            {
+              "key": "REDIS_PASSWORD",
+              "required": true,
+              "description": {
+                "en": "Choose a fixed market version, read its parameters, and enter your own secrets. Passwords have no usable default; use at least 16 bytes. Never commit real secrets to the market.",
+                "ja": "固定された市場バージョンを選び、パラメーターを確認して独自の秘密情報を入力します。パスワードに使用可能な既定値はなく、16 バイト以上必要です。実際の秘密情報を市場に登録しないでください。",
+                "de": "Wählen Sie eine feste Marktversion, lesen Sie die Parameter und tragen Sie eigene Geheimnisse ein. Passwörter haben keinen verwendbaren Standardwert; verwenden Sie mindestens 16 Byte. Veröffentlichen Sie keine echten Geheimnisse im Markt.",
+                "zh-CN": "选择固定市场版本，阅读参数并填写自己的秘密。密码没有可用默认值，至少使用 16 字节。不要把真实秘密提交到市场。",
+                "zh-TW": "選擇固定市場版本，閱讀參數並填寫自己的機密。密碼沒有可用預設值，至少使用 16 位元組。不要將真實機密提交到市場。",
+                "fr": "Choisissez une version fixe du marché, lisez ses paramètres et saisissez vos propres secrets. Les mots de passe n’ont pas de valeur utilisable par défaut ; utilisez au moins 16 octets. Ne publiez aucun secret réel dans le marché.",
+                "ru": "Выберите фиксированную версию, изучите параметры и введите свои секреты. У паролей нет пригодных значений по умолчанию; используйте не менее 16 байт. Не публикуйте настоящие секреты в каталоге.",
+                "es": "Elija una versión fija, revise sus parámetros e introduzca sus propios secretos. Las contraseñas no tienen un valor predeterminado utilizable; use al menos 16 bytes. No publique secretos reales en el mercado."
+              },
+              "secret": true,
+              "min_length": 16
+            }
+          ],
+          "recommended_domains": []
+        },
+        {
+          "version": "7.4.11-alpine-nsc.1",
+          "files": {
+            "compose": "redis/compose.yaml",
+            "readme": {
+              "en": "redis/docs/en/swarm-README.md",
+              "ja": "redis/docs/ja/swarm-README.md",
+              "de": "redis/docs/de/swarm-README.md",
+              "zh-CN": "redis/docs/zh-CN/swarm-README.md",
+              "zh-TW": "redis/docs/zh-TW/swarm-README.md",
+              "fr": "redis/docs/fr/swarm-README.md",
+              "ru": "redis/docs/ru/swarm-README.md",
+              "es": "redis/docs/es/swarm-README.md"
+            },
+            "manuals": {
+              "operations": {
+                "title": {
+                  "en": "Installation and maintenance",
+                  "ja": "インストールと保守",
+                  "de": "Installation und Wartung",
+                  "zh-CN": "安装与维护",
+                  "zh-TW": "安裝與維護",
+                  "fr": "Installation et maintenance",
+                  "ru": "Установка и обслуживание",
+                  "es": "Instalación y mantenimiento"
+                },
+                "files": {
+                  "en": "redis/docs/en/swarm-operations.md",
+                  "ja": "redis/docs/ja/swarm-operations.md",
+                  "de": "redis/docs/de/swarm-operations.md",
+                  "zh-CN": "redis/docs/zh-CN/swarm-operations.md",
+                  "zh-TW": "redis/docs/zh-TW/swarm-operations.md",
+                  "fr": "redis/docs/fr/swarm-operations.md",
+                  "ru": "redis/docs/ru/swarm-operations.md",
+                  "es": "redis/docs/es/swarm-operations.md"
+                },
+                "revision": "83a8fb66901e26bf68452f523728573caadf681ca4977f07663d41747bc8dba0",
+                "translations": {
+                  "en": "83a8fb66901e26bf68452f523728573caadf681ca4977f07663d41747bc8dba0",
+                  "ja": "83a8fb66901e26bf68452f523728573caadf681ca4977f07663d41747bc8dba0",
+                  "de": "83a8fb66901e26bf68452f523728573caadf681ca4977f07663d41747bc8dba0",
+                  "zh-CN": "83a8fb66901e26bf68452f523728573caadf681ca4977f07663d41747bc8dba0",
+                  "zh-TW": "83a8fb66901e26bf68452f523728573caadf681ca4977f07663d41747bc8dba0",
+                  "fr": "83a8fb66901e26bf68452f523728573caadf681ca4977f07663d41747bc8dba0",
+                  "ru": "83a8fb66901e26bf68452f523728573caadf681ca4977f07663d41747bc8dba0",
+                  "es": "83a8fb66901e26bf68452f523728573caadf681ca4977f07663d41747bc8dba0"
+                }
+              }
+            },
+            "env_example": "redis/.env.example",
+            "readme_revision": "5dbc5c69181395757ccd2b1c962245eb3eadee203544cbffd155eb86ebe5b6d6",
+            "readme_translations": {
+              "en": "5dbc5c69181395757ccd2b1c962245eb3eadee203544cbffd155eb86ebe5b6d6",
+              "ja": "5dbc5c69181395757ccd2b1c962245eb3eadee203544cbffd155eb86ebe5b6d6",
+              "de": "5dbc5c69181395757ccd2b1c962245eb3eadee203544cbffd155eb86ebe5b6d6",
+              "zh-CN": "5dbc5c69181395757ccd2b1c962245eb3eadee203544cbffd155eb86ebe5b6d6",
+              "zh-TW": "5dbc5c69181395757ccd2b1c962245eb3eadee203544cbffd155eb86ebe5b6d6",
+              "fr": "5dbc5c69181395757ccd2b1c962245eb3eadee203544cbffd155eb86ebe5b6d6",
+              "ru": "5dbc5c69181395757ccd2b1c962245eb3eadee203544cbffd155eb86ebe5b6d6",
+              "es": "5dbc5c69181395757ccd2b1c962245eb3eadee203544cbffd155eb86ebe5b6d6"
+            },
+            "swarm": "redis/swarm.yaml"
+          },
+          "variables": [
+            {
+              "key": "REDIS_PASSWORD",
+              "required": true,
+              "description": {
+                "en": "Choose a fixed market version, read its parameters, and enter your own secrets. Passwords have no usable default; use at least 16 bytes. Never commit real secrets to the market.",
+                "ja": "固定された市場バージョンを選び、パラメーターを確認して独自の秘密情報を入力します。パスワードに使用可能な既定値はなく、16 バイト以上必要です。実際の秘密情報を市場に登録しないでください。",
+                "de": "Wählen Sie eine feste Marktversion, lesen Sie die Parameter und tragen Sie eigene Geheimnisse ein. Passwörter haben keinen verwendbaren Standardwert; verwenden Sie mindestens 16 Byte. Veröffentlichen Sie keine echten Geheimnisse im Markt.",
+                "zh-CN": "选择固定市场版本，阅读参数并填写自己的秘密。密码没有可用默认值，至少使用 16 字节。不要把真实秘密提交到市场。",
+                "zh-TW": "選擇固定市場版本，閱讀參數並填寫自己的機密。密碼沒有可用預設值，至少使用 16 位元組。不要將真實機密提交到市場。",
+                "fr": "Choisissez une version fixe du marché, lisez ses paramètres et saisissez vos propres secrets. Les mots de passe n’ont pas de valeur utilisable par défaut ; utilisez au moins 16 octets. Ne publiez aucun secret réel dans le marché.",
+                "ru": "Выберите фиксированную версию, изучите параметры и введите свои секреты. У паролей нет пригодных значений по умолчанию; используйте не менее 16 байт. Не публикуйте настоящие секреты в каталоге.",
+                "es": "Elija una versión fija, revise sus parámetros e introduzca sus propios secretos. Las contraseñas no tienen un valor predeterminado utilizable; use al menos 16 bytes. No publique secretos reales en el mercado."
+              },
+              "secret": true,
+              "min_length": 16
+            }
+          ],
+          "recommended_domains": []
+        }
+      ]
+    },
+    {
+      "id": "mysql",
+      "name": {
+        "en": "MySQL"
+      },
+      "description": {
+        "en": "MySQL with separate root and application passwords. Connect on port 3306; data: /var/lib/mysql.",
+        "zh-CN": "MySQL 使用独立 root 和应用密码。连接端口 3306；数据：/var/lib/mysql。",
+        "zh-TW": "MySQL 使用獨立 root 和應用密碼。連線連接埠 3306；資料：/var/lib/mysql。",
+        "ja": "root とアプリ用のパスワードを分離した MySQL。ポート 3306、データ: /var/lib/mysql。",
+        "de": "MySQL mit getrennten Root- und Anwendungspasswörtern. Port 3306; Daten: /var/lib/mysql.",
+        "fr": "MySQL avec mots de passe root et applicatif distincts. Port 3306 ; données : /var/lib/mysql.",
+        "ru": "MySQL с отдельными паролями root и приложения. Порт 3306; данные: /var/lib/mysql.",
+        "es": "MySQL con contraseñas separadas para root y la aplicación. Puerto 3306; datos: /var/lib/mysql."
+      },
+      "versions": [
+        {
+          "version": "8.4.11",
+          "files": {
+            "compose": "mysql/compose.yaml",
+            "readme": {
+              "en": "mysql/docs/en/README.md",
+              "ja": "mysql/docs/ja/README.md",
+              "de": "mysql/docs/de/README.md",
+              "zh-CN": "mysql/docs/zh-CN/README.md",
+              "zh-TW": "mysql/docs/zh-TW/README.md",
+              "fr": "mysql/docs/fr/README.md",
+              "ru": "mysql/docs/ru/README.md",
+              "es": "mysql/docs/es/README.md"
+            },
+            "manuals": {
+              "operations": {
+                "title": {
+                  "en": "Installation and maintenance",
+                  "ja": "インストールと保守",
+                  "de": "Installation und Wartung",
+                  "zh-CN": "安装与维护",
+                  "zh-TW": "安裝與維護",
+                  "fr": "Installation et maintenance",
+                  "ru": "Установка и обслуживание",
+                  "es": "Instalación y mantenimiento"
+                },
+                "files": {
+                  "en": "mysql/docs/en/operations.md",
+                  "ja": "mysql/docs/ja/operations.md",
+                  "de": "mysql/docs/de/operations.md",
+                  "zh-CN": "mysql/docs/zh-CN/operations.md",
+                  "zh-TW": "mysql/docs/zh-TW/operations.md",
+                  "fr": "mysql/docs/fr/operations.md",
+                  "ru": "mysql/docs/ru/operations.md",
+                  "es": "mysql/docs/es/operations.md"
+                },
+                "revision": "14a2a6896079586bdf737a4447f4d4ae09410a598e7ee67654f8c91e4c5de2ba",
+                "translations": {
+                  "en": "14a2a6896079586bdf737a4447f4d4ae09410a598e7ee67654f8c91e4c5de2ba",
+                  "ja": "14a2a6896079586bdf737a4447f4d4ae09410a598e7ee67654f8c91e4c5de2ba",
+                  "de": "14a2a6896079586bdf737a4447f4d4ae09410a598e7ee67654f8c91e4c5de2ba",
+                  "zh-CN": "14a2a6896079586bdf737a4447f4d4ae09410a598e7ee67654f8c91e4c5de2ba",
+                  "zh-TW": "14a2a6896079586bdf737a4447f4d4ae09410a598e7ee67654f8c91e4c5de2ba",
+                  "fr": "14a2a6896079586bdf737a4447f4d4ae09410a598e7ee67654f8c91e4c5de2ba",
+                  "ru": "14a2a6896079586bdf737a4447f4d4ae09410a598e7ee67654f8c91e4c5de2ba",
+                  "es": "14a2a6896079586bdf737a4447f4d4ae09410a598e7ee67654f8c91e4c5de2ba"
+                }
+              }
+            },
+            "env_example": "mysql/.env.example",
+            "readme_revision": "fa476512ed942330ddf85711ee8da65295073f5d062bc2e5dbf5ff9e79507def",
+            "readme_translations": {
+              "en": "fa476512ed942330ddf85711ee8da65295073f5d062bc2e5dbf5ff9e79507def",
+              "ja": "fa476512ed942330ddf85711ee8da65295073f5d062bc2e5dbf5ff9e79507def",
+              "de": "fa476512ed942330ddf85711ee8da65295073f5d062bc2e5dbf5ff9e79507def",
+              "zh-CN": "fa476512ed942330ddf85711ee8da65295073f5d062bc2e5dbf5ff9e79507def",
+              "zh-TW": "fa476512ed942330ddf85711ee8da65295073f5d062bc2e5dbf5ff9e79507def",
+              "fr": "fa476512ed942330ddf85711ee8da65295073f5d062bc2e5dbf5ff9e79507def",
+              "ru": "fa476512ed942330ddf85711ee8da65295073f5d062bc2e5dbf5ff9e79507def",
+              "es": "fa476512ed942330ddf85711ee8da65295073f5d062bc2e5dbf5ff9e79507def"
+            }
+          },
+          "variables": [
+            {
+              "key": "MYSQL_ROOT_PASSWORD",
+              "required": true,
+              "description": {
+                "en": "Choose a fixed market version, read its parameters, and enter your own secrets. Passwords have no usable default; use at least 16 bytes. Never commit real secrets to the market.",
+                "ja": "固定された市場バージョンを選び、パラメーターを確認して独自の秘密情報を入力します。パスワードに使用可能な既定値はなく、16 バイト以上必要です。実際の秘密情報を市場に登録しないでください。",
+                "de": "Wählen Sie eine feste Marktversion, lesen Sie die Parameter und tragen Sie eigene Geheimnisse ein. Passwörter haben keinen verwendbaren Standardwert; verwenden Sie mindestens 16 Byte. Veröffentlichen Sie keine echten Geheimnisse im Markt.",
+                "zh-CN": "选择固定市场版本，阅读参数并填写自己的秘密。密码没有可用默认值，至少使用 16 字节。不要把真实秘密提交到市场。",
+                "zh-TW": "選擇固定市場版本，閱讀參數並填寫自己的機密。密碼沒有可用預設值，至少使用 16 位元組。不要將真實機密提交到市場。",
+                "fr": "Choisissez une version fixe du marché, lisez ses paramètres et saisissez vos propres secrets. Les mots de passe n’ont pas de valeur utilisable par défaut ; utilisez au moins 16 octets. Ne publiez aucun secret réel dans le marché.",
+                "ru": "Выберите фиксированную версию, изучите параметры и введите свои секреты. У паролей нет пригодных значений по умолчанию; используйте не менее 16 байт. Не публикуйте настоящие секреты в каталоге.",
+                "es": "Elija una versión fija, revise sus parámetros e introduzca sus propios secretos. Las contraseñas no tienen un valor predeterminado utilizable; use al menos 16 bytes. No publique secretos reales en el mercado."
+              },
+              "secret": true,
+              "min_length": 16
+            },
+            {
+              "key": "MYSQL_PASSWORD",
+              "required": true,
+              "description": {
+                "en": "Choose a fixed market version, read its parameters, and enter your own secrets. Passwords have no usable default; use at least 16 bytes. Never commit real secrets to the market.",
+                "ja": "固定された市場バージョンを選び、パラメーターを確認して独自の秘密情報を入力します。パスワードに使用可能な既定値はなく、16 バイト以上必要です。実際の秘密情報を市場に登録しないでください。",
+                "de": "Wählen Sie eine feste Marktversion, lesen Sie die Parameter und tragen Sie eigene Geheimnisse ein. Passwörter haben keinen verwendbaren Standardwert; verwenden Sie mindestens 16 Byte. Veröffentlichen Sie keine echten Geheimnisse im Markt.",
+                "zh-CN": "选择固定市场版本，阅读参数并填写自己的秘密。密码没有可用默认值，至少使用 16 字节。不要把真实秘密提交到市场。",
+                "zh-TW": "選擇固定市場版本，閱讀參數並填寫自己的機密。密碼沒有可用預設值，至少使用 16 位元組。不要將真實機密提交到市場。",
+                "fr": "Choisissez une version fixe du marché, lisez ses paramètres et saisissez vos propres secrets. Les mots de passe n’ont pas de valeur utilisable par défaut ; utilisez au moins 16 octets. Ne publiez aucun secret réel dans le marché.",
+                "ru": "Выберите фиксированную версию, изучите параметры и введите свои секреты. У паролей нет пригодных значений по умолчанию; используйте не менее 16 байт. Не публикуйте настоящие секреты в каталоге.",
+                "es": "Elija una versión fija, revise sus parámetros e introduzca sus propios secretos. Las contraseñas no tienen un valor predeterminado utilizable; use al menos 16 bytes. No publique secretos reales en el mercado."
+              },
+              "secret": true,
+              "min_length": 16
+            },
+            {
+              "key": "MYSQL_DATABASE",
+              "required": false,
+              "description": {
+                "en": "MySQL with separate root and application passwords. Connect on port 3306; data: /var/lib/mysql.",
+                "ja": "root とアプリ用のパスワードを分離した MySQL。ポート 3306、データ: /var/lib/mysql。",
+                "de": "MySQL mit getrennten Root- und Anwendungspasswörtern. Port 3306; Daten: /var/lib/mysql.",
+                "zh-CN": "MySQL 使用独立 root 和应用密码。连接端口 3306；数据：/var/lib/mysql。",
+                "zh-TW": "MySQL 使用獨立 root 和應用密碼。連線連接埠 3306；資料：/var/lib/mysql。",
+                "fr": "MySQL avec mots de passe root et applicatif distincts. Port 3306 ; données : /var/lib/mysql.",
+                "ru": "MySQL с отдельными паролями root и приложения. Порт 3306; данные: /var/lib/mysql.",
+                "es": "MySQL con contraseñas separadas para root y la aplicación. Puerto 3306; datos: /var/lib/mysql."
+              },
+              "default": "app",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_]{0,62}$"
+            },
+            {
+              "key": "MYSQL_USER",
+              "required": false,
+              "description": {
+                "en": "MySQL with separate root and application passwords. Connect on port 3306; data: /var/lib/mysql.",
+                "ja": "root とアプリ用のパスワードを分離した MySQL。ポート 3306、データ: /var/lib/mysql。",
+                "de": "MySQL mit getrennten Root- und Anwendungspasswörtern. Port 3306; Daten: /var/lib/mysql.",
+                "zh-CN": "MySQL 使用独立 root 和应用密码。连接端口 3306；数据：/var/lib/mysql。",
+                "zh-TW": "MySQL 使用獨立 root 和應用密碼。連線連接埠 3306；資料：/var/lib/mysql。",
+                "fr": "MySQL avec mots de passe root et applicatif distincts. Port 3306 ; données : /var/lib/mysql.",
+                "ru": "MySQL с отдельными паролями root и приложения. Порт 3306; данные: /var/lib/mysql.",
+                "es": "MySQL con contraseñas separadas para root y la aplicación. Puerto 3306; datos: /var/lib/mysql."
+              },
+              "default": "app",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_]{0,30}$"
+            }
+          ],
+          "recommended_domains": []
+        },
+        {
+          "version": "8.4.11-nsc.1",
+          "files": {
+            "compose": "mysql/compose.yaml",
+            "readme": {
+              "en": "mysql/docs/en/swarm-README.md",
+              "ja": "mysql/docs/ja/swarm-README.md",
+              "de": "mysql/docs/de/swarm-README.md",
+              "zh-CN": "mysql/docs/zh-CN/swarm-README.md",
+              "zh-TW": "mysql/docs/zh-TW/swarm-README.md",
+              "fr": "mysql/docs/fr/swarm-README.md",
+              "ru": "mysql/docs/ru/swarm-README.md",
+              "es": "mysql/docs/es/swarm-README.md"
+            },
+            "manuals": {
+              "operations": {
+                "title": {
+                  "en": "Installation and maintenance",
+                  "ja": "インストールと保守",
+                  "de": "Installation und Wartung",
+                  "zh-CN": "安装与维护",
+                  "zh-TW": "安裝與維護",
+                  "fr": "Installation et maintenance",
+                  "ru": "Установка и обслуживание",
+                  "es": "Instalación y mantenimiento"
+                },
+                "files": {
+                  "en": "mysql/docs/en/swarm-operations.md",
+                  "ja": "mysql/docs/ja/swarm-operations.md",
+                  "de": "mysql/docs/de/swarm-operations.md",
+                  "zh-CN": "mysql/docs/zh-CN/swarm-operations.md",
+                  "zh-TW": "mysql/docs/zh-TW/swarm-operations.md",
+                  "fr": "mysql/docs/fr/swarm-operations.md",
+                  "ru": "mysql/docs/ru/swarm-operations.md",
+                  "es": "mysql/docs/es/swarm-operations.md"
+                },
+                "revision": "c076b8e4dc9990daf6d1a8d641d4556f5e5291ed6b7555e1f617bb3fd2b0b383",
+                "translations": {
+                  "en": "c076b8e4dc9990daf6d1a8d641d4556f5e5291ed6b7555e1f617bb3fd2b0b383",
+                  "ja": "c076b8e4dc9990daf6d1a8d641d4556f5e5291ed6b7555e1f617bb3fd2b0b383",
+                  "de": "c076b8e4dc9990daf6d1a8d641d4556f5e5291ed6b7555e1f617bb3fd2b0b383",
+                  "zh-CN": "c076b8e4dc9990daf6d1a8d641d4556f5e5291ed6b7555e1f617bb3fd2b0b383",
+                  "zh-TW": "c076b8e4dc9990daf6d1a8d641d4556f5e5291ed6b7555e1f617bb3fd2b0b383",
+                  "fr": "c076b8e4dc9990daf6d1a8d641d4556f5e5291ed6b7555e1f617bb3fd2b0b383",
+                  "ru": "c076b8e4dc9990daf6d1a8d641d4556f5e5291ed6b7555e1f617bb3fd2b0b383",
+                  "es": "c076b8e4dc9990daf6d1a8d641d4556f5e5291ed6b7555e1f617bb3fd2b0b383"
+                }
+              }
+            },
+            "env_example": "mysql/.env.example",
+            "readme_revision": "9d2a2ff6e17b85d52d40678537225a826bedd0d44806113491ea4d0d07180168",
+            "readme_translations": {
+              "en": "9d2a2ff6e17b85d52d40678537225a826bedd0d44806113491ea4d0d07180168",
+              "ja": "9d2a2ff6e17b85d52d40678537225a826bedd0d44806113491ea4d0d07180168",
+              "de": "9d2a2ff6e17b85d52d40678537225a826bedd0d44806113491ea4d0d07180168",
+              "zh-CN": "9d2a2ff6e17b85d52d40678537225a826bedd0d44806113491ea4d0d07180168",
+              "zh-TW": "9d2a2ff6e17b85d52d40678537225a826bedd0d44806113491ea4d0d07180168",
+              "fr": "9d2a2ff6e17b85d52d40678537225a826bedd0d44806113491ea4d0d07180168",
+              "ru": "9d2a2ff6e17b85d52d40678537225a826bedd0d44806113491ea4d0d07180168",
+              "es": "9d2a2ff6e17b85d52d40678537225a826bedd0d44806113491ea4d0d07180168"
+            },
+            "swarm": "mysql/swarm.yaml"
+          },
+          "variables": [
+            {
+              "key": "MYSQL_ROOT_PASSWORD",
+              "required": true,
+              "description": {
+                "en": "Choose a fixed market version, read its parameters, and enter your own secrets. Passwords have no usable default; use at least 16 bytes. Never commit real secrets to the market.",
+                "ja": "固定された市場バージョンを選び、パラメーターを確認して独自の秘密情報を入力します。パスワードに使用可能な既定値はなく、16 バイト以上必要です。実際の秘密情報を市場に登録しないでください。",
+                "de": "Wählen Sie eine feste Marktversion, lesen Sie die Parameter und tragen Sie eigene Geheimnisse ein. Passwörter haben keinen verwendbaren Standardwert; verwenden Sie mindestens 16 Byte. Veröffentlichen Sie keine echten Geheimnisse im Markt.",
+                "zh-CN": "选择固定市场版本，阅读参数并填写自己的秘密。密码没有可用默认值，至少使用 16 字节。不要把真实秘密提交到市场。",
+                "zh-TW": "選擇固定市場版本，閱讀參數並填寫自己的機密。密碼沒有可用預設值，至少使用 16 位元組。不要將真實機密提交到市場。",
+                "fr": "Choisissez une version fixe du marché, lisez ses paramètres et saisissez vos propres secrets. Les mots de passe n’ont pas de valeur utilisable par défaut ; utilisez au moins 16 octets. Ne publiez aucun secret réel dans le marché.",
+                "ru": "Выберите фиксированную версию, изучите параметры и введите свои секреты. У паролей нет пригодных значений по умолчанию; используйте не менее 16 байт. Не публикуйте настоящие секреты в каталоге.",
+                "es": "Elija una versión fija, revise sus parámetros e introduzca sus propios secretos. Las contraseñas no tienen un valor predeterminado utilizable; use al menos 16 bytes. No publique secretos reales en el mercado."
+              },
+              "secret": true,
+              "min_length": 16
+            },
+            {
+              "key": "MYSQL_PASSWORD",
+              "required": true,
+              "description": {
+                "en": "Choose a fixed market version, read its parameters, and enter your own secrets. Passwords have no usable default; use at least 16 bytes. Never commit real secrets to the market.",
+                "ja": "固定された市場バージョンを選び、パラメーターを確認して独自の秘密情報を入力します。パスワードに使用可能な既定値はなく、16 バイト以上必要です。実際の秘密情報を市場に登録しないでください。",
+                "de": "Wählen Sie eine feste Marktversion, lesen Sie die Parameter und tragen Sie eigene Geheimnisse ein. Passwörter haben keinen verwendbaren Standardwert; verwenden Sie mindestens 16 Byte. Veröffentlichen Sie keine echten Geheimnisse im Markt.",
+                "zh-CN": "选择固定市场版本，阅读参数并填写自己的秘密。密码没有可用默认值，至少使用 16 字节。不要把真实秘密提交到市场。",
+                "zh-TW": "選擇固定市場版本，閱讀參數並填寫自己的機密。密碼沒有可用預設值，至少使用 16 位元組。不要將真實機密提交到市場。",
+                "fr": "Choisissez une version fixe du marché, lisez ses paramètres et saisissez vos propres secrets. Les mots de passe n’ont pas de valeur utilisable par défaut ; utilisez au moins 16 octets. Ne publiez aucun secret réel dans le marché.",
+                "ru": "Выберите фиксированную версию, изучите параметры и введите свои секреты. У паролей нет пригодных значений по умолчанию; используйте не менее 16 байт. Не публикуйте настоящие секреты в каталоге.",
+                "es": "Elija una versión fija, revise sus parámetros e introduzca sus propios secretos. Las contraseñas no tienen un valor predeterminado utilizable; use al menos 16 bytes. No publique secretos reales en el mercado."
+              },
+              "secret": true,
+              "min_length": 16
+            },
+            {
+              "key": "MYSQL_DATABASE",
+              "required": false,
+              "description": {
+                "en": "MySQL with separate root and application passwords. Connect on port 3306; data: /var/lib/mysql.",
+                "ja": "root とアプリ用のパスワードを分離した MySQL。ポート 3306、データ: /var/lib/mysql。",
+                "de": "MySQL mit getrennten Root- und Anwendungspasswörtern. Port 3306; Daten: /var/lib/mysql.",
+                "zh-CN": "MySQL 使用独立 root 和应用密码。连接端口 3306；数据：/var/lib/mysql。",
+                "zh-TW": "MySQL 使用獨立 root 和應用密碼。連線連接埠 3306；資料：/var/lib/mysql。",
+                "fr": "MySQL avec mots de passe root et applicatif distincts. Port 3306 ; données : /var/lib/mysql.",
+                "ru": "MySQL с отдельными паролями root и приложения. Порт 3306; данные: /var/lib/mysql.",
+                "es": "MySQL con contraseñas separadas para root y la aplicación. Puerto 3306; datos: /var/lib/mysql."
+              },
+              "default": "app",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_]{0,62}$"
+            },
+            {
+              "key": "MYSQL_USER",
+              "required": false,
+              "description": {
+                "en": "MySQL with separate root and application passwords. Connect on port 3306; data: /var/lib/mysql.",
+                "ja": "root とアプリ用のパスワードを分離した MySQL。ポート 3306、データ: /var/lib/mysql。",
+                "de": "MySQL mit getrennten Root- und Anwendungspasswörtern. Port 3306; Daten: /var/lib/mysql.",
+                "zh-CN": "MySQL 使用独立 root 和应用密码。连接端口 3306；数据：/var/lib/mysql。",
+                "zh-TW": "MySQL 使用獨立 root 和應用密碼。連線連接埠 3306；資料：/var/lib/mysql。",
+                "fr": "MySQL avec mots de passe root et applicatif distincts. Port 3306 ; données : /var/lib/mysql.",
+                "ru": "MySQL с отдельными паролями root и приложения. Порт 3306; данные: /var/lib/mysql.",
+                "es": "MySQL con contraseñas separadas para root y la aplicación. Puerto 3306; datos: /var/lib/mysql."
+              },
+              "default": "app",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_]{0,30}$"
+            }
+          ],
+          "recommended_domains": []
+        }
+      ]
+    },
+    {
+      "id": "postgresql",
+      "name": {
+        "en": "PostgreSQL"
+      },
+      "description": {
+        "en": "PostgreSQL 18 on port 5432. Mount the parent data directory /var/lib/postgresql, not the legacy /var/lib/postgresql/data path.",
+        "zh-CN": "PostgreSQL 18 使用 5432 端口。挂载父数据目录 /var/lib/postgresql，不使用旧版 /var/lib/postgresql/data 路径。",
+        "zh-TW": "PostgreSQL 18 使用 5432 連接埠。掛載父資料目錄 /var/lib/postgresql，不使用舊版 /var/lib/postgresql/data 路徑。",
+        "ja": "PostgreSQL 18 はポート 5432 を使います。旧パス /var/lib/postgresql/data ではなく親ディレクトリ /var/lib/postgresql をマウントします。",
+        "de": "PostgreSQL 18 nutzt Port 5432. Mounten Sie /var/lib/postgresql statt des alten Pfads /var/lib/postgresql/data.",
+        "fr": "PostgreSQL 18 utilise le port 5432. Montez /var/lib/postgresql plutôt que l’ancien chemin /var/lib/postgresql/data.",
+        "ru": "PostgreSQL 18 использует порт 5432. Подключайте /var/lib/postgresql, а не старый путь /var/lib/postgresql/data.",
+        "es": "PostgreSQL 18 usa el puerto 5432. Monte /var/lib/postgresql, no la ruta antigua /var/lib/postgresql/data."
+      },
+      "versions": [
+        {
+          "version": "18.6-alpine3.24",
+          "files": {
+            "compose": "postgresql/compose.yaml",
+            "readme": {
+              "en": "postgresql/docs/en/README.md",
+              "ja": "postgresql/docs/ja/README.md",
+              "de": "postgresql/docs/de/README.md",
+              "zh-CN": "postgresql/docs/zh-CN/README.md",
+              "zh-TW": "postgresql/docs/zh-TW/README.md",
+              "fr": "postgresql/docs/fr/README.md",
+              "ru": "postgresql/docs/ru/README.md",
+              "es": "postgresql/docs/es/README.md"
+            },
+            "manuals": {
+              "operations": {
+                "title": {
+                  "en": "Installation and maintenance",
+                  "ja": "インストールと保守",
+                  "de": "Installation und Wartung",
+                  "zh-CN": "安装与维护",
+                  "zh-TW": "安裝與維護",
+                  "fr": "Installation et maintenance",
+                  "ru": "Установка и обслуживание",
+                  "es": "Instalación y mantenimiento"
+                },
+                "files": {
+                  "en": "postgresql/docs/en/operations.md",
+                  "ja": "postgresql/docs/ja/operations.md",
+                  "de": "postgresql/docs/de/operations.md",
+                  "zh-CN": "postgresql/docs/zh-CN/operations.md",
+                  "zh-TW": "postgresql/docs/zh-TW/operations.md",
+                  "fr": "postgresql/docs/fr/operations.md",
+                  "ru": "postgresql/docs/ru/operations.md",
+                  "es": "postgresql/docs/es/operations.md"
+                },
+                "revision": "aaaee2357354abd82f4b6c72b0563a1bc38c897c190bd7db818f8145590e6457",
+                "translations": {
+                  "en": "aaaee2357354abd82f4b6c72b0563a1bc38c897c190bd7db818f8145590e6457",
+                  "ja": "aaaee2357354abd82f4b6c72b0563a1bc38c897c190bd7db818f8145590e6457",
+                  "de": "aaaee2357354abd82f4b6c72b0563a1bc38c897c190bd7db818f8145590e6457",
+                  "zh-CN": "aaaee2357354abd82f4b6c72b0563a1bc38c897c190bd7db818f8145590e6457",
+                  "zh-TW": "aaaee2357354abd82f4b6c72b0563a1bc38c897c190bd7db818f8145590e6457",
+                  "fr": "aaaee2357354abd82f4b6c72b0563a1bc38c897c190bd7db818f8145590e6457",
+                  "ru": "aaaee2357354abd82f4b6c72b0563a1bc38c897c190bd7db818f8145590e6457",
+                  "es": "aaaee2357354abd82f4b6c72b0563a1bc38c897c190bd7db818f8145590e6457"
+                }
+              }
+            },
+            "env_example": "postgresql/.env.example",
+            "readme_revision": "a15f0b0012da5f64bc028dec1046ec7806d90278c68a1836c5fdc194d860e642",
+            "readme_translations": {
+              "en": "a15f0b0012da5f64bc028dec1046ec7806d90278c68a1836c5fdc194d860e642",
+              "ja": "a15f0b0012da5f64bc028dec1046ec7806d90278c68a1836c5fdc194d860e642",
+              "de": "a15f0b0012da5f64bc028dec1046ec7806d90278c68a1836c5fdc194d860e642",
+              "zh-CN": "a15f0b0012da5f64bc028dec1046ec7806d90278c68a1836c5fdc194d860e642",
+              "zh-TW": "a15f0b0012da5f64bc028dec1046ec7806d90278c68a1836c5fdc194d860e642",
+              "fr": "a15f0b0012da5f64bc028dec1046ec7806d90278c68a1836c5fdc194d860e642",
+              "ru": "a15f0b0012da5f64bc028dec1046ec7806d90278c68a1836c5fdc194d860e642",
+              "es": "a15f0b0012da5f64bc028dec1046ec7806d90278c68a1836c5fdc194d860e642"
+            }
+          },
+          "variables": [
+            {
+              "key": "POSTGRES_PASSWORD",
+              "required": true,
+              "description": {
+                "en": "Choose a fixed market version, read its parameters, and enter your own secrets. Passwords have no usable default; use at least 16 bytes. Never commit real secrets to the market.",
+                "ja": "固定された市場バージョンを選び、パラメーターを確認して独自の秘密情報を入力します。パスワードに使用可能な既定値はなく、16 バイト以上必要です。実際の秘密情報を市場に登録しないでください。",
+                "de": "Wählen Sie eine feste Marktversion, lesen Sie die Parameter und tragen Sie eigene Geheimnisse ein. Passwörter haben keinen verwendbaren Standardwert; verwenden Sie mindestens 16 Byte. Veröffentlichen Sie keine echten Geheimnisse im Markt.",
+                "zh-CN": "选择固定市场版本，阅读参数并填写自己的秘密。密码没有可用默认值，至少使用 16 字节。不要把真实秘密提交到市场。",
+                "zh-TW": "選擇固定市場版本，閱讀參數並填寫自己的機密。密碼沒有可用預設值，至少使用 16 位元組。不要將真實機密提交到市場。",
+                "fr": "Choisissez une version fixe du marché, lisez ses paramètres et saisissez vos propres secrets. Les mots de passe n’ont pas de valeur utilisable par défaut ; utilisez au moins 16 octets. Ne publiez aucun secret réel dans le marché.",
+                "ru": "Выберите фиксированную версию, изучите параметры и введите свои секреты. У паролей нет пригодных значений по умолчанию; используйте не менее 16 байт. Не публикуйте настоящие секреты в каталоге.",
+                "es": "Elija una versión fija, revise sus parámetros e introduzca sus propios secretos. Las contraseñas no tienen un valor predeterminado utilizable; use al menos 16 bytes. No publique secretos reales en el mercado."
+              },
+              "secret": true,
+              "min_length": 16
+            },
+            {
+              "key": "POSTGRES_USER",
+              "required": false,
+              "description": {
+                "en": "PostgreSQL 18 on port 5432. Mount the parent data directory /var/lib/postgresql, not the legacy /var/lib/postgresql/data path.",
+                "ja": "PostgreSQL 18 はポート 5432 を使います。旧パス /var/lib/postgresql/data ではなく親ディレクトリ /var/lib/postgresql をマウントします。",
+                "de": "PostgreSQL 18 nutzt Port 5432. Mounten Sie /var/lib/postgresql statt des alten Pfads /var/lib/postgresql/data.",
+                "zh-CN": "PostgreSQL 18 使用 5432 端口。挂载父数据目录 /var/lib/postgresql，不使用旧版 /var/lib/postgresql/data 路径。",
+                "zh-TW": "PostgreSQL 18 使用 5432 連接埠。掛載父資料目錄 /var/lib/postgresql，不使用舊版 /var/lib/postgresql/data 路徑。",
+                "fr": "PostgreSQL 18 utilise le port 5432. Montez /var/lib/postgresql plutôt que l’ancien chemin /var/lib/postgresql/data.",
+                "ru": "PostgreSQL 18 использует порт 5432. Подключайте /var/lib/postgresql, а не старый путь /var/lib/postgresql/data.",
+                "es": "PostgreSQL 18 usa el puerto 5432. Monte /var/lib/postgresql, no la ruta antigua /var/lib/postgresql/data."
+              },
+              "default": "app"
+            },
+            {
+              "key": "POSTGRES_DB",
+              "required": false,
+              "description": {
+                "en": "PostgreSQL 18 on port 5432. Mount the parent data directory /var/lib/postgresql, not the legacy /var/lib/postgresql/data path.",
+                "ja": "PostgreSQL 18 はポート 5432 を使います。旧パス /var/lib/postgresql/data ではなく親ディレクトリ /var/lib/postgresql をマウントします。",
+                "de": "PostgreSQL 18 nutzt Port 5432. Mounten Sie /var/lib/postgresql statt des alten Pfads /var/lib/postgresql/data.",
+                "zh-CN": "PostgreSQL 18 使用 5432 端口。挂载父数据目录 /var/lib/postgresql，不使用旧版 /var/lib/postgresql/data 路径。",
+                "zh-TW": "PostgreSQL 18 使用 5432 連接埠。掛載父資料目錄 /var/lib/postgresql，不使用舊版 /var/lib/postgresql/data 路徑。",
+                "fr": "PostgreSQL 18 utilise le port 5432. Montez /var/lib/postgresql plutôt que l’ancien chemin /var/lib/postgresql/data.",
+                "ru": "PostgreSQL 18 использует порт 5432. Подключайте /var/lib/postgresql, а не старый путь /var/lib/postgresql/data.",
+                "es": "PostgreSQL 18 usa el puerto 5432. Monte /var/lib/postgresql, no la ruta antigua /var/lib/postgresql/data."
+              },
+              "default": "app"
+            }
+          ],
+          "recommended_domains": []
+        },
+        {
+          "version": "18.6-alpine3.24-nsc.1",
+          "files": {
+            "compose": "postgresql/compose.yaml",
+            "readme": {
+              "en": "postgresql/docs/en/swarm-README.md",
+              "ja": "postgresql/docs/ja/swarm-README.md",
+              "de": "postgresql/docs/de/swarm-README.md",
+              "zh-CN": "postgresql/docs/zh-CN/swarm-README.md",
+              "zh-TW": "postgresql/docs/zh-TW/swarm-README.md",
+              "fr": "postgresql/docs/fr/swarm-README.md",
+              "ru": "postgresql/docs/ru/swarm-README.md",
+              "es": "postgresql/docs/es/swarm-README.md"
+            },
+            "manuals": {
+              "operations": {
+                "title": {
+                  "en": "Installation and maintenance",
+                  "ja": "インストールと保守",
+                  "de": "Installation und Wartung",
+                  "zh-CN": "安装与维护",
+                  "zh-TW": "安裝與維護",
+                  "fr": "Installation et maintenance",
+                  "ru": "Установка и обслуживание",
+                  "es": "Instalación y mantenimiento"
+                },
+                "files": {
+                  "en": "postgresql/docs/en/swarm-operations.md",
+                  "ja": "postgresql/docs/ja/swarm-operations.md",
+                  "de": "postgresql/docs/de/swarm-operations.md",
+                  "zh-CN": "postgresql/docs/zh-CN/swarm-operations.md",
+                  "zh-TW": "postgresql/docs/zh-TW/swarm-operations.md",
+                  "fr": "postgresql/docs/fr/swarm-operations.md",
+                  "ru": "postgresql/docs/ru/swarm-operations.md",
+                  "es": "postgresql/docs/es/swarm-operations.md"
+                },
+                "revision": "b0d51d60fd0b2916e62431b70fb6d632e1b2e632e38cf313e566fb8567e0188e",
+                "translations": {
+                  "en": "b0d51d60fd0b2916e62431b70fb6d632e1b2e632e38cf313e566fb8567e0188e",
+                  "ja": "b0d51d60fd0b2916e62431b70fb6d632e1b2e632e38cf313e566fb8567e0188e",
+                  "de": "b0d51d60fd0b2916e62431b70fb6d632e1b2e632e38cf313e566fb8567e0188e",
+                  "zh-CN": "b0d51d60fd0b2916e62431b70fb6d632e1b2e632e38cf313e566fb8567e0188e",
+                  "zh-TW": "b0d51d60fd0b2916e62431b70fb6d632e1b2e632e38cf313e566fb8567e0188e",
+                  "fr": "b0d51d60fd0b2916e62431b70fb6d632e1b2e632e38cf313e566fb8567e0188e",
+                  "ru": "b0d51d60fd0b2916e62431b70fb6d632e1b2e632e38cf313e566fb8567e0188e",
+                  "es": "b0d51d60fd0b2916e62431b70fb6d632e1b2e632e38cf313e566fb8567e0188e"
+                }
+              }
+            },
+            "env_example": "postgresql/.env.example",
+            "readme_revision": "74dad6414fecae3b0360ce3d179241863db637984fc50272377c6ac93724b5d8",
+            "readme_translations": {
+              "en": "74dad6414fecae3b0360ce3d179241863db637984fc50272377c6ac93724b5d8",
+              "ja": "74dad6414fecae3b0360ce3d179241863db637984fc50272377c6ac93724b5d8",
+              "de": "74dad6414fecae3b0360ce3d179241863db637984fc50272377c6ac93724b5d8",
+              "zh-CN": "74dad6414fecae3b0360ce3d179241863db637984fc50272377c6ac93724b5d8",
+              "zh-TW": "74dad6414fecae3b0360ce3d179241863db637984fc50272377c6ac93724b5d8",
+              "fr": "74dad6414fecae3b0360ce3d179241863db637984fc50272377c6ac93724b5d8",
+              "ru": "74dad6414fecae3b0360ce3d179241863db637984fc50272377c6ac93724b5d8",
+              "es": "74dad6414fecae3b0360ce3d179241863db637984fc50272377c6ac93724b5d8"
+            },
+            "swarm": "postgresql/swarm.yaml"
+          },
+          "variables": [
+            {
+              "key": "POSTGRES_PASSWORD",
+              "required": true,
+              "description": {
+                "en": "Choose a fixed market version, read its parameters, and enter your own secrets. Passwords have no usable default; use at least 16 bytes. Never commit real secrets to the market.",
+                "ja": "固定された市場バージョンを選び、パラメーターを確認して独自の秘密情報を入力します。パスワードに使用可能な既定値はなく、16 バイト以上必要です。実際の秘密情報を市場に登録しないでください。",
+                "de": "Wählen Sie eine feste Marktversion, lesen Sie die Parameter und tragen Sie eigene Geheimnisse ein. Passwörter haben keinen verwendbaren Standardwert; verwenden Sie mindestens 16 Byte. Veröffentlichen Sie keine echten Geheimnisse im Markt.",
+                "zh-CN": "选择固定市场版本，阅读参数并填写自己的秘密。密码没有可用默认值，至少使用 16 字节。不要把真实秘密提交到市场。",
+                "zh-TW": "選擇固定市場版本，閱讀參數並填寫自己的機密。密碼沒有可用預設值，至少使用 16 位元組。不要將真實機密提交到市場。",
+                "fr": "Choisissez une version fixe du marché, lisez ses paramètres et saisissez vos propres secrets. Les mots de passe n’ont pas de valeur utilisable par défaut ; utilisez au moins 16 octets. Ne publiez aucun secret réel dans le marché.",
+                "ru": "Выберите фиксированную версию, изучите параметры и введите свои секреты. У паролей нет пригодных значений по умолчанию; используйте не менее 16 байт. Не публикуйте настоящие секреты в каталоге.",
+                "es": "Elija una versión fija, revise sus parámetros e introduzca sus propios secretos. Las contraseñas no tienen un valor predeterminado utilizable; use al menos 16 bytes. No publique secretos reales en el mercado."
+              },
+              "secret": true,
+              "min_length": 16
+            },
+            {
+              "key": "POSTGRES_USER",
+              "required": false,
+              "description": {
+                "en": "PostgreSQL 18 on port 5432. Mount the parent data directory /var/lib/postgresql, not the legacy /var/lib/postgresql/data path.",
+                "ja": "PostgreSQL 18 はポート 5432 を使います。旧パス /var/lib/postgresql/data ではなく親ディレクトリ /var/lib/postgresql をマウントします。",
+                "de": "PostgreSQL 18 nutzt Port 5432. Mounten Sie /var/lib/postgresql statt des alten Pfads /var/lib/postgresql/data.",
+                "zh-CN": "PostgreSQL 18 使用 5432 端口。挂载父数据目录 /var/lib/postgresql，不使用旧版 /var/lib/postgresql/data 路径。",
+                "zh-TW": "PostgreSQL 18 使用 5432 連接埠。掛載父資料目錄 /var/lib/postgresql，不使用舊版 /var/lib/postgresql/data 路徑。",
+                "fr": "PostgreSQL 18 utilise le port 5432. Montez /var/lib/postgresql plutôt que l’ancien chemin /var/lib/postgresql/data.",
+                "ru": "PostgreSQL 18 использует порт 5432. Подключайте /var/lib/postgresql, а не старый путь /var/lib/postgresql/data.",
+                "es": "PostgreSQL 18 usa el puerto 5432. Monte /var/lib/postgresql, no la ruta antigua /var/lib/postgresql/data."
+              },
+              "default": "app"
+            },
+            {
+              "key": "POSTGRES_DB",
+              "required": false,
+              "description": {
+                "en": "PostgreSQL 18 on port 5432. Mount the parent data directory /var/lib/postgresql, not the legacy /var/lib/postgresql/data path.",
+                "ja": "PostgreSQL 18 はポート 5432 を使います。旧パス /var/lib/postgresql/data ではなく親ディレクトリ /var/lib/postgresql をマウントします。",
+                "de": "PostgreSQL 18 nutzt Port 5432. Mounten Sie /var/lib/postgresql statt des alten Pfads /var/lib/postgresql/data.",
+                "zh-CN": "PostgreSQL 18 使用 5432 端口。挂载父数据目录 /var/lib/postgresql，不使用旧版 /var/lib/postgresql/data 路径。",
+                "zh-TW": "PostgreSQL 18 使用 5432 連接埠。掛載父資料目錄 /var/lib/postgresql，不使用舊版 /var/lib/postgresql/data 路徑。",
+                "fr": "PostgreSQL 18 utilise le port 5432. Montez /var/lib/postgresql plutôt que l’ancien chemin /var/lib/postgresql/data.",
+                "ru": "PostgreSQL 18 использует порт 5432. Подключайте /var/lib/postgresql, а не старый путь /var/lib/postgresql/data.",
+                "es": "PostgreSQL 18 usa el puerto 5432. Monte /var/lib/postgresql, no la ruta antigua /var/lib/postgresql/data."
+              },
+              "default": "app"
+            }
+          ],
+          "recommended_domains": []
+        }
+      ]
+    },
+    {
+      "id": "wordpress",
+      "name": {
+        "en": "WordPress"
+      },
+      "description": {
+        "en": "WordPress includes a dedicated MySQL service. Wait for database readiness before opening the web installer on port 80. Preserve both database-data and wordpress-data volumes.",
+        "zh-CN": "WordPress 包含独立 MySQL 服务。数据库就绪后再访问 80 端口的安装向导。保留 database-data 和 wordpress-data 两个卷。",
+        "zh-TW": "WordPress 包含獨立 MySQL 服務。資料庫就緒後再存取 80 連接埠的安裝精靈。保留 database-data 與 wordpress-data 兩個卷。",
+        "ja": "WordPress には専用 MySQL が含まれます。DB の準備完了後にポート 80 のインストーラーを開きます。database-data と wordpress-data の両ボリュームを保持します。",
+        "de": "WordPress enthält einen eigenen MySQL-Dienst. Öffnen Sie den Installer an Port 80 erst nach Datenbankbereitschaft. Erhalten Sie database-data und wordpress-data.",
+        "fr": "WordPress inclut un service MySQL dédié. Attendez la disponibilité de la base avant d’ouvrir l’installation sur le port 80. Conservez database-data et wordpress-data.",
+        "ru": "WordPress включает отдельный MySQL. Дождитесь готовности базы перед открытием установки на порту 80. Сохраняйте тома database-data и wordpress-data.",
+        "es": "WordPress incluye un MySQL dedicado. Espere a que la base esté lista antes de abrir el instalador en el puerto 80. Conserve database-data y wordpress-data."
+      },
+      "versions": [
+        {
+          "version": "7.1.0-php8.3-apache",
+          "files": {
+            "compose": "wordpress/compose.yaml",
+            "readme": {
+              "en": "wordpress/docs/en/README.md",
+              "ja": "wordpress/docs/ja/README.md",
+              "de": "wordpress/docs/de/README.md",
+              "zh-CN": "wordpress/docs/zh-CN/README.md",
+              "zh-TW": "wordpress/docs/zh-TW/README.md",
+              "fr": "wordpress/docs/fr/README.md",
+              "ru": "wordpress/docs/ru/README.md",
+              "es": "wordpress/docs/es/README.md"
+            },
+            "manuals": {
+              "operations": {
+                "title": {
+                  "en": "Installation and maintenance",
+                  "ja": "インストールと保守",
+                  "de": "Installation und Wartung",
+                  "zh-CN": "安装与维护",
+                  "zh-TW": "安裝與維護",
+                  "fr": "Installation et maintenance",
+                  "ru": "Установка и обслуживание",
+                  "es": "Instalación y mantenimiento"
+                },
+                "files": {
+                  "en": "wordpress/docs/en/operations.md",
+                  "ja": "wordpress/docs/ja/operations.md",
+                  "de": "wordpress/docs/de/operations.md",
+                  "zh-CN": "wordpress/docs/zh-CN/operations.md",
+                  "zh-TW": "wordpress/docs/zh-TW/operations.md",
+                  "fr": "wordpress/docs/fr/operations.md",
+                  "ru": "wordpress/docs/ru/operations.md",
+                  "es": "wordpress/docs/es/operations.md"
+                },
+                "revision": "0a3cef7fb20ab14d85e5c7abf5bc3c2eaf2d5092afb31adf5dcbbf6548511b16",
+                "translations": {
+                  "en": "0a3cef7fb20ab14d85e5c7abf5bc3c2eaf2d5092afb31adf5dcbbf6548511b16",
+                  "ja": "0a3cef7fb20ab14d85e5c7abf5bc3c2eaf2d5092afb31adf5dcbbf6548511b16",
+                  "de": "0a3cef7fb20ab14d85e5c7abf5bc3c2eaf2d5092afb31adf5dcbbf6548511b16",
+                  "zh-CN": "0a3cef7fb20ab14d85e5c7abf5bc3c2eaf2d5092afb31adf5dcbbf6548511b16",
+                  "zh-TW": "0a3cef7fb20ab14d85e5c7abf5bc3c2eaf2d5092afb31adf5dcbbf6548511b16",
+                  "fr": "0a3cef7fb20ab14d85e5c7abf5bc3c2eaf2d5092afb31adf5dcbbf6548511b16",
+                  "ru": "0a3cef7fb20ab14d85e5c7abf5bc3c2eaf2d5092afb31adf5dcbbf6548511b16",
+                  "es": "0a3cef7fb20ab14d85e5c7abf5bc3c2eaf2d5092afb31adf5dcbbf6548511b16"
+                }
+              }
+            },
+            "env_example": "wordpress/.env.example",
+            "readme_revision": "31cfbb1e78f4a201b2567bcdec71e37c623f2ab86359fc197bc5f45b9910bf90",
+            "readme_translations": {
+              "en": "31cfbb1e78f4a201b2567bcdec71e37c623f2ab86359fc197bc5f45b9910bf90",
+              "ja": "31cfbb1e78f4a201b2567bcdec71e37c623f2ab86359fc197bc5f45b9910bf90",
+              "de": "31cfbb1e78f4a201b2567bcdec71e37c623f2ab86359fc197bc5f45b9910bf90",
+              "zh-CN": "31cfbb1e78f4a201b2567bcdec71e37c623f2ab86359fc197bc5f45b9910bf90",
+              "zh-TW": "31cfbb1e78f4a201b2567bcdec71e37c623f2ab86359fc197bc5f45b9910bf90",
+              "fr": "31cfbb1e78f4a201b2567bcdec71e37c623f2ab86359fc197bc5f45b9910bf90",
+              "ru": "31cfbb1e78f4a201b2567bcdec71e37c623f2ab86359fc197bc5f45b9910bf90",
+              "es": "31cfbb1e78f4a201b2567bcdec71e37c623f2ab86359fc197bc5f45b9910bf90"
+            }
+          },
+          "variables": [
+            {
+              "key": "MYSQL_ROOT_PASSWORD",
+              "required": true,
+              "description": {
+                "en": "Choose a fixed market version, read its parameters, and enter your own secrets. Passwords have no usable default; use at least 16 bytes. Never commit real secrets to the market.",
+                "ja": "固定された市場バージョンを選び、パラメーターを確認して独自の秘密情報を入力します。パスワードに使用可能な既定値はなく、16 バイト以上必要です。実際の秘密情報を市場に登録しないでください。",
+                "de": "Wählen Sie eine feste Marktversion, lesen Sie die Parameter und tragen Sie eigene Geheimnisse ein. Passwörter haben keinen verwendbaren Standardwert; verwenden Sie mindestens 16 Byte. Veröffentlichen Sie keine echten Geheimnisse im Markt.",
+                "zh-CN": "选择固定市场版本，阅读参数并填写自己的秘密。密码没有可用默认值，至少使用 16 字节。不要把真实秘密提交到市场。",
+                "zh-TW": "選擇固定市場版本，閱讀參數並填寫自己的機密。密碼沒有可用預設值，至少使用 16 位元組。不要將真實機密提交到市場。",
+                "fr": "Choisissez une version fixe du marché, lisez ses paramètres et saisissez vos propres secrets. Les mots de passe n’ont pas de valeur utilisable par défaut ; utilisez au moins 16 octets. Ne publiez aucun secret réel dans le marché.",
+                "ru": "Выберите фиксированную версию, изучите параметры и введите свои секреты. У паролей нет пригодных значений по умолчанию; используйте не менее 16 байт. Не публикуйте настоящие секреты в каталоге.",
+                "es": "Elija una versión fija, revise sus parámetros e introduzca sus propios secretos. Las contraseñas no tienen un valor predeterminado utilizable; use al menos 16 bytes. No publique secretos reales en el mercado."
+              },
+              "secret": true,
+              "min_length": 16
+            },
+            {
+              "key": "MYSQL_PASSWORD",
+              "required": true,
+              "description": {
+                "en": "Choose a fixed market version, read its parameters, and enter your own secrets. Passwords have no usable default; use at least 16 bytes. Never commit real secrets to the market.",
+                "ja": "固定された市場バージョンを選び、パラメーターを確認して独自の秘密情報を入力します。パスワードに使用可能な既定値はなく、16 バイト以上必要です。実際の秘密情報を市場に登録しないでください。",
+                "de": "Wählen Sie eine feste Marktversion, lesen Sie die Parameter und tragen Sie eigene Geheimnisse ein. Passwörter haben keinen verwendbaren Standardwert; verwenden Sie mindestens 16 Byte. Veröffentlichen Sie keine echten Geheimnisse im Markt.",
+                "zh-CN": "选择固定市场版本，阅读参数并填写自己的秘密。密码没有可用默认值，至少使用 16 字节。不要把真实秘密提交到市场。",
+                "zh-TW": "選擇固定市場版本，閱讀參數並填寫自己的機密。密碼沒有可用預設值，至少使用 16 位元組。不要將真實機密提交到市場。",
+                "fr": "Choisissez une version fixe du marché, lisez ses paramètres et saisissez vos propres secrets. Les mots de passe n’ont pas de valeur utilisable par défaut ; utilisez au moins 16 octets. Ne publiez aucun secret réel dans le marché.",
+                "ru": "Выберите фиксированную версию, изучите параметры и введите свои секреты. У паролей нет пригодных значений по умолчанию; используйте не менее 16 байт. Не публикуйте настоящие секреты в каталоге.",
+                "es": "Elija una versión fija, revise sus parámetros e introduzca sus propios secretos. Las contraseñas no tienen un valor predeterminado utilizable; use al menos 16 bytes. No publique secretos reales en el mercado."
+              },
+              "secret": true,
+              "min_length": 16
+            },
+            {
+              "key": "MYSQL_DATABASE",
+              "required": false,
+              "description": {
+                "en": "WordPress includes a dedicated MySQL service. Wait for database readiness before opening the web installer on port 80. Preserve both database-data and wordpress-data volumes.",
+                "ja": "WordPress には専用 MySQL が含まれます。DB の準備完了後にポート 80 のインストーラーを開きます。database-data と wordpress-data の両ボリュームを保持します。",
+                "de": "WordPress enthält einen eigenen MySQL-Dienst. Öffnen Sie den Installer an Port 80 erst nach Datenbankbereitschaft. Erhalten Sie database-data und wordpress-data.",
+                "zh-CN": "WordPress 包含独立 MySQL 服务。数据库就绪后再访问 80 端口的安装向导。保留 database-data 和 wordpress-data 两个卷。",
+                "zh-TW": "WordPress 包含獨立 MySQL 服務。資料庫就緒後再存取 80 連接埠的安裝精靈。保留 database-data 與 wordpress-data 兩個卷。",
+                "fr": "WordPress inclut un service MySQL dédié. Attendez la disponibilité de la base avant d’ouvrir l’installation sur le port 80. Conservez database-data et wordpress-data.",
+                "ru": "WordPress включает отдельный MySQL. Дождитесь готовности базы перед открытием установки на порту 80. Сохраняйте тома database-data и wordpress-data.",
+                "es": "WordPress incluye un MySQL dedicado. Espere a que la base esté lista antes de abrir el instalador en el puerto 80. Conserve database-data y wordpress-data."
+              },
+              "default": "app",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_]{0,62}$"
+            },
+            {
+              "key": "MYSQL_USER",
+              "required": false,
+              "description": {
+                "en": "WordPress includes a dedicated MySQL service. Wait for database readiness before opening the web installer on port 80. Preserve both database-data and wordpress-data volumes.",
+                "ja": "WordPress には専用 MySQL が含まれます。DB の準備完了後にポート 80 のインストーラーを開きます。database-data と wordpress-data の両ボリュームを保持します。",
+                "de": "WordPress enthält einen eigenen MySQL-Dienst. Öffnen Sie den Installer an Port 80 erst nach Datenbankbereitschaft. Erhalten Sie database-data und wordpress-data.",
+                "zh-CN": "WordPress 包含独立 MySQL 服务。数据库就绪后再访问 80 端口的安装向导。保留 database-data 和 wordpress-data 两个卷。",
+                "zh-TW": "WordPress 包含獨立 MySQL 服務。資料庫就緒後再存取 80 連接埠的安裝精靈。保留 database-data 與 wordpress-data 兩個卷。",
+                "fr": "WordPress inclut un service MySQL dédié. Attendez la disponibilité de la base avant d’ouvrir l’installation sur le port 80. Conservez database-data et wordpress-data.",
+                "ru": "WordPress включает отдельный MySQL. Дождитесь готовности базы перед открытием установки на порту 80. Сохраняйте тома database-data и wordpress-data.",
+                "es": "WordPress incluye un MySQL dedicado. Espere a que la base esté lista antes de abrir el instalador en el puerto 80. Conserve database-data y wordpress-data."
+              },
+              "default": "app",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_]{0,30}$"
+            }
+          ],
+          "recommended_domains": [
+            {
+              "service": "wordpress",
+              "host": "wordpress.example.com",
+              "path": "/",
+              "target_port": 80,
+              "tls_mode": "managed"
+            }
+          ]
+        },
+        {
+          "version": "7.1.0-php8.3-apache-nsc.1",
+          "files": {
+            "compose": "wordpress/compose-nsc.1.yaml",
+            "readme": {
+              "en": "wordpress/docs/en/swarm-README.md",
+              "ja": "wordpress/docs/ja/swarm-README.md",
+              "de": "wordpress/docs/de/swarm-README.md",
+              "zh-CN": "wordpress/docs/zh-CN/swarm-README.md",
+              "zh-TW": "wordpress/docs/zh-TW/swarm-README.md",
+              "fr": "wordpress/docs/fr/swarm-README.md",
+              "ru": "wordpress/docs/ru/swarm-README.md",
+              "es": "wordpress/docs/es/swarm-README.md"
+            },
+            "manuals": {
+              "operations": {
+                "title": {
+                  "en": "Installation and maintenance",
+                  "ja": "インストールと保守",
+                  "de": "Installation und Wartung",
+                  "zh-CN": "安装与维护",
+                  "zh-TW": "安裝與維護",
+                  "fr": "Installation et maintenance",
+                  "ru": "Установка и обслуживание",
+                  "es": "Instalación y mantenimiento"
+                },
+                "files": {
+                  "en": "wordpress/docs/en/swarm-operations.md",
+                  "ja": "wordpress/docs/ja/swarm-operations.md",
+                  "de": "wordpress/docs/de/swarm-operations.md",
+                  "zh-CN": "wordpress/docs/zh-CN/swarm-operations.md",
+                  "zh-TW": "wordpress/docs/zh-TW/swarm-operations.md",
+                  "fr": "wordpress/docs/fr/swarm-operations.md",
+                  "ru": "wordpress/docs/ru/swarm-operations.md",
+                  "es": "wordpress/docs/es/swarm-operations.md"
+                },
+                "revision": "6f1707ab43be0485e672cdae452b1eebeb0d08e4c0369014bacf114eb2e83a53",
+                "translations": {
+                  "en": "6f1707ab43be0485e672cdae452b1eebeb0d08e4c0369014bacf114eb2e83a53",
+                  "ja": "6f1707ab43be0485e672cdae452b1eebeb0d08e4c0369014bacf114eb2e83a53",
+                  "de": "6f1707ab43be0485e672cdae452b1eebeb0d08e4c0369014bacf114eb2e83a53",
+                  "zh-CN": "6f1707ab43be0485e672cdae452b1eebeb0d08e4c0369014bacf114eb2e83a53",
+                  "zh-TW": "6f1707ab43be0485e672cdae452b1eebeb0d08e4c0369014bacf114eb2e83a53",
+                  "fr": "6f1707ab43be0485e672cdae452b1eebeb0d08e4c0369014bacf114eb2e83a53",
+                  "ru": "6f1707ab43be0485e672cdae452b1eebeb0d08e4c0369014bacf114eb2e83a53",
+                  "es": "6f1707ab43be0485e672cdae452b1eebeb0d08e4c0369014bacf114eb2e83a53"
+                }
+              }
+            },
+            "env_example": "wordpress/.env.example",
+            "readme_revision": "843c29e3e9b914e11e684402d041a7768d5edccb279c2af98a04b19442003be7",
+            "readme_translations": {
+              "en": "843c29e3e9b914e11e684402d041a7768d5edccb279c2af98a04b19442003be7",
+              "ja": "843c29e3e9b914e11e684402d041a7768d5edccb279c2af98a04b19442003be7",
+              "de": "843c29e3e9b914e11e684402d041a7768d5edccb279c2af98a04b19442003be7",
+              "zh-CN": "843c29e3e9b914e11e684402d041a7768d5edccb279c2af98a04b19442003be7",
+              "zh-TW": "843c29e3e9b914e11e684402d041a7768d5edccb279c2af98a04b19442003be7",
+              "fr": "843c29e3e9b914e11e684402d041a7768d5edccb279c2af98a04b19442003be7",
+              "ru": "843c29e3e9b914e11e684402d041a7768d5edccb279c2af98a04b19442003be7",
+              "es": "843c29e3e9b914e11e684402d041a7768d5edccb279c2af98a04b19442003be7"
+            },
+            "swarm": "wordpress/swarm.yaml"
+          },
+          "variables": [
+            {
+              "key": "MYSQL_ROOT_PASSWORD",
+              "required": true,
+              "description": {
+                "en": "Choose a fixed market version, read its parameters, and enter your own secrets. Passwords have no usable default; use at least 16 bytes. Never commit real secrets to the market.",
+                "ja": "固定された市場バージョンを選び、パラメーターを確認して独自の秘密情報を入力します。パスワードに使用可能な既定値はなく、16 バイト以上必要です。実際の秘密情報を市場に登録しないでください。",
+                "de": "Wählen Sie eine feste Marktversion, lesen Sie die Parameter und tragen Sie eigene Geheimnisse ein. Passwörter haben keinen verwendbaren Standardwert; verwenden Sie mindestens 16 Byte. Veröffentlichen Sie keine echten Geheimnisse im Markt.",
+                "zh-CN": "选择固定市场版本，阅读参数并填写自己的秘密。密码没有可用默认值，至少使用 16 字节。不要把真实秘密提交到市场。",
+                "zh-TW": "選擇固定市場版本，閱讀參數並填寫自己的機密。密碼沒有可用預設值，至少使用 16 位元組。不要將真實機密提交到市場。",
+                "fr": "Choisissez une version fixe du marché, lisez ses paramètres et saisissez vos propres secrets. Les mots de passe n’ont pas de valeur utilisable par défaut ; utilisez au moins 16 octets. Ne publiez aucun secret réel dans le marché.",
+                "ru": "Выберите фиксированную версию, изучите параметры и введите свои секреты. У паролей нет пригодных значений по умолчанию; используйте не менее 16 байт. Не публикуйте настоящие секреты в каталоге.",
+                "es": "Elija una versión fija, revise sus parámetros e introduzca sus propios secretos. Las contraseñas no tienen un valor predeterminado utilizable; use al menos 16 bytes. No publique secretos reales en el mercado."
+              },
+              "secret": true,
+              "min_length": 16
+            },
+            {
+              "key": "MYSQL_PASSWORD",
+              "required": true,
+              "description": {
+                "en": "Choose a fixed market version, read its parameters, and enter your own secrets. Passwords have no usable default; use at least 16 bytes. Never commit real secrets to the market.",
+                "ja": "固定された市場バージョンを選び、パラメーターを確認して独自の秘密情報を入力します。パスワードに使用可能な既定値はなく、16 バイト以上必要です。実際の秘密情報を市場に登録しないでください。",
+                "de": "Wählen Sie eine feste Marktversion, lesen Sie die Parameter und tragen Sie eigene Geheimnisse ein. Passwörter haben keinen verwendbaren Standardwert; verwenden Sie mindestens 16 Byte. Veröffentlichen Sie keine echten Geheimnisse im Markt.",
+                "zh-CN": "选择固定市场版本，阅读参数并填写自己的秘密。密码没有可用默认值，至少使用 16 字节。不要把真实秘密提交到市场。",
+                "zh-TW": "選擇固定市場版本，閱讀參數並填寫自己的機密。密碼沒有可用預設值，至少使用 16 位元組。不要將真實機密提交到市場。",
+                "fr": "Choisissez une version fixe du marché, lisez ses paramètres et saisissez vos propres secrets. Les mots de passe n’ont pas de valeur utilisable par défaut ; utilisez au moins 16 octets. Ne publiez aucun secret réel dans le marché.",
+                "ru": "Выберите фиксированную версию, изучите параметры и введите свои секреты. У паролей нет пригодных значений по умолчанию; используйте не менее 16 байт. Не публикуйте настоящие секреты в каталоге.",
+                "es": "Elija una versión fija, revise sus parámetros e introduzca sus propios secretos. Las contraseñas no tienen un valor predeterminado utilizable; use al menos 16 bytes. No publique secretos reales en el mercado."
+              },
+              "secret": true,
+              "min_length": 16
+            },
+            {
+              "key": "MYSQL_DATABASE",
+              "required": false,
+              "description": {
+                "en": "WordPress includes a dedicated MySQL service. Wait for database readiness before opening the web installer on port 80. Preserve both database-data and wordpress-data volumes.",
+                "ja": "WordPress には専用 MySQL が含まれます。DB の準備完了後にポート 80 のインストーラーを開きます。database-data と wordpress-data の両ボリュームを保持します。",
+                "de": "WordPress enthält einen eigenen MySQL-Dienst. Öffnen Sie den Installer an Port 80 erst nach Datenbankbereitschaft. Erhalten Sie database-data und wordpress-data.",
+                "zh-CN": "WordPress 包含独立 MySQL 服务。数据库就绪后再访问 80 端口的安装向导。保留 database-data 和 wordpress-data 两个卷。",
+                "zh-TW": "WordPress 包含獨立 MySQL 服務。資料庫就緒後再存取 80 連接埠的安裝精靈。保留 database-data 與 wordpress-data 兩個卷。",
+                "fr": "WordPress inclut un service MySQL dédié. Attendez la disponibilité de la base avant d’ouvrir l’installation sur le port 80. Conservez database-data et wordpress-data.",
+                "ru": "WordPress включает отдельный MySQL. Дождитесь готовности базы перед открытием установки на порту 80. Сохраняйте тома database-data и wordpress-data.",
+                "es": "WordPress incluye un MySQL dedicado. Espere a que la base esté lista antes de abrir el instalador en el puerto 80. Conserve database-data y wordpress-data."
+              },
+              "default": "app",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_]{0,62}$"
+            },
+            {
+              "key": "MYSQL_USER",
+              "required": false,
+              "description": {
+                "en": "WordPress includes a dedicated MySQL service. Wait for database readiness before opening the web installer on port 80. Preserve both database-data and wordpress-data volumes.",
+                "ja": "WordPress には専用 MySQL が含まれます。DB の準備完了後にポート 80 のインストーラーを開きます。database-data と wordpress-data の両ボリュームを保持します。",
+                "de": "WordPress enthält einen eigenen MySQL-Dienst. Öffnen Sie den Installer an Port 80 erst nach Datenbankbereitschaft. Erhalten Sie database-data und wordpress-data.",
+                "zh-CN": "WordPress 包含独立 MySQL 服务。数据库就绪后再访问 80 端口的安装向导。保留 database-data 和 wordpress-data 两个卷。",
+                "zh-TW": "WordPress 包含獨立 MySQL 服務。資料庫就緒後再存取 80 連接埠的安裝精靈。保留 database-data 與 wordpress-data 兩個卷。",
+                "fr": "WordPress inclut un service MySQL dédié. Attendez la disponibilité de la base avant d’ouvrir l’installation sur le port 80. Conservez database-data et wordpress-data.",
+                "ru": "WordPress включает отдельный MySQL. Дождитесь готовности базы перед открытием установки на порту 80. Сохраняйте тома database-data и wordpress-data.",
+                "es": "WordPress incluye un MySQL dedicado. Espere a que la base esté lista antes de abrir el instalador en el puerto 80. Conserve database-data y wordpress-data."
+              },
+              "default": "app",
+              "pattern": "^[a-zA-Z][a-zA-Z0-9_]{0,30}$"
+            }
+          ],
+          "recommended_domains": [
+            {
+              "service": "wordpress",
+              "host": "wordpress.example.com",
+              "path": "/",
+              "target_port": 80,
+              "tls_mode": "managed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pgadmin",
+      "name": {
+        "en": "pgAdmin"
+      },
+      "description": {
+        "en": "pgAdmin uses an administrator email and password on port 80. Set DATABASE_NETWORK to an existing PostgreSQL network. After signing in, register the database server manually; pgAdmin does not create a PostgreSQL server. Data: /var/lib/pgadmin.",
+        "zh-CN": "pgAdmin 在 80 端口使用管理员邮箱和密码登录。DATABASE_NETWORK 指定已有 PostgreSQL 网络。登录后手动注册数据库服务器；pgAdmin 不创建 PostgreSQL 服务。数据：/var/lib/pgadmin。",
+        "zh-TW": "pgAdmin 在 80 連接埠使用管理員信箱和密碼登入。DATABASE_NETWORK 指定既有 PostgreSQL 網路。登入後手動註冊資料庫伺服器；pgAdmin 不建立 PostgreSQL 服務。資料：/var/lib/pgadmin。",
+        "ja": "pgAdmin はポート 80 で管理者メールとパスワードを使います。DATABASE_NETWORK に既存 PostgreSQL ネットワークを指定し、ログイン後に DB サーバーを手動登録します。PostgreSQL 自体は作成しません。データ: /var/lib/pgadmin。",
+        "de": "pgAdmin nutzt an Port 80 Administrator-E-Mail und Passwort. DATABASE_NETWORK muss ein vorhandenes PostgreSQL-Netzwerk sein. Registrieren Sie nach der Anmeldung den Datenbankserver manuell; pgAdmin erstellt keinen PostgreSQL-Server. Daten: /var/lib/pgadmin.",
+        "fr": "pgAdmin utilise un courriel administrateur et un mot de passe sur le port 80. DATABASE_NETWORK désigne un réseau PostgreSQL existant. Enregistrez ensuite le serveur manuellement ; pgAdmin ne crée pas de serveur PostgreSQL. Données : /var/lib/pgadmin.",
+        "ru": "pgAdmin использует email администратора и пароль на порту 80. DATABASE_NETWORK задаёт существующую сеть PostgreSQL. После входа зарегистрируйте сервер вручную; pgAdmin не создаёт PostgreSQL. Данные: /var/lib/pgadmin.",
+        "es": "pgAdmin usa correo y contraseña de administrador en el puerto 80. DATABASE_NETWORK debe ser una red PostgreSQL existente. Registre el servidor manualmente tras iniciar sesión; pgAdmin no crea PostgreSQL. Datos: /var/lib/pgadmin."
+      },
+      "versions": [
+        {
+          "version": "9.17",
+          "files": {
+            "compose": "pgadmin/compose.yaml",
+            "readme": {
+              "en": "pgadmin/docs/en/README.md",
+              "ja": "pgadmin/docs/ja/README.md",
+              "de": "pgadmin/docs/de/README.md",
+              "zh-CN": "pgadmin/docs/zh-CN/README.md",
+              "zh-TW": "pgadmin/docs/zh-TW/README.md",
+              "fr": "pgadmin/docs/fr/README.md",
+              "ru": "pgadmin/docs/ru/README.md",
+              "es": "pgadmin/docs/es/README.md"
+            },
+            "manuals": {
+              "operations": {
+                "title": {
+                  "en": "Installation and maintenance",
+                  "ja": "インストールと保守",
+                  "de": "Installation und Wartung",
+                  "zh-CN": "安装与维护",
+                  "zh-TW": "安裝與維護",
+                  "fr": "Installation et maintenance",
+                  "ru": "Установка и обслуживание",
+                  "es": "Instalación y mantenimiento"
+                },
+                "files": {
+                  "en": "pgadmin/docs/en/operations.md",
+                  "ja": "pgadmin/docs/ja/operations.md",
+                  "de": "pgadmin/docs/de/operations.md",
+                  "zh-CN": "pgadmin/docs/zh-CN/operations.md",
+                  "zh-TW": "pgadmin/docs/zh-TW/operations.md",
+                  "fr": "pgadmin/docs/fr/operations.md",
+                  "ru": "pgadmin/docs/ru/operations.md",
+                  "es": "pgadmin/docs/es/operations.md"
+                },
+                "revision": "0d710f0948957a146a1dc9f5d76a037a512d8842123464cb970c05ad633871fe",
+                "translations": {
+                  "en": "0d710f0948957a146a1dc9f5d76a037a512d8842123464cb970c05ad633871fe",
+                  "ja": "0d710f0948957a146a1dc9f5d76a037a512d8842123464cb970c05ad633871fe",
+                  "de": "0d710f0948957a146a1dc9f5d76a037a512d8842123464cb970c05ad633871fe",
+                  "zh-CN": "0d710f0948957a146a1dc9f5d76a037a512d8842123464cb970c05ad633871fe",
+                  "zh-TW": "0d710f0948957a146a1dc9f5d76a037a512d8842123464cb970c05ad633871fe",
+                  "fr": "0d710f0948957a146a1dc9f5d76a037a512d8842123464cb970c05ad633871fe",
+                  "ru": "0d710f0948957a146a1dc9f5d76a037a512d8842123464cb970c05ad633871fe",
+                  "es": "0d710f0948957a146a1dc9f5d76a037a512d8842123464cb970c05ad633871fe"
+                }
+              }
+            },
+            "env_example": "pgadmin/.env.example",
+            "readme_revision": "8235463b25f3e3fa8a1a4fff428e269265241d05cabb3a32a9e1b6db0985011d",
+            "readme_translations": {
+              "en": "8235463b25f3e3fa8a1a4fff428e269265241d05cabb3a32a9e1b6db0985011d",
+              "ja": "8235463b25f3e3fa8a1a4fff428e269265241d05cabb3a32a9e1b6db0985011d",
+              "de": "8235463b25f3e3fa8a1a4fff428e269265241d05cabb3a32a9e1b6db0985011d",
+              "zh-CN": "8235463b25f3e3fa8a1a4fff428e269265241d05cabb3a32a9e1b6db0985011d",
+              "zh-TW": "8235463b25f3e3fa8a1a4fff428e269265241d05cabb3a32a9e1b6db0985011d",
+              "fr": "8235463b25f3e3fa8a1a4fff428e269265241d05cabb3a32a9e1b6db0985011d",
+              "ru": "8235463b25f3e3fa8a1a4fff428e269265241d05cabb3a32a9e1b6db0985011d",
+              "es": "8235463b25f3e3fa8a1a4fff428e269265241d05cabb3a32a9e1b6db0985011d"
+            }
+          },
+          "variables": [
+            {
+              "key": "PGADMIN_DEFAULT_EMAIL",
+              "required": true,
+              "description": {
+                "en": "pgAdmin uses an administrator email and password on port 80. Set DATABASE_NETWORK to an existing PostgreSQL network. After signing in, register the database server manually; pgAdmin does not create a PostgreSQL server. Data: /var/lib/pgadmin.",
+                "ja": "pgAdmin はポート 80 で管理者メールとパスワードを使います。DATABASE_NETWORK に既存 PostgreSQL ネットワークを指定し、ログイン後に DB サーバーを手動登録します。PostgreSQL 自体は作成しません。データ: /var/lib/pgadmin。",
+                "de": "pgAdmin nutzt an Port 80 Administrator-E-Mail und Passwort. DATABASE_NETWORK muss ein vorhandenes PostgreSQL-Netzwerk sein. Registrieren Sie nach der Anmeldung den Datenbankserver manuell; pgAdmin erstellt keinen PostgreSQL-Server. Daten: /var/lib/pgadmin.",
+                "zh-CN": "pgAdmin 在 80 端口使用管理员邮箱和密码登录。DATABASE_NETWORK 指定已有 PostgreSQL 网络。登录后手动注册数据库服务器；pgAdmin 不创建 PostgreSQL 服务。数据：/var/lib/pgadmin。",
+                "zh-TW": "pgAdmin 在 80 連接埠使用管理員信箱和密碼登入。DATABASE_NETWORK 指定既有 PostgreSQL 網路。登入後手動註冊資料庫伺服器；pgAdmin 不建立 PostgreSQL 服務。資料：/var/lib/pgadmin。",
+                "fr": "pgAdmin utilise un courriel administrateur et un mot de passe sur le port 80. DATABASE_NETWORK désigne un réseau PostgreSQL existant. Enregistrez ensuite le serveur manuellement ; pgAdmin ne crée pas de serveur PostgreSQL. Données : /var/lib/pgadmin.",
+                "ru": "pgAdmin использует email администратора и пароль на порту 80. DATABASE_NETWORK задаёт существующую сеть PostgreSQL. После входа зарегистрируйте сервер вручную; pgAdmin не создаёт PostgreSQL. Данные: /var/lib/pgadmin.",
+                "es": "pgAdmin usa correo y contraseña de administrador en el puerto 80. DATABASE_NETWORK debe ser una red PostgreSQL existente. Registre el servidor manualmente tras iniciar sesión; pgAdmin no crea PostgreSQL. Datos: /var/lib/pgadmin."
+              },
+              "pattern": "^[^@ ]+@[^@ ]+[.][^@ ]+$"
+            },
+            {
+              "key": "PGADMIN_DEFAULT_PASSWORD",
+              "required": true,
+              "description": {
+                "en": "Choose a fixed market version, read its parameters, and enter your own secrets. Passwords have no usable default; use at least 16 bytes. Never commit real secrets to the market.",
+                "ja": "固定された市場バージョンを選び、パラメーターを確認して独自の秘密情報を入力します。パスワードに使用可能な既定値はなく、16 バイト以上必要です。実際の秘密情報を市場に登録しないでください。",
+                "de": "Wählen Sie eine feste Marktversion, lesen Sie die Parameter und tragen Sie eigene Geheimnisse ein. Passwörter haben keinen verwendbaren Standardwert; verwenden Sie mindestens 16 Byte. Veröffentlichen Sie keine echten Geheimnisse im Markt.",
+                "zh-CN": "选择固定市场版本，阅读参数并填写自己的秘密。密码没有可用默认值，至少使用 16 字节。不要把真实秘密提交到市场。",
+                "zh-TW": "選擇固定市場版本，閱讀參數並填寫自己的機密。密碼沒有可用預設值，至少使用 16 位元組。不要將真實機密提交到市場。",
+                "fr": "Choisissez une version fixe du marché, lisez ses paramètres et saisissez vos propres secrets. Les mots de passe n’ont pas de valeur utilisable par défaut ; utilisez au moins 16 octets. Ne publiez aucun secret réel dans le marché.",
+                "ru": "Выберите фиксированную версию, изучите параметры и введите свои секреты. У паролей нет пригодных значений по умолчанию; используйте не менее 16 байт. Не публикуйте настоящие секреты в каталоге.",
+                "es": "Elija una versión fija, revise sus parámetros e introduzca sus propios secretos. Las contraseñas no tienen un valor predeterminado utilizable; use al menos 16 bytes. No publique secretos reales en el mercado."
+              },
+              "secret": true,
+              "min_length": 16
+            },
+            {
+              "key": "DATABASE_NETWORK",
+              "required": true,
+              "description": {
+                "en": "pgAdmin uses an administrator email and password on port 80. Set DATABASE_NETWORK to an existing PostgreSQL network. After signing in, register the database server manually; pgAdmin does not create a PostgreSQL server. Data: /var/lib/pgadmin.",
+                "ja": "pgAdmin はポート 80 で管理者メールとパスワードを使います。DATABASE_NETWORK に既存 PostgreSQL ネットワークを指定し、ログイン後に DB サーバーを手動登録します。PostgreSQL 自体は作成しません。データ: /var/lib/pgadmin。",
+                "de": "pgAdmin nutzt an Port 80 Administrator-E-Mail und Passwort. DATABASE_NETWORK muss ein vorhandenes PostgreSQL-Netzwerk sein. Registrieren Sie nach der Anmeldung den Datenbankserver manuell; pgAdmin erstellt keinen PostgreSQL-Server. Daten: /var/lib/pgadmin.",
+                "zh-CN": "pgAdmin 在 80 端口使用管理员邮箱和密码登录。DATABASE_NETWORK 指定已有 PostgreSQL 网络。登录后手动注册数据库服务器；pgAdmin 不创建 PostgreSQL 服务。数据：/var/lib/pgadmin。",
+                "zh-TW": "pgAdmin 在 80 連接埠使用管理員信箱和密碼登入。DATABASE_NETWORK 指定既有 PostgreSQL 網路。登入後手動註冊資料庫伺服器；pgAdmin 不建立 PostgreSQL 服務。資料：/var/lib/pgadmin。",
+                "fr": "pgAdmin utilise un courriel administrateur et un mot de passe sur le port 80. DATABASE_NETWORK désigne un réseau PostgreSQL existant. Enregistrez ensuite le serveur manuellement ; pgAdmin ne crée pas de serveur PostgreSQL. Données : /var/lib/pgadmin.",
+                "ru": "pgAdmin использует email администратора и пароль на порту 80. DATABASE_NETWORK задаёт существующую сеть PostgreSQL. После входа зарегистрируйте сервер вручную; pgAdmin не создаёт PostgreSQL. Данные: /var/lib/pgadmin.",
+                "es": "pgAdmin usa correo y contraseña de administrador en el puerto 80. DATABASE_NETWORK debe ser una red PostgreSQL existente. Registre el servidor manualmente tras iniciar sesión; pgAdmin no crea PostgreSQL. Datos: /var/lib/pgadmin."
+              }
+            }
+          ],
+          "recommended_domains": [
+            {
+              "service": "pgadmin",
+              "host": "pgadmin.example.com",
+              "path": "/",
+              "target_port": 80,
+              "tls_mode": "managed"
+            }
+          ]
+        },
+        {
+          "version": "9.17-nsc.1",
+          "files": {
+            "compose": "pgadmin/compose.yaml",
+            "readme": {
+              "en": "pgadmin/docs/en/swarm-README.md",
+              "ja": "pgadmin/docs/ja/swarm-README.md",
+              "de": "pgadmin/docs/de/swarm-README.md",
+              "zh-CN": "pgadmin/docs/zh-CN/swarm-README.md",
+              "zh-TW": "pgadmin/docs/zh-TW/swarm-README.md",
+              "fr": "pgadmin/docs/fr/swarm-README.md",
+              "ru": "pgadmin/docs/ru/swarm-README.md",
+              "es": "pgadmin/docs/es/swarm-README.md"
+            },
+            "manuals": {
+              "operations": {
+                "title": {
+                  "en": "Installation and maintenance",
+                  "ja": "インストールと保守",
+                  "de": "Installation und Wartung",
+                  "zh-CN": "安装与维护",
+                  "zh-TW": "安裝與維護",
+                  "fr": "Installation et maintenance",
+                  "ru": "Установка и обслуживание",
+                  "es": "Instalación y mantenimiento"
+                },
+                "files": {
+                  "en": "pgadmin/docs/en/swarm-operations.md",
+                  "ja": "pgadmin/docs/ja/swarm-operations.md",
+                  "de": "pgadmin/docs/de/swarm-operations.md",
+                  "zh-CN": "pgadmin/docs/zh-CN/swarm-operations.md",
+                  "zh-TW": "pgadmin/docs/zh-TW/swarm-operations.md",
+                  "fr": "pgadmin/docs/fr/swarm-operations.md",
+                  "ru": "pgadmin/docs/ru/swarm-operations.md",
+                  "es": "pgadmin/docs/es/swarm-operations.md"
+                },
+                "revision": "fdbb394033f828aed3daadbb50fce2cd3f072e9fb5199d322bc65f6abae49388",
+                "translations": {
+                  "en": "fdbb394033f828aed3daadbb50fce2cd3f072e9fb5199d322bc65f6abae49388",
+                  "ja": "fdbb394033f828aed3daadbb50fce2cd3f072e9fb5199d322bc65f6abae49388",
+                  "de": "fdbb394033f828aed3daadbb50fce2cd3f072e9fb5199d322bc65f6abae49388",
+                  "zh-CN": "fdbb394033f828aed3daadbb50fce2cd3f072e9fb5199d322bc65f6abae49388",
+                  "zh-TW": "fdbb394033f828aed3daadbb50fce2cd3f072e9fb5199d322bc65f6abae49388",
+                  "fr": "fdbb394033f828aed3daadbb50fce2cd3f072e9fb5199d322bc65f6abae49388",
+                  "ru": "fdbb394033f828aed3daadbb50fce2cd3f072e9fb5199d322bc65f6abae49388",
+                  "es": "fdbb394033f828aed3daadbb50fce2cd3f072e9fb5199d322bc65f6abae49388"
+                }
+              }
+            },
+            "env_example": "pgadmin/.env.example",
+            "readme_revision": "e5cfba2e1f3f3b7b51d19cadcad9f3d294c587d0fc9299b102048966363b2880",
+            "readme_translations": {
+              "en": "e5cfba2e1f3f3b7b51d19cadcad9f3d294c587d0fc9299b102048966363b2880",
+              "ja": "e5cfba2e1f3f3b7b51d19cadcad9f3d294c587d0fc9299b102048966363b2880",
+              "de": "e5cfba2e1f3f3b7b51d19cadcad9f3d294c587d0fc9299b102048966363b2880",
+              "zh-CN": "e5cfba2e1f3f3b7b51d19cadcad9f3d294c587d0fc9299b102048966363b2880",
+              "zh-TW": "e5cfba2e1f3f3b7b51d19cadcad9f3d294c587d0fc9299b102048966363b2880",
+              "fr": "e5cfba2e1f3f3b7b51d19cadcad9f3d294c587d0fc9299b102048966363b2880",
+              "ru": "e5cfba2e1f3f3b7b51d19cadcad9f3d294c587d0fc9299b102048966363b2880",
+              "es": "e5cfba2e1f3f3b7b51d19cadcad9f3d294c587d0fc9299b102048966363b2880"
+            },
+            "swarm": "pgadmin/swarm.yaml"
+          },
+          "variables": [
+            {
+              "key": "PGADMIN_DEFAULT_EMAIL",
+              "required": true,
+              "description": {
+                "en": "pgAdmin uses an administrator email and password on port 80. Set DATABASE_NETWORK to an existing PostgreSQL network. After signing in, register the database server manually; pgAdmin does not create a PostgreSQL server. Data: /var/lib/pgadmin.",
+                "ja": "pgAdmin はポート 80 で管理者メールとパスワードを使います。DATABASE_NETWORK に既存 PostgreSQL ネットワークを指定し、ログイン後に DB サーバーを手動登録します。PostgreSQL 自体は作成しません。データ: /var/lib/pgadmin。",
+                "de": "pgAdmin nutzt an Port 80 Administrator-E-Mail und Passwort. DATABASE_NETWORK muss ein vorhandenes PostgreSQL-Netzwerk sein. Registrieren Sie nach der Anmeldung den Datenbankserver manuell; pgAdmin erstellt keinen PostgreSQL-Server. Daten: /var/lib/pgadmin.",
+                "zh-CN": "pgAdmin 在 80 端口使用管理员邮箱和密码登录。DATABASE_NETWORK 指定已有 PostgreSQL 网络。登录后手动注册数据库服务器；pgAdmin 不创建 PostgreSQL 服务。数据：/var/lib/pgadmin。",
+                "zh-TW": "pgAdmin 在 80 連接埠使用管理員信箱和密碼登入。DATABASE_NETWORK 指定既有 PostgreSQL 網路。登入後手動註冊資料庫伺服器；pgAdmin 不建立 PostgreSQL 服務。資料：/var/lib/pgadmin。",
+                "fr": "pgAdmin utilise un courriel administrateur et un mot de passe sur le port 80. DATABASE_NETWORK désigne un réseau PostgreSQL existant. Enregistrez ensuite le serveur manuellement ; pgAdmin ne crée pas de serveur PostgreSQL. Données : /var/lib/pgadmin.",
+                "ru": "pgAdmin использует email администратора и пароль на порту 80. DATABASE_NETWORK задаёт существующую сеть PostgreSQL. После входа зарегистрируйте сервер вручную; pgAdmin не создаёт PostgreSQL. Данные: /var/lib/pgadmin.",
+                "es": "pgAdmin usa correo y contraseña de administrador en el puerto 80. DATABASE_NETWORK debe ser una red PostgreSQL existente. Registre el servidor manualmente tras iniciar sesión; pgAdmin no crea PostgreSQL. Datos: /var/lib/pgadmin."
+              },
+              "pattern": "^[^@ ]+@[^@ ]+[.][^@ ]+$"
+            },
+            {
+              "key": "PGADMIN_DEFAULT_PASSWORD",
+              "required": true,
+              "description": {
+                "en": "Choose a fixed market version, read its parameters, and enter your own secrets. Passwords have no usable default; use at least 16 bytes. Never commit real secrets to the market.",
+                "ja": "固定された市場バージョンを選び、パラメーターを確認して独自の秘密情報を入力します。パスワードに使用可能な既定値はなく、16 バイト以上必要です。実際の秘密情報を市場に登録しないでください。",
+                "de": "Wählen Sie eine feste Marktversion, lesen Sie die Parameter und tragen Sie eigene Geheimnisse ein. Passwörter haben keinen verwendbaren Standardwert; verwenden Sie mindestens 16 Byte. Veröffentlichen Sie keine echten Geheimnisse im Markt.",
+                "zh-CN": "选择固定市场版本，阅读参数并填写自己的秘密。密码没有可用默认值，至少使用 16 字节。不要把真实秘密提交到市场。",
+                "zh-TW": "選擇固定市場版本，閱讀參數並填寫自己的機密。密碼沒有可用預設值，至少使用 16 位元組。不要將真實機密提交到市場。",
+                "fr": "Choisissez une version fixe du marché, lisez ses paramètres et saisissez vos propres secrets. Les mots de passe n’ont pas de valeur utilisable par défaut ; utilisez au moins 16 octets. Ne publiez aucun secret réel dans le marché.",
+                "ru": "Выберите фиксированную версию, изучите параметры и введите свои секреты. У паролей нет пригодных значений по умолчанию; используйте не менее 16 байт. Не публикуйте настоящие секреты в каталоге.",
+                "es": "Elija una versión fija, revise sus parámetros e introduzca sus propios secretos. Las contraseñas no tienen un valor predeterminado utilizable; use al menos 16 bytes. No publique secretos reales en el mercado."
+              },
+              "secret": true,
+              "min_length": 16
+            },
+            {
+              "key": "DATABASE_NETWORK",
+              "required": true,
+              "description": {
+                "en": "pgAdmin uses an administrator email and password on port 80. Set DATABASE_NETWORK to an existing PostgreSQL network. After signing in, register the database server manually; pgAdmin does not create a PostgreSQL server. Data: /var/lib/pgadmin.",
+                "ja": "pgAdmin はポート 80 で管理者メールとパスワードを使います。DATABASE_NETWORK に既存 PostgreSQL ネットワークを指定し、ログイン後に DB サーバーを手動登録します。PostgreSQL 自体は作成しません。データ: /var/lib/pgadmin。",
+                "de": "pgAdmin nutzt an Port 80 Administrator-E-Mail und Passwort. DATABASE_NETWORK muss ein vorhandenes PostgreSQL-Netzwerk sein. Registrieren Sie nach der Anmeldung den Datenbankserver manuell; pgAdmin erstellt keinen PostgreSQL-Server. Daten: /var/lib/pgadmin.",
+                "zh-CN": "pgAdmin 在 80 端口使用管理员邮箱和密码登录。DATABASE_NETWORK 指定已有 PostgreSQL 网络。登录后手动注册数据库服务器；pgAdmin 不创建 PostgreSQL 服务。数据：/var/lib/pgadmin。",
+                "zh-TW": "pgAdmin 在 80 連接埠使用管理員信箱和密碼登入。DATABASE_NETWORK 指定既有 PostgreSQL 網路。登入後手動註冊資料庫伺服器；pgAdmin 不建立 PostgreSQL 服務。資料：/var/lib/pgadmin。",
+                "fr": "pgAdmin utilise un courriel administrateur et un mot de passe sur le port 80. DATABASE_NETWORK désigne un réseau PostgreSQL existant. Enregistrez ensuite le serveur manuellement ; pgAdmin ne crée pas de serveur PostgreSQL. Données : /var/lib/pgadmin.",
+                "ru": "pgAdmin использует email администратора и пароль на порту 80. DATABASE_NETWORK задаёт существующую сеть PostgreSQL. После входа зарегистрируйте сервер вручную; pgAdmin не создаёт PostgreSQL. Данные: /var/lib/pgadmin.",
+                "es": "pgAdmin usa correo y contraseña de administrador en el puerto 80. DATABASE_NETWORK debe ser una red PostgreSQL existente. Registre el servidor manualmente tras iniciar sesión; pgAdmin no crea PostgreSQL. Datos: /var/lib/pgadmin."
+              }
+            }
+          ],
+          "recommended_domains": [
+            {
+              "service": "pgadmin",
+              "host": "pgadmin.example.com",
+              "path": "/",
+              "target_port": 80,
+              "tls_mode": "managed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "phpmyadmin",
+      "name": {
+        "en": "phpMyAdmin"
+      },
+      "description": {
+        "en": "phpMyAdmin connects to PMA_HOST and PMA_PORT through DATABASE_NETWORK. Use existing MySQL credentials at the login page on port 80. No automatic login or arbitrary server selection is enabled. Sessions: /sessions.",
+        "zh-CN": "phpMyAdmin 通过 DATABASE_NETWORK 连接 PMA_HOST 和 PMA_PORT。在 80 端口登录页填写已有 MySQL 凭据。不启用自动登录或任意服务器选择。会话：/sessions。",
+        "zh-TW": "phpMyAdmin 透過 DATABASE_NETWORK 連線 PMA_HOST 和 PMA_PORT。在 80 連接埠登入頁填寫既有 MySQL 憑證。不啟用自動登入或任意伺服器選擇。工作階段：/sessions。",
+        "ja": "phpMyAdmin は DATABASE_NETWORK 経由で PMA_HOST と PMA_PORT に接続します。ポート 80 のログイン画面で既存 MySQL 認証情報を入力します。自動ログインや任意サーバー選択は無効です。セッション: /sessions。",
+        "de": "phpMyAdmin verbindet PMA_HOST und PMA_PORT über DATABASE_NETWORK. Melden Sie sich an Port 80 mit vorhandenen MySQL-Zugangsdaten an. Automatische Anmeldung und freie Serverwahl sind deaktiviert. Sitzungen: /sessions.",
+        "fr": "phpMyAdmin se connecte à PMA_HOST et PMA_PORT via DATABASE_NETWORK. Connectez-vous sur le port 80 avec les identifiants MySQL existants. La connexion automatique et le choix arbitraire du serveur sont désactivés. Sessions : /sessions.",
+        "ru": "phpMyAdmin подключается к PMA_HOST и PMA_PORT через DATABASE_NETWORK. На порту 80 войдите с существующими данными MySQL. Автовход и выбор произвольного сервера отключены. Сеансы: /sessions.",
+        "es": "phpMyAdmin conecta con PMA_HOST y PMA_PORT mediante DATABASE_NETWORK. Inicie sesión en el puerto 80 con credenciales MySQL existentes. El acceso automático y la selección arbitraria de servidor están deshabilitados. Sesiones: /sessions."
+      },
+      "versions": [
+        {
+          "version": "5.2.3-apache",
+          "files": {
+            "compose": "phpmyadmin/compose.yaml",
+            "readme": {
+              "en": "phpmyadmin/docs/en/README.md",
+              "ja": "phpmyadmin/docs/ja/README.md",
+              "de": "phpmyadmin/docs/de/README.md",
+              "zh-CN": "phpmyadmin/docs/zh-CN/README.md",
+              "zh-TW": "phpmyadmin/docs/zh-TW/README.md",
+              "fr": "phpmyadmin/docs/fr/README.md",
+              "ru": "phpmyadmin/docs/ru/README.md",
+              "es": "phpmyadmin/docs/es/README.md"
+            },
+            "manuals": {
+              "operations": {
+                "title": {
+                  "en": "Installation and maintenance",
+                  "ja": "インストールと保守",
+                  "de": "Installation und Wartung",
+                  "zh-CN": "安装与维护",
+                  "zh-TW": "安裝與維護",
+                  "fr": "Installation et maintenance",
+                  "ru": "Установка и обслуживание",
+                  "es": "Instalación y mantenimiento"
+                },
+                "files": {
+                  "en": "phpmyadmin/docs/en/operations.md",
+                  "ja": "phpmyadmin/docs/ja/operations.md",
+                  "de": "phpmyadmin/docs/de/operations.md",
+                  "zh-CN": "phpmyadmin/docs/zh-CN/operations.md",
+                  "zh-TW": "phpmyadmin/docs/zh-TW/operations.md",
+                  "fr": "phpmyadmin/docs/fr/operations.md",
+                  "ru": "phpmyadmin/docs/ru/operations.md",
+                  "es": "phpmyadmin/docs/es/operations.md"
+                },
+                "revision": "f77e9e7de935a5f1afbc18f835f1e2b3baca9073ff0628abb287b5e7647ab506",
+                "translations": {
+                  "en": "f77e9e7de935a5f1afbc18f835f1e2b3baca9073ff0628abb287b5e7647ab506",
+                  "ja": "f77e9e7de935a5f1afbc18f835f1e2b3baca9073ff0628abb287b5e7647ab506",
+                  "de": "f77e9e7de935a5f1afbc18f835f1e2b3baca9073ff0628abb287b5e7647ab506",
+                  "zh-CN": "f77e9e7de935a5f1afbc18f835f1e2b3baca9073ff0628abb287b5e7647ab506",
+                  "zh-TW": "f77e9e7de935a5f1afbc18f835f1e2b3baca9073ff0628abb287b5e7647ab506",
+                  "fr": "f77e9e7de935a5f1afbc18f835f1e2b3baca9073ff0628abb287b5e7647ab506",
+                  "ru": "f77e9e7de935a5f1afbc18f835f1e2b3baca9073ff0628abb287b5e7647ab506",
+                  "es": "f77e9e7de935a5f1afbc18f835f1e2b3baca9073ff0628abb287b5e7647ab506"
+                }
+              }
+            },
+            "env_example": "phpmyadmin/.env.example",
+            "readme_revision": "28ea0ff8c8b37836d459d72b52f3515b1019b7292335154082d8046a80ff5f33",
+            "readme_translations": {
+              "en": "28ea0ff8c8b37836d459d72b52f3515b1019b7292335154082d8046a80ff5f33",
+              "ja": "28ea0ff8c8b37836d459d72b52f3515b1019b7292335154082d8046a80ff5f33",
+              "de": "28ea0ff8c8b37836d459d72b52f3515b1019b7292335154082d8046a80ff5f33",
+              "zh-CN": "28ea0ff8c8b37836d459d72b52f3515b1019b7292335154082d8046a80ff5f33",
+              "zh-TW": "28ea0ff8c8b37836d459d72b52f3515b1019b7292335154082d8046a80ff5f33",
+              "fr": "28ea0ff8c8b37836d459d72b52f3515b1019b7292335154082d8046a80ff5f33",
+              "ru": "28ea0ff8c8b37836d459d72b52f3515b1019b7292335154082d8046a80ff5f33",
+              "es": "28ea0ff8c8b37836d459d72b52f3515b1019b7292335154082d8046a80ff5f33"
+            }
+          },
+          "variables": [
+            {
+              "key": "PMA_HOST",
+              "required": true,
+              "description": {
+                "en": "phpMyAdmin connects to PMA_HOST and PMA_PORT through DATABASE_NETWORK. Use existing MySQL credentials at the login page on port 80. No automatic login or arbitrary server selection is enabled. Sessions: /sessions.",
+                "ja": "phpMyAdmin は DATABASE_NETWORK 経由で PMA_HOST と PMA_PORT に接続します。ポート 80 のログイン画面で既存 MySQL 認証情報を入力します。自動ログインや任意サーバー選択は無効です。セッション: /sessions。",
+                "de": "phpMyAdmin verbindet PMA_HOST und PMA_PORT über DATABASE_NETWORK. Melden Sie sich an Port 80 mit vorhandenen MySQL-Zugangsdaten an. Automatische Anmeldung und freie Serverwahl sind deaktiviert. Sitzungen: /sessions.",
+                "zh-CN": "phpMyAdmin 通过 DATABASE_NETWORK 连接 PMA_HOST 和 PMA_PORT。在 80 端口登录页填写已有 MySQL 凭据。不启用自动登录或任意服务器选择。会话：/sessions。",
+                "zh-TW": "phpMyAdmin 透過 DATABASE_NETWORK 連線 PMA_HOST 和 PMA_PORT。在 80 連接埠登入頁填寫既有 MySQL 憑證。不啟用自動登入或任意伺服器選擇。工作階段：/sessions。",
+                "fr": "phpMyAdmin se connecte à PMA_HOST et PMA_PORT via DATABASE_NETWORK. Connectez-vous sur le port 80 avec les identifiants MySQL existants. La connexion automatique et le choix arbitraire du serveur sont désactivés. Sessions : /sessions.",
+                "ru": "phpMyAdmin подключается к PMA_HOST и PMA_PORT через DATABASE_NETWORK. На порту 80 войдите с существующими данными MySQL. Автовход и выбор произвольного сервера отключены. Сеансы: /sessions.",
+                "es": "phpMyAdmin conecta con PMA_HOST y PMA_PORT mediante DATABASE_NETWORK. Inicie sesión en el puerto 80 con credenciales MySQL existentes. El acceso automático y la selección arbitraria de servidor están deshabilitados. Sesiones: /sessions."
+              }
+            },
+            {
+              "key": "PMA_PORT",
+              "required": false,
+              "description": {
+                "en": "phpMyAdmin connects to PMA_HOST and PMA_PORT through DATABASE_NETWORK. Use existing MySQL credentials at the login page on port 80. No automatic login or arbitrary server selection is enabled. Sessions: /sessions.",
+                "ja": "phpMyAdmin は DATABASE_NETWORK 経由で PMA_HOST と PMA_PORT に接続します。ポート 80 のログイン画面で既存 MySQL 認証情報を入力します。自動ログインや任意サーバー選択は無効です。セッション: /sessions。",
+                "de": "phpMyAdmin verbindet PMA_HOST und PMA_PORT über DATABASE_NETWORK. Melden Sie sich an Port 80 mit vorhandenen MySQL-Zugangsdaten an. Automatische Anmeldung und freie Serverwahl sind deaktiviert. Sitzungen: /sessions.",
+                "zh-CN": "phpMyAdmin 通过 DATABASE_NETWORK 连接 PMA_HOST 和 PMA_PORT。在 80 端口登录页填写已有 MySQL 凭据。不启用自动登录或任意服务器选择。会话：/sessions。",
+                "zh-TW": "phpMyAdmin 透過 DATABASE_NETWORK 連線 PMA_HOST 和 PMA_PORT。在 80 連接埠登入頁填寫既有 MySQL 憑證。不啟用自動登入或任意伺服器選擇。工作階段：/sessions。",
+                "fr": "phpMyAdmin se connecte à PMA_HOST et PMA_PORT via DATABASE_NETWORK. Connectez-vous sur le port 80 avec les identifiants MySQL existants. La connexion automatique et le choix arbitraire du serveur sont désactivés. Sessions : /sessions.",
+                "ru": "phpMyAdmin подключается к PMA_HOST и PMA_PORT через DATABASE_NETWORK. На порту 80 войдите с существующими данными MySQL. Автовход и выбор произвольного сервера отключены. Сеансы: /sessions.",
+                "es": "phpMyAdmin conecta con PMA_HOST y PMA_PORT mediante DATABASE_NETWORK. Inicie sesión en el puerto 80 con credenciales MySQL existentes. El acceso automático y la selección arbitraria de servidor están deshabilitados. Sesiones: /sessions."
+              },
+              "default": "3306",
+              "pattern": "^[0-9]{1,5}$"
+            },
+            {
+              "key": "DATABASE_NETWORK",
+              "required": true,
+              "description": {
+                "en": "phpMyAdmin connects to PMA_HOST and PMA_PORT through DATABASE_NETWORK. Use existing MySQL credentials at the login page on port 80. No automatic login or arbitrary server selection is enabled. Sessions: /sessions.",
+                "ja": "phpMyAdmin は DATABASE_NETWORK 経由で PMA_HOST と PMA_PORT に接続します。ポート 80 のログイン画面で既存 MySQL 認証情報を入力します。自動ログインや任意サーバー選択は無効です。セッション: /sessions。",
+                "de": "phpMyAdmin verbindet PMA_HOST und PMA_PORT über DATABASE_NETWORK. Melden Sie sich an Port 80 mit vorhandenen MySQL-Zugangsdaten an. Automatische Anmeldung und freie Serverwahl sind deaktiviert. Sitzungen: /sessions.",
+                "zh-CN": "phpMyAdmin 通过 DATABASE_NETWORK 连接 PMA_HOST 和 PMA_PORT。在 80 端口登录页填写已有 MySQL 凭据。不启用自动登录或任意服务器选择。会话：/sessions。",
+                "zh-TW": "phpMyAdmin 透過 DATABASE_NETWORK 連線 PMA_HOST 和 PMA_PORT。在 80 連接埠登入頁填寫既有 MySQL 憑證。不啟用自動登入或任意伺服器選擇。工作階段：/sessions。",
+                "fr": "phpMyAdmin se connecte à PMA_HOST et PMA_PORT via DATABASE_NETWORK. Connectez-vous sur le port 80 avec les identifiants MySQL existants. La connexion automatique et le choix arbitraire du serveur sont désactivés. Sessions : /sessions.",
+                "ru": "phpMyAdmin подключается к PMA_HOST и PMA_PORT через DATABASE_NETWORK. На порту 80 войдите с существующими данными MySQL. Автовход и выбор произвольного сервера отключены. Сеансы: /sessions.",
+                "es": "phpMyAdmin conecta con PMA_HOST y PMA_PORT mediante DATABASE_NETWORK. Inicie sesión en el puerto 80 con credenciales MySQL existentes. El acceso automático y la selección arbitraria de servidor están deshabilitados. Sesiones: /sessions."
+              }
+            }
+          ],
+          "recommended_domains": [
+            {
+              "service": "phpmyadmin",
+              "host": "phpmyadmin.example.com",
+              "path": "/",
+              "target_port": 80,
+              "tls_mode": "managed"
+            }
+          ]
+        },
+        {
+          "version": "5.2.3-apache-nsc.1",
+          "files": {
+            "compose": "phpmyadmin/compose.yaml",
+            "readme": {
+              "en": "phpmyadmin/docs/en/swarm-README.md",
+              "ja": "phpmyadmin/docs/ja/swarm-README.md",
+              "de": "phpmyadmin/docs/de/swarm-README.md",
+              "zh-CN": "phpmyadmin/docs/zh-CN/swarm-README.md",
+              "zh-TW": "phpmyadmin/docs/zh-TW/swarm-README.md",
+              "fr": "phpmyadmin/docs/fr/swarm-README.md",
+              "ru": "phpmyadmin/docs/ru/swarm-README.md",
+              "es": "phpmyadmin/docs/es/swarm-README.md"
+            },
+            "manuals": {
+              "operations": {
+                "title": {
+                  "en": "Installation and maintenance",
+                  "ja": "インストールと保守",
+                  "de": "Installation und Wartung",
+                  "zh-CN": "安装与维护",
+                  "zh-TW": "安裝與維護",
+                  "fr": "Installation et maintenance",
+                  "ru": "Установка и обслуживание",
+                  "es": "Instalación y mantenimiento"
+                },
+                "files": {
+                  "en": "phpmyadmin/docs/en/swarm-operations.md",
+                  "ja": "phpmyadmin/docs/ja/swarm-operations.md",
+                  "de": "phpmyadmin/docs/de/swarm-operations.md",
+                  "zh-CN": "phpmyadmin/docs/zh-CN/swarm-operations.md",
+                  "zh-TW": "phpmyadmin/docs/zh-TW/swarm-operations.md",
+                  "fr": "phpmyadmin/docs/fr/swarm-operations.md",
+                  "ru": "phpmyadmin/docs/ru/swarm-operations.md",
+                  "es": "phpmyadmin/docs/es/swarm-operations.md"
+                },
+                "revision": "cfcf44c4f9c85d97c3fd97a62e793cb1ff16fed3602bb21cb636e03ff22cbfed",
+                "translations": {
+                  "en": "cfcf44c4f9c85d97c3fd97a62e793cb1ff16fed3602bb21cb636e03ff22cbfed",
+                  "ja": "cfcf44c4f9c85d97c3fd97a62e793cb1ff16fed3602bb21cb636e03ff22cbfed",
+                  "de": "cfcf44c4f9c85d97c3fd97a62e793cb1ff16fed3602bb21cb636e03ff22cbfed",
+                  "zh-CN": "cfcf44c4f9c85d97c3fd97a62e793cb1ff16fed3602bb21cb636e03ff22cbfed",
+                  "zh-TW": "cfcf44c4f9c85d97c3fd97a62e793cb1ff16fed3602bb21cb636e03ff22cbfed",
+                  "fr": "cfcf44c4f9c85d97c3fd97a62e793cb1ff16fed3602bb21cb636e03ff22cbfed",
+                  "ru": "cfcf44c4f9c85d97c3fd97a62e793cb1ff16fed3602bb21cb636e03ff22cbfed",
+                  "es": "cfcf44c4f9c85d97c3fd97a62e793cb1ff16fed3602bb21cb636e03ff22cbfed"
+                }
+              }
+            },
+            "env_example": "phpmyadmin/.env.example",
+            "readme_revision": "12eb1ad909470fbfdf2293957c7e44ad6a3f1d4d9b914224d9a3548607fbd557",
+            "readme_translations": {
+              "en": "12eb1ad909470fbfdf2293957c7e44ad6a3f1d4d9b914224d9a3548607fbd557",
+              "ja": "12eb1ad909470fbfdf2293957c7e44ad6a3f1d4d9b914224d9a3548607fbd557",
+              "de": "12eb1ad909470fbfdf2293957c7e44ad6a3f1d4d9b914224d9a3548607fbd557",
+              "zh-CN": "12eb1ad909470fbfdf2293957c7e44ad6a3f1d4d9b914224d9a3548607fbd557",
+              "zh-TW": "12eb1ad909470fbfdf2293957c7e44ad6a3f1d4d9b914224d9a3548607fbd557",
+              "fr": "12eb1ad909470fbfdf2293957c7e44ad6a3f1d4d9b914224d9a3548607fbd557",
+              "ru": "12eb1ad909470fbfdf2293957c7e44ad6a3f1d4d9b914224d9a3548607fbd557",
+              "es": "12eb1ad909470fbfdf2293957c7e44ad6a3f1d4d9b914224d9a3548607fbd557"
+            },
+            "swarm": "phpmyadmin/swarm.yaml"
+          },
+          "variables": [
+            {
+              "key": "PMA_HOST",
+              "required": true,
+              "description": {
+                "en": "phpMyAdmin connects to PMA_HOST and PMA_PORT through DATABASE_NETWORK. Use existing MySQL credentials at the login page on port 80. No automatic login or arbitrary server selection is enabled. Sessions: /sessions.",
+                "ja": "phpMyAdmin は DATABASE_NETWORK 経由で PMA_HOST と PMA_PORT に接続します。ポート 80 のログイン画面で既存 MySQL 認証情報を入力します。自動ログインや任意サーバー選択は無効です。セッション: /sessions。",
+                "de": "phpMyAdmin verbindet PMA_HOST und PMA_PORT über DATABASE_NETWORK. Melden Sie sich an Port 80 mit vorhandenen MySQL-Zugangsdaten an. Automatische Anmeldung und freie Serverwahl sind deaktiviert. Sitzungen: /sessions.",
+                "zh-CN": "phpMyAdmin 通过 DATABASE_NETWORK 连接 PMA_HOST 和 PMA_PORT。在 80 端口登录页填写已有 MySQL 凭据。不启用自动登录或任意服务器选择。会话：/sessions。",
+                "zh-TW": "phpMyAdmin 透過 DATABASE_NETWORK 連線 PMA_HOST 和 PMA_PORT。在 80 連接埠登入頁填寫既有 MySQL 憑證。不啟用自動登入或任意伺服器選擇。工作階段：/sessions。",
+                "fr": "phpMyAdmin se connecte à PMA_HOST et PMA_PORT via DATABASE_NETWORK. Connectez-vous sur le port 80 avec les identifiants MySQL existants. La connexion automatique et le choix arbitraire du serveur sont désactivés. Sessions : /sessions.",
+                "ru": "phpMyAdmin подключается к PMA_HOST и PMA_PORT через DATABASE_NETWORK. На порту 80 войдите с существующими данными MySQL. Автовход и выбор произвольного сервера отключены. Сеансы: /sessions.",
+                "es": "phpMyAdmin conecta con PMA_HOST y PMA_PORT mediante DATABASE_NETWORK. Inicie sesión en el puerto 80 con credenciales MySQL existentes. El acceso automático y la selección arbitraria de servidor están deshabilitados. Sesiones: /sessions."
+              }
+            },
+            {
+              "key": "PMA_PORT",
+              "required": false,
+              "description": {
+                "en": "phpMyAdmin connects to PMA_HOST and PMA_PORT through DATABASE_NETWORK. Use existing MySQL credentials at the login page on port 80. No automatic login or arbitrary server selection is enabled. Sessions: /sessions.",
+                "ja": "phpMyAdmin は DATABASE_NETWORK 経由で PMA_HOST と PMA_PORT に接続します。ポート 80 のログイン画面で既存 MySQL 認証情報を入力します。自動ログインや任意サーバー選択は無効です。セッション: /sessions。",
+                "de": "phpMyAdmin verbindet PMA_HOST und PMA_PORT über DATABASE_NETWORK. Melden Sie sich an Port 80 mit vorhandenen MySQL-Zugangsdaten an. Automatische Anmeldung und freie Serverwahl sind deaktiviert. Sitzungen: /sessions.",
+                "zh-CN": "phpMyAdmin 通过 DATABASE_NETWORK 连接 PMA_HOST 和 PMA_PORT。在 80 端口登录页填写已有 MySQL 凭据。不启用自动登录或任意服务器选择。会话：/sessions。",
+                "zh-TW": "phpMyAdmin 透過 DATABASE_NETWORK 連線 PMA_HOST 和 PMA_PORT。在 80 連接埠登入頁填寫既有 MySQL 憑證。不啟用自動登入或任意伺服器選擇。工作階段：/sessions。",
+                "fr": "phpMyAdmin se connecte à PMA_HOST et PMA_PORT via DATABASE_NETWORK. Connectez-vous sur le port 80 avec les identifiants MySQL existants. La connexion automatique et le choix arbitraire du serveur sont désactivés. Sessions : /sessions.",
+                "ru": "phpMyAdmin подключается к PMA_HOST и PMA_PORT через DATABASE_NETWORK. На порту 80 войдите с существующими данными MySQL. Автовход и выбор произвольного сервера отключены. Сеансы: /sessions.",
+                "es": "phpMyAdmin conecta con PMA_HOST y PMA_PORT mediante DATABASE_NETWORK. Inicie sesión en el puerto 80 con credenciales MySQL existentes. El acceso automático y la selección arbitraria de servidor están deshabilitados. Sesiones: /sessions."
+              },
+              "default": "3306",
+              "pattern": "^[0-9]{1,5}$"
+            },
+            {
+              "key": "DATABASE_NETWORK",
+              "required": true,
+              "description": {
+                "en": "phpMyAdmin connects to PMA_HOST and PMA_PORT through DATABASE_NETWORK. Use existing MySQL credentials at the login page on port 80. No automatic login or arbitrary server selection is enabled. Sessions: /sessions.",
+                "ja": "phpMyAdmin は DATABASE_NETWORK 経由で PMA_HOST と PMA_PORT に接続します。ポート 80 のログイン画面で既存 MySQL 認証情報を入力します。自動ログインや任意サーバー選択は無効です。セッション: /sessions。",
+                "de": "phpMyAdmin verbindet PMA_HOST und PMA_PORT über DATABASE_NETWORK. Melden Sie sich an Port 80 mit vorhandenen MySQL-Zugangsdaten an. Automatische Anmeldung und freie Serverwahl sind deaktiviert. Sitzungen: /sessions.",
+                "zh-CN": "phpMyAdmin 通过 DATABASE_NETWORK 连接 PMA_HOST 和 PMA_PORT。在 80 端口登录页填写已有 MySQL 凭据。不启用自动登录或任意服务器选择。会话：/sessions。",
+                "zh-TW": "phpMyAdmin 透過 DATABASE_NETWORK 連線 PMA_HOST 和 PMA_PORT。在 80 連接埠登入頁填寫既有 MySQL 憑證。不啟用自動登入或任意伺服器選擇。工作階段：/sessions。",
+                "fr": "phpMyAdmin se connecte à PMA_HOST et PMA_PORT via DATABASE_NETWORK. Connectez-vous sur le port 80 avec les identifiants MySQL existants. La connexion automatique et le choix arbitraire du serveur sont désactivés. Sessions : /sessions.",
+                "ru": "phpMyAdmin подключается к PMA_HOST и PMA_PORT через DATABASE_NETWORK. На порту 80 войдите с существующими данными MySQL. Автовход и выбор произвольного сервера отключены. Сеансы: /sessions.",
+                "es": "phpMyAdmin conecta con PMA_HOST y PMA_PORT mediante DATABASE_NETWORK. Inicie sesión en el puerto 80 con credenciales MySQL existentes. El acceso automático y la selección arbitraria de servidor están deshabilitados. Sesiones: /sessions."
+              }
+            }
+          ],
+          "recommended_domains": [
+            {
+              "service": "phpmyadmin",
+              "host": "phpmyadmin.example.com",
+              "path": "/",
+              "target_port": 80,
+              "tls_mode": "managed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nginx",
+      "name": {
+        "en": "NGINX"
+      },
+      "description": {
+        "en": "Minimal NGINX web server"
+      },
+      "versions": [
+        {
+          "version": "1.31.5",
+          "files": {
+            "compose": "nginx/compose.yaml",
+            "readme": {
+              "en": "nginx/docs/en/README.md",
+              "ja": "nginx/docs/ja/README.md",
+              "de": "nginx/docs/de/README.md",
+              "zh-CN": "nginx/docs/zh-CN/README.md",
+              "zh-TW": "nginx/docs/zh-TW/README.md",
+              "fr": "nginx/docs/fr/README.md",
+              "ru": "nginx/docs/ru/README.md",
+              "es": "nginx/docs/es/README.md"
+            },
+            "manuals": {
+              "operations": {
+                "title": {
+                  "en": "Installation and maintenance",
+                  "ja": "インストールと保守",
+                  "de": "Installation und Wartung",
+                  "zh-CN": "安装与维护",
+                  "zh-TW": "安裝與維護",
+                  "fr": "Installation et maintenance",
+                  "ru": "Установка и обслуживание",
+                  "es": "Instalación y mantenimiento"
+                },
+                "files": {
+                  "en": "nginx/docs/en/operations.md",
+                  "ja": "nginx/docs/ja/operations.md",
+                  "de": "nginx/docs/de/operations.md",
+                  "zh-CN": "nginx/docs/zh-CN/operations.md",
+                  "zh-TW": "nginx/docs/zh-TW/operations.md",
+                  "fr": "nginx/docs/fr/operations.md",
+                  "ru": "nginx/docs/ru/operations.md",
+                  "es": "nginx/docs/es/operations.md"
+                },
+                "revision": "d42d0dcd3f1a3d9cd179d44c955259c3e1c6493fbe82a417f0a2f882caf4bb74",
+                "translations": {
+                  "en": "d42d0dcd3f1a3d9cd179d44c955259c3e1c6493fbe82a417f0a2f882caf4bb74",
+                  "ja": "d42d0dcd3f1a3d9cd179d44c955259c3e1c6493fbe82a417f0a2f882caf4bb74",
+                  "de": "d42d0dcd3f1a3d9cd179d44c955259c3e1c6493fbe82a417f0a2f882caf4bb74",
+                  "zh-CN": "d42d0dcd3f1a3d9cd179d44c955259c3e1c6493fbe82a417f0a2f882caf4bb74",
+                  "zh-TW": "d42d0dcd3f1a3d9cd179d44c955259c3e1c6493fbe82a417f0a2f882caf4bb74",
+                  "fr": "d42d0dcd3f1a3d9cd179d44c955259c3e1c6493fbe82a417f0a2f882caf4bb74",
+                  "ru": "d42d0dcd3f1a3d9cd179d44c955259c3e1c6493fbe82a417f0a2f882caf4bb74",
+                  "es": "d42d0dcd3f1a3d9cd179d44c955259c3e1c6493fbe82a417f0a2f882caf4bb74"
+                }
+              }
+            },
+            "readme_revision": "34137b2d01ae6322800c8ef5ea74264a03802c18d738c0931e2a8a1479c064c1",
+            "readme_translations": {
+              "en": "34137b2d01ae6322800c8ef5ea74264a03802c18d738c0931e2a8a1479c064c1",
+              "ja": "34137b2d01ae6322800c8ef5ea74264a03802c18d738c0931e2a8a1479c064c1",
+              "de": "34137b2d01ae6322800c8ef5ea74264a03802c18d738c0931e2a8a1479c064c1",
+              "zh-CN": "34137b2d01ae6322800c8ef5ea74264a03802c18d738c0931e2a8a1479c064c1",
+              "zh-TW": "34137b2d01ae6322800c8ef5ea74264a03802c18d738c0931e2a8a1479c064c1",
+              "fr": "34137b2d01ae6322800c8ef5ea74264a03802c18d738c0931e2a8a1479c064c1",
+              "ru": "34137b2d01ae6322800c8ef5ea74264a03802c18d738c0931e2a8a1479c064c1",
+              "es": "34137b2d01ae6322800c8ef5ea74264a03802c18d738c0931e2a8a1479c064c1"
+            }
+          },
+          "variables": [],
+          "recommended_domains": [
+            {
+              "service": "web",
+              "host": "nginx.example.com",
+              "path": "/",
+              "target_port": 80,
+              "tls_mode": "managed"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

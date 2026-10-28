@@ -1,0 +1,135 @@
+{
+  "schema": 1,
+  "jobs": [
+    {
+      "id": "repository-privacy",
+      "workflowJob": "repository-privacy",
+      "checks": [
+        "privacy"
+      ]
+    },
+    {
+      "id": "unit",
+      "workflowJob": "unit",
+      "checks": [
+        "harness",
+        "modules",
+        "race",
+        "fuzz",
+        "benchmarks",
+        "vulnerability",
+        "frontend"
+      ]
+    },
+    {
+      "id": "stores-postgres",
+      "workflowJob": "stores",
+      "checks": [
+        "store"
+      ]
+    },
+    {
+      "id": "stores-mysql",
+      "workflowJob": "stores",
+      "checks": [
+        "store"
+      ]
+    },
+    {
+      "id": "images-controller",
+      "workflowJob": "images",
+      "checks": [
+        "build",
+        "scan",
+        "sbom"
+      ],
+      "images": [
+        "controller"
+      ]
+    },
+    {
+      "id": "images-gateway",
+      "workflowJob": "images",
+      "checks": [
+        "build",
+        "nginx",
+        "scan",
+        "sbom"
+      ],
+      "images": [
+        "gateway"
+      ]
+    },
+    {
+      "id": "compose",
+      "workflowJob": "compose",
+      "checks": [
+        "compose"
+      ]
+    },
+    {
+      "id": "ha-postgres",
+      "workflowJob": "ha-e2e",
+      "checks": [
+        "build",
+        "ha"
+      ],
+      "images": [
+        "controller"
+      ]
+    },
+    {
+      "id": "ha-mysql",
+      "workflowJob": "ha-e2e",
+      "checks": [
+        "build",
+        "ha"
+      ],
+      "images": [
+        "controller"
+      ]
+    },
+    {
+      "id": "docker-e2e",
+      "workflowJob": "docker-e2e",
+      "checks": [
+        "build",
+        "compose",
+        "management",
+        "delivery",
+        "ui",
+        "acme",
+        "cluster",
+        "swarm"
+      ],
+      "images": [
+        "controller",
+        "gateway"
+      ]
+    },
+    {
+      "id": "p0-acceptance",
+      "workflowJob": "p0-acceptance",
+      "checks": [
+        "build",
+        "gateway",
+        "retention",
+        "recovery",
+        "quorum",
+        "alerts",
+        "gate-tests",
+        "reconciliation",
+        "access",
+        "browser",
+        "installation"
+      ],
+      "images": [
+        "controller",
+        "gateway"
+      ]
+    }
+  ],
+  "exclusions": {
+    "ovh": "DISABLED"
+  }
+}

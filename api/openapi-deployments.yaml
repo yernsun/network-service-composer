@@ -1,0 +1,415 @@
+openapi: 3.1.0
+info:
+  title: Network Service Composer DevOps OpenAPI
+  version: 0.1.0
+  description: |
+    Machine API for project discovery, services, variables and domain drafts.
+    Legacy environment keys retain their original deployment-only routes.
+    User-owned project keys are issued through /api/v1/users/{userID}/api-keys.
+servers:
+  - url: /openapi/v1
+security:
+  - deploymentAPIKey: []
+paths:
+  /projects:
+    get:
+      operationId: discoverKeyProject
+      summary: Discover the single project bound to this project key
+      responses:
+        '200': { description: One project, content: { application/json: { schema: { $ref: '#/components/schemas/ProjectCollection' } } } }
+        default: { $ref: '#/components/responses/Problem' }
+  /projects/{id}:
+    get:
+      operationId: getKeyProject
+      parameters: [{ $ref: '#/components/parameters/ProjectID' }]
+      responses:
+        '200': { description: Project metadata and ETag, content: { application/json: { schema: { $ref: '#/components/schemas/ProjectEnvelope' } } } }
+        default: { $ref: '#/components/responses/Problem' }
+  /projects/{id}/environments:
+    get:
+      operationId: listKeyProjectEnvironments
+      parameters: [{ $ref: '#/components/parameters/ProjectID' }]
+      responses:
+        '200': { description: Current and future project environments, content: { application/json: { schema: { $ref: '#/components/schemas/EnvironmentCollection' } } } }
+        default: { $ref: '#/components/responses/Problem' }
+  /projects/{id}/variables:
+    parameters: [{ $ref: '#/components/parameters/ProjectID' }]
+    get:
+      operationId: getKeyProjectVariables
+      description: Requires project_variables.read. Secret values are redacted.
+      responses:
+        '200': { $ref: '#/components/responses/Variables' }
+        default: { $ref: '#/components/responses/Problem' }
+    put:
+      operationId: putKeyProjectVariables
+      description: Requires project_variables.edit. Replaces the layer using its ETag; rev-0 denotes an absent layer.
+      parameters: [{ $ref: '#/components/parameters/IfMatch' }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: './openapi.yaml#/components/schemas/LayerVariableInput' } } } }
+      responses:
+        '200': { $ref: '#/components/responses/Variables' }
+        default: { $ref: '#/components/responses/Problem' }
+  /environments/{id}/variables:
+    parameters: [{ $ref: '#/components/parameters/EnvironmentID' }]
+    get:
+      operationId: getKeyEnvironmentVariables
+      description: Requires environment_variables.read. Secret values are redacted.
+      responses:
+        '200': { $ref: '#/components/responses/Variables' }
+        default: { $ref: '#/components/responses/Problem' }
+    put:
+      operationId: putKeyEnvironmentVariables
+      description: Requires environment_variables.edit. Replaces the layer using its ETag; rev-0 denotes an absent layer.
+      parameters: [{ $ref: '#/components/parameters/IfMatch' }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: './openapi.yaml#/components/schemas/LayerVariableInput' } } } }
+      responses:
+        '200': { $ref: '#/components/responses/Variables' }
+        default: { $ref: '#/components/responses/Problem' }
+  /environments/{id}/effective-variables:
+    get:
+      operationId: getKeyEffectiveVariables
+      description: Requires environment_variables.read. Secret values remain redacted.
+      parameters: [{ $ref: '#/components/parameters/EnvironmentID' }]
+      responses:
+        '200': { description: Effective redacted variable layers, content: { application/json: { schema: { type: object } } } }
+        default: { $ref: '#/components/responses/Problem' }
+  /services:
+    get:
+      operationId: listKeyProjectServices
+      description: Requires services.read; the server filters to the key's project.
+      responses:
+        '200': { description: Project services, content: { application/json: { schema: { $ref: './openapi.yaml#/components/schemas/ServiceCollection' } } } }
+        default: { $ref: '#/components/responses/Problem' }
+  /services/{id}:
+    parameters: [{ $ref: '#/components/parameters/ServiceID' }]
+    get:
+      operationId: getKeyProjectService
+      description: Requires services.read and current project ownership.
+      responses:
+        '200': { description: Service metadata and ETag, content: { application/json: { schema: { $ref: './openapi.yaml#/components/schemas/ServiceEnvelope' } } } }
+        default: { $ref: '#/components/responses/Problem' }
+    patch:
+      operationId: editKeyProjectService
+      description: Requires services.edit. Does not deploy Compose changes.
+      parameters: [{ $ref: '#/components/parameters/IfMatch' }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: './openapi.yaml#/components/schemas/ServicePatch' } } } }
+      responses:
+        '200': { description: Updated service, content: { application/json: { schema: { $ref: './openapi.yaml#/components/schemas/ServiceEnvelope' } } } }
+        default: { $ref: '#/components/responses/Problem' }
+  /services/{id}/instances:
+    get:
+      operationId: listKeyServiceInstances
+      description: Requires services.read.
+      parameters: [{ $ref: '#/components/parameters/ServiceID' }]
+      responses:
+        '200': { description: Service instances, content: { application/json: { schema: { type: object } } } }
+        default: { $ref: '#/components/responses/Problem' }
+  /services/{id}/restart:
+    post:
+      operationId: restartKeyService
+      description: Requires services.operate. Uses the existing asynchronous operation and idempotency flow.
+      parameters: [{ $ref: '#/components/parameters/ServiceID' }, { $ref: '#/components/parameters/IdempotencyKey' }]
+      responses:
+        '202': { $ref: '#/components/responses/OperationAccepted' }
+        default: { $ref: '#/components/responses/Problem' }
+  /services/{id}/scale:
+    post:
+      operationId: scaleKeyService
+      description: Temporary scale requires services.operate. Persistent scale also requires services.edit and services.deploy, plus the service ETag.
+      parameters: [{ $ref: '#/components/parameters/ServiceID' }, { $ref: '#/components/parameters/IdempotencyKey' }, { $ref: '#/components/parameters/IfMatchOptional' }]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [replicas], properties: { replicas: { type: integer, minimum: 0 }, persist: { type: boolean, default: false } } } } } }
+      responses:
+        '202': { $ref: '#/components/responses/OperationAccepted' }
+        default: { $ref: '#/components/responses/Problem' }
+  /services/{id}/domain-bindings:
+    parameters: [{ $ref: '#/components/parameters/ServiceID' }]
+    get:
+      operationId: listKeyDomainBindings
+      description: Requires domains.read.
+      responses:
+        '200': { description: Service domain bindings, content: { application/json: { schema: { type: object } } } }
+        default: { $ref: '#/components/responses/Problem' }
+    post:
+      operationId: createKeyDomainBinding
+      description: Requires domains.create and domains.publish. An embedded new domain is required; an existing shared Domain ID cannot be attached.
+      parameters: [{ $ref: '#/components/parameters/IdempotencyKey' }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: './openapi.yaml#/components/schemas/DomainBindingCreate' } } } }
+      responses:
+        '201': { description: Binding created, content: { application/json: { schema: { $ref: './openapi.yaml#/components/schemas/DomainBindingEnvelope' } } } }
+        '202': { $ref: '#/components/responses/OperationAccepted' }
+        default: { $ref: '#/components/responses/Problem' }
+  /services/{id}/domain-bindings/{bindingID}:
+    parameters: [{ $ref: '#/components/parameters/ServiceID' }, { $ref: '#/components/parameters/BindingID' }]
+    patch:
+      operationId: editKeyDomainBinding
+      description: Requires domains.edit and domains.publish. Shared Domain metadata cannot be changed.
+      parameters: [{ $ref: '#/components/parameters/IfMatch' }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: './openapi.yaml#/components/schemas/DomainBindingPatch' } } } }
+      responses:
+        '200': { description: Updated binding, content: { application/json: { schema: { $ref: './openapi.yaml#/components/schemas/DomainBindingEnvelope' } } } }
+        default: { $ref: '#/components/responses/Problem' }
+    delete:
+      operationId: deleteKeyDomainBinding
+      description: Requires domains.delete and domains.publish. Does not delete the shared Domain.
+      parameters: [{ $ref: '#/components/parameters/IfMatch' }, { $ref: '#/components/parameters/IdempotencyKey' }]
+      responses:
+        '202': { $ref: '#/components/responses/OperationAccepted' }
+        '204': { description: Binding removed }
+        default: { $ref: '#/components/responses/Problem' }
+  /environments/{id}/domain-drafts:
+    parameters: [{ $ref: '#/components/parameters/EnvironmentID' }]
+    get:
+      operationId: listKeyDomainDrafts
+      description: Requires domains.edit because draft content is sensitive.
+      responses:
+        '200': { description: Domain drafts, content: { application/json: { schema: { $ref: './openapi.yaml#/components/schemas/DomainDraftCollection' } } } }
+        default: { $ref: '#/components/responses/Problem' }
+    post:
+      operationId: createKeyDomainDraft
+      description: Requires domains.create. Does not publish a live route.
+      requestBody: { required: true, content: { application/json: { schema: { $ref: './openapi.yaml#/components/schemas/DomainDraftInput' } } } }
+      responses:
+        '201': { description: Saved draft, content: { application/json: { schema: { $ref: './openapi.yaml#/components/schemas/DomainDraftEnvelope' } } } }
+        default: { $ref: '#/components/responses/Problem' }
+  /domain-drafts/{id}:
+    parameters: [{ $ref: '#/components/parameters/DomainDraftID' }]
+    get:
+      operationId: getKeyDomainDraft
+      description: Requires domains.edit because draft content is sensitive.
+      responses:
+        '200': { description: Domain draft, content: { application/json: { schema: { $ref: './openapi.yaml#/components/schemas/DomainDraftEnvelope' } } } }
+        default: { $ref: '#/components/responses/Problem' }
+    put:
+      operationId: editKeyDomainDraft
+      description: Requires domains.edit. Does not publish a live route.
+      parameters: [{ $ref: '#/components/parameters/IfMatch' }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: './openapi.yaml#/components/schemas/DomainDraftInput' } } } }
+      responses:
+        '200': { description: Updated draft, content: { application/json: { schema: { $ref: './openapi.yaml#/components/schemas/DomainDraftEnvelope' } } } }
+        default: { $ref: '#/components/responses/Problem' }
+    delete:
+      operationId: deleteKeyDomainDraft
+      description: Requires domains.delete.
+      parameters: [{ $ref: '#/components/parameters/IfMatch' }]
+      responses:
+        '204': { description: Draft removed }
+        default: { $ref: '#/components/responses/Problem' }
+  /domain-drafts/{id}/publish:
+    post:
+      operationId: publishKeyDomainDraft
+      description: Requires domains.publish and the draft ETag. Publication uses the existing asynchronous binding flow.
+      parameters: [{ $ref: '#/components/parameters/DomainDraftID' }, { $ref: '#/components/parameters/IfMatch' }]
+      responses:
+        '202': { description: Published draft and operation, content: { application/json: { schema: { $ref: './openapi.yaml#/components/schemas/DomainDraftEnvelope' } } } }
+        default: { $ref: '#/components/responses/Problem' }
+  /environments/{id}:
+    get:
+      operationId: getDeploymentEnvironment
+      summary: Read the environment ID and current ETag
+      parameters: [{ $ref: '#/components/parameters/EnvironmentID' }]
+      responses:
+        '200':
+          description: Project keys receive only the environment ID and revision; legacy keys retain the original environment response.
+          headers:
+            ETag: { schema: { type: string }, description: Required by deployment confirmation. }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EnvironmentEnvelope' }
+        default: { $ref: '#/components/responses/Problem' }
+  /environments/{id}/preflight:
+    post:
+      operationId: reviewEnvironmentDeployment
+      summary: Review a Compose or Stack install or update
+      description: Creates an encrypted review that expires after 15 minutes. No deployment is queued.
+      parameters: [{ $ref: '#/components/parameters/EnvironmentID' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/DeploymentReviewInput' }
+      responses:
+        '200': { $ref: '#/components/responses/Review' }
+        default: { $ref: '#/components/responses/Problem' }
+  /environments/{id}/deployments:
+    post:
+      operationId: deployReviewedEnvironment
+      summary: Queue the reviewed Compose or Stack install or update
+      description: The review must belong to this environment and its frozen state must still be current.
+      parameters:
+        - { $ref: '#/components/parameters/EnvironmentID' }
+        - { $ref: '#/components/parameters/IfMatch' }
+        - { $ref: '#/components/parameters/IdempotencyKey' }
+      requestBody: { $ref: '#/components/requestBodies/ConfirmReview' }
+      responses:
+        '202': { $ref: '#/components/responses/OperationAccepted' }
+        default: { $ref: '#/components/responses/Problem' }
+  /environments/{id}/service-preflight:
+    post:
+      operationId: reviewSwarmServiceChange
+      summary: Review incremental Swarm Service creation or update
+      description: Swarm only. The server derives the affected Service scope and retains omitted Services.
+      parameters: [{ $ref: '#/components/parameters/EnvironmentID' }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ServiceReviewInput' }
+      responses:
+        '200': { $ref: '#/components/responses/Review' }
+        default: { $ref: '#/components/responses/Problem' }
+  /environments/{id}/service-deployments:
+    post:
+      operationId: deployReviewedSwarmServices
+      summary: Queue reviewed incremental Swarm Service changes
+      parameters:
+        - { $ref: '#/components/parameters/EnvironmentID' }
+        - { $ref: '#/components/parameters/IfMatch' }
+        - { $ref: '#/components/parameters/IdempotencyKey' }
+      requestBody: { $ref: '#/components/requestBodies/ConfirmReview' }
+      responses:
+        '202': { $ref: '#/components/responses/OperationAccepted' }
+        default: { $ref: '#/components/responses/Problem' }
+  /operations/{id}:
+    get:
+      operationId: getDeploymentOperation
+      summary: Read an authorized operation
+      description: Legacy keys use the immutable revision source. Project keys require the immutable project and environment snapshot plus services.read or domains.read. Operations without reliable ownership evidence are denied.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: Durable operation state; QUEUED or RUNNING is not deployment success.
+          headers:
+            ETag: { schema: { type: string } }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OperationEnvelope' }
+        default: { $ref: '#/components/responses/Problem' }
+components:
+  securitySchemes:
+    deploymentAPIKey:
+      type: apiKey
+      in: header
+      name: X-NSC-API-Key
+      description: A legacy environment deployment key or a user-owned project DevOps key. User Bearer tokens and console cookies are rejected.
+  parameters:
+    ProjectID: { name: id, in: path, required: true, schema: { type: string } }
+    ServiceID: { name: id, in: path, required: true, schema: { type: string } }
+    BindingID: { name: bindingID, in: path, required: true, schema: { type: string } }
+    DomainDraftID: { name: id, in: path, required: true, schema: { type: string } }
+    EnvironmentID: { name: id, in: path, required: true, schema: { type: string } }
+    IfMatch: { name: If-Match, in: header, required: true, schema: { type: string }, description: 'Environment ETag from GET /environments/{id}.' }
+    IdempotencyKey: { name: Idempotency-Key, in: header, required: true, schema: { type: string }, description: Stable unique key for retrying the same confirmation. }
+    IfMatchOptional: { name: If-Match, in: header, required: false, schema: { type: string }, description: Required when persist is true. }
+  requestBodies:
+    ConfirmReview:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required: [preflight_id]
+            properties:
+              preflight_id: { type: string }
+  responses:
+    Variables:
+      description: Variable layer with secret values redacted and an ETag
+      content:
+        application/json:
+          schema: { type: object, required: [data], properties: { data: { $ref: './openapi.yaml#/components/schemas/LayerVariables' } } }
+    Review:
+      description: Encrypted review created; response fields are redacted for display.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ReviewEnvelope' }
+    OperationAccepted:
+      description: Durable deployment operation queued; poll Location for the final status.
+      headers:
+        Location: { schema: { type: string } }
+        ETag: { schema: { type: string } }
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/OperationEnvelope' }
+    Problem:
+      description: RFC 9457 problem response
+      content:
+        application/problem+json:
+          schema: { $ref: './openapi.yaml#/components/schemas/Problem' }
+  schemas:
+    ProjectEnvelope: { type: object, required: [data], properties: { data: { $ref: './openapi.yaml#/components/schemas/LogicalProject' } } }
+    ProjectCollection: { type: object, required: [data], properties: { data: { type: array, items: { $ref: './openapi.yaml#/components/schemas/LogicalProject' } } } }
+    EnvironmentCollection: { type: object, required: [data], properties: { data: { type: array, items: { $ref: '#/components/schemas/EnvironmentDiscovery' } } } }
+    EnvironmentDiscovery:
+      type: object
+      additionalProperties: false
+      required: [id, revision]
+      properties:
+        id: { type: string }
+        revision: { type: integer, format: int64 }
+    EnvironmentEnvelope:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          description: Project keys receive only id and revision; legacy environment keys also receive the existing metadata fields.
+          required: [id, revision]
+          properties:
+            id: { type: string }
+            project_id: { type: string }
+            runtime_id: { type: string }
+            application_id: { type: string }
+            project_name: { type: string }
+            revision: { type: integer, format: int64 }
+    DeploymentReviewInput:
+      type: object
+      additionalProperties: false
+      anyOf:
+        - required: [compose_yaml]
+        - required: [catalog_app_version_id]
+      properties:
+        compose_yaml: { type: string, writeOnly: true }
+        catalog_app_version_id: { type: string }
+        runtime_env: { type: string, writeOnly: true }
+        network_name: { type: string }
+        base_revision_id: { type: string }
+        deployment_plan: { $ref: './openapi.yaml#/components/schemas/ComposeDeploymentPlan' }
+        entrypoint: { $ref: '#/components/schemas/Entrypoint' }
+    ServiceReviewInput:
+      type: object
+      additionalProperties: false
+      required: [compose_yaml, service_mode]
+      properties:
+        compose_yaml: { type: string, writeOnly: true }
+        service_mode: { type: string, enum: [create, update] }
+        runtime_env: { type: string, writeOnly: true }
+        network_name: { type: string }
+        base_revision_id: { type: string }
+        deployment_plan: { $ref: './openapi.yaml#/components/schemas/ComposeDeploymentPlan' }
+        entrypoint: { $ref: '#/components/schemas/Entrypoint' }
+    Entrypoint:
+      type: object
+      required: [host, service, port, gateway_id]
+      properties:
+        host: { type: string }
+        service: { type: string }
+        port: { type: integer, minimum: 1, maximum: 65535 }
+        gateway_id: { type: string }
+        certificate_id: { type: string }
+    ReviewEnvelope:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          required: [preflight_id]
+          properties:
+            preflight_id: { type: string }
+            resolved_yaml: { type: string, description: Redacted display output. }
+            base_revision_id: { type: string }
+            service_changes: { type: array, items: { type: object } }
+    OperationEnvelope:
+      type: object
+      required: [data]
+      properties:
+        data: { $ref: './openapi.yaml#/components/schemas/DeploymentOperation' }

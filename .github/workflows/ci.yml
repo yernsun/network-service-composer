@@ -1,0 +1,560 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_call:
+
+permissions:
+  contents: read
+
+env:
+  GO_VERSION: 1.27.3
+
+jobs:
+  repository-privacy:
+    name: Repository privacy
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out source
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.20.0
+      - name: Check committed snapshot
+        id: privacy
+        run: node scripts/check-repository-privacy.mjs --staged
+      - name: Bind verification evidence to source
+        if: always()
+        env:
+          NSC_CHECK_RESULTS: '{"privacy":"${{ steps.privacy.outcome }}"}'
+        run: node scripts/readiness/gate.mjs record repository-privacy coverage/readiness/repository-privacy.json
+      - name: Retain source-bound verification envelope
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: readiness-repository-privacy-${{ github.run_id }}-${{ github.run_attempt }}
+          path: coverage/readiness/repository-privacy.json
+          if-no-files-found: error
+          retention-days: 14
+
+  unit:
+    name: Unit, race, and static checks
+    timeout-minutes: 60
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out source
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+      - name: Set up Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+      - name: Set up Node for the embedded console
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.20.0
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install frontend dependencies
+        run: make frontend-install
+      - name: Install pinned protobuf generators
+        run: |
+          curl --fail --location --silent --show-error --retry 3 -o "$RUNNER_TEMP/protoc.zip" https://github.com/protocolbuffers/protobuf/releases/download/v33.0/protoc-33.0-linux-x86_64.zip
+          unzip -q "$RUNNER_TEMP/protoc.zip" -d "$RUNNER_TEMP/protoc"
+          echo "855eca120edab40ed611f2b3a5da25a654d22fa4c757de128c7e1dfb70c4d4e7  $RUNNER_TEMP/protoc/bin/protoc" | sha256sum --check
+          echo "$RUNNER_TEMP/protoc/bin" >> "$GITHUB_PATH"
+          go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.12
+          go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.6.0
+      - name: NSC engineering harness
+        id: harness
+        continue-on-error: true
+        env:
+          NSC_COVERAGE_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          NSC_COVERAGE_BASE=$(node scripts/coverage/baseline.mjs)
+          export NSC_COVERAGE_BASE
+          make harness
+      - name: Verify frontend with warm and clean caches
+        id: frontend
+        run: |
+          make frontend-check
+          find frontend -name "*.tsbuildinfo" -delete
+          make frontend-check
+      - name: Verify module files
+        id: modules
+        run: |
+          go mod tidy
+          git diff --exit-code -- go.mod go.sum
+      - name: Race tests
+        id: race
+        run: go test -race -count=1 -timeout=30m ./...
+      - name: Bounded fuzz tests
+        id: fuzz
+        run: |
+          GOMAXPROCS=2 go test -run '^$' -fuzz '^FuzzNormalizeHost$' -fuzztime=5s ./internal/core
+          GOMAXPROCS=2 go test -run '^$' -fuzz '^FuzzNormalizePath$' -fuzztime=5s ./internal/core
+          GOMAXPROCS=2 go test -run '^$' -fuzz '^FuzzParseLabels$' -fuzztime=5s ./internal/runtime
+          GOMAXPROCS=2 go test -run '^$' -fuzz '^FuzzDecodeSnapshot$' -fuzztime=5s ./internal/gateway
+          GOMAXPROCS=2 go test -run '^$' -fuzz '^FuzzNGINXPathValidation$' -fuzztime=5s ./internal/nginx
+      - name: Large capacity benchmarks
+        id: benchmarks
+        run: make bench-large
+      - name: Go vulnerability scan
+        id: vulnerability
+        run: go run golang.org/x/vuln/cmd/govulncheck@v1.7.0 ./...
+      - name: Enforce harness outcome
+        if: always()
+        env:
+          HARNESS_OUTCOME: ${{ steps.harness.outcome }}
+        run: test "$HARNESS_OUTCOME" = success
+      - name: Retain verification evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: nsc-verification-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            coverage/harness/**/summary.json
+            coverage/harness/**/*.log
+            coverage/harness/**/evidence/**
+          if-no-files-found: error
+          retention-days: 14
+      - name: Bind verification evidence to source
+        if: always()
+        env:
+          NSC_CHECK_RESULTS: '{"harness":"${{ steps.harness.outcome }}","modules":"${{ steps.modules.outcome }}","race":"${{ steps.race.outcome }}","fuzz":"${{ steps.fuzz.outcome }}","benchmarks":"${{ steps.benchmarks.outcome }}","vulnerability":"${{ steps.vulnerability.outcome }}","frontend":"${{ steps.frontend.outcome }}"}'
+        run: node scripts/readiness/gate.mjs record unit coverage/readiness/unit.json
+      - name: Retain source-bound verification envelope
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: readiness-unit-${{ github.run_id }}-${{ github.run_attempt }}
+          path: coverage/readiness/unit.json
+          if-no-files-found: error
+          retention-days: 14
+
+  stores:
+    name: Store contract (${{ matrix.driver }})
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        driver: [postgres, mysql]
+    services:
+      postgres:
+        image: postgres:18.6-alpine3.24@sha256:d3e1620b530c944afa6e887d22eb899824da68e19c52024bf98f5220c88a65b2
+        env:
+          POSTGRES_DB: nsc
+          POSTGRES_USER: nsc
+          POSTGRES_PASSWORD: nsc-test-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U nsc -d nsc"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 20
+      mysql:
+        image: mysql:8.4.11@sha256:3466ba4a4828aa8d46fb7c3bc16b67b781c98413cf4ea0fac6feaa6e881faa26
+        env:
+          MYSQL_DATABASE: nsc
+          MYSQL_USER: nsc
+          MYSQL_PASSWORD: nsc-test-password
+          MYSQL_ROOT_PASSWORD: nsc-root-password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mysqladmin ping -h 127.0.0.1 -u root -pnsc-root-password --silent"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 30
+    steps:
+      - name: Check out source
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Set up Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+      - name: Set up Node for evidence contracts
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24.20.0
+      - name: PostgreSQL contract suite
+        id: store_postgres
+        if: matrix.driver == 'postgres'
+        env:
+          NSC_TEST_POSTGRES_DSN: postgres://nsc:nsc-test-password@127.0.0.1:5432/nsc?sslmode=disable
+        run: go test -count=1 -run TestExternalStoreConformance ./internal/storage
+      - name: MySQL contract suite
+        id: store_mysql
+        if: matrix.driver == 'mysql'
+        env:
+          NSC_TEST_MYSQL_DSN: nsc:nsc-test-password@tcp(127.0.0.1:3306)/nsc?parseTime=true&multiStatements=true&charset=utf8mb4
+        run: go test -count=1 -run TestExternalStoreConformance ./internal/storage
+      - name: Bind verification evidence to source
+        if: always()
+        env:
+          NSC_CHECK_RESULTS: '{"store":"${{ matrix.driver == ''postgres'' && steps.store_postgres.outcome || steps.store_mysql.outcome }}"}'
+        run: node scripts/readiness/gate.mjs record stores-${{ matrix.driver }} coverage/readiness/stores-${{ matrix.driver }}.json
+      - name: Retain source-bound verification envelope
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: readiness-stores-${{ matrix.driver }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: coverage/readiness/stores-${{ matrix.driver }}.json
+          if-no-files-found: error
+          retention-days: 14
+
+  images:
+    name: Container build and vulnerability scan
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        include:
+          - name: controller
+            dockerfile: build/Dockerfile.controller
+          - name: gateway
+            dockerfile: build/Dockerfile.gateway
+    steps:
+      - name: Check out source
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Set up Go for image integration tests
+        if: matrix.name == 'gateway'
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+      - name: Set up Node for evidence contracts
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24.20.0
+      - name: Capture source identity
+        id: source
+        run: node scripts/readiness/gate.mjs github-output >> "$GITHUB_OUTPUT"
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4
+      - name: Build image
+        id: build
+        uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf # v7.2.0
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}
+          load: true
+          tags: nsc-${{ matrix.name }}:ci
+          build-args: |
+            VERSION=ci
+            SOURCE_REVISION=${{ github.sha }}
+            SOURCE_FINGERPRINT=${{ steps.source.outputs.fingerprint }}
+          cache-from: type=gha,scope=${{ matrix.name }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.name }}
+      - name: Compile NGINX integration test
+        if: matrix.name == 'gateway'
+        run: CGO_ENABLED=0 go test -c -o /tmp/nsc-agent-tests ./internal/agent
+      - name: Test NGINX apply, rollback, and cold-start LKG
+        id: nginx
+        if: matrix.name == 'gateway'
+        run: >-
+          docker run --rm --read-only
+          --network none
+          --sysctl net.ipv4.ip_unprivileged_port_start=0
+          --tmpfs /tmp:uid=101,gid=101,mode=1777
+          --tmpfs /var/cache/nginx:uid=101,gid=101,mode=0750
+          --entrypoint /nsc-agent-tests
+          -e NSC_TEST_NGINX_BINARY=/usr/sbin/nginx
+          -e NSC_TEST_LOCAL_DNS=true
+          -v /tmp/nsc-agent-tests:/nsc-agent-tests:ro
+          nsc-gateway:ci
+          -test.run TestGenerationManagerWithRealNGINX -test.v
+      - name: Scan image
+        id: scan
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # 0.35.0
+        with:
+          image-ref: nsc-${{ matrix.name }}:ci
+          format: table
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          cache-dir: ${{ runner.temp }}/nsc-trivy
+          exit-code: '1'
+      - name: Prepare private SBOM output
+        run: mkdir -p coverage/sbom
+      - name: Generate SBOM
+        id: sbom
+        uses: anchore/sbom-action@e22c389904149dbc22b58101806040fa8d37a610 # v0
+        with:
+          image: nsc-${{ matrix.name }}:ci
+          artifact-name: nsc-${{ matrix.name }}-sbom-${{ github.run_id }}-${{ github.run_attempt }}.spdx.json
+          output-file: coverage/sbom/nsc-${{ matrix.name }}.spdx.json
+      - name: Bind verification evidence to source
+        if: always()
+        env:
+          NSC_CHECK_RESULTS: '{"build":"${{ steps.build.outcome }}","nginx":"${{ matrix.name == ''controller'' && ''skipped'' || steps.nginx.outcome }}","scan":"${{ steps.scan.outcome }}","sbom":"${{ steps.sbom.outcome }}"}'
+          NSC_EVIDENCE_IMAGES: '{"${{ matrix.name }}":"nsc-${{ matrix.name }}:ci"}'
+        run: node scripts/readiness/gate.mjs record images-${{ matrix.name }} coverage/readiness/images-${{ matrix.name }}.json
+      - name: Retain source-bound verification envelope
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: readiness-images-${{ matrix.name }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: coverage/readiness/images-${{ matrix.name }}.json
+          if-no-files-found: error
+          retention-days: 14
+
+  compose:
+    name: Compose manifest validation
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out source
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Set up Node for evidence contracts
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24.20.0
+      - name: Validate every profile
+        id: compose
+        env:
+          NSC_ADMIN_TOKEN: ci-admin-token
+          NSC_SESSION_KEY: 01234567890123456789012345678901
+          NSC_ENCRYPTION_KEY_B64: MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
+          NSC_DATABASE_PASSWORD: ci-database-password
+          NSC_SECRET_GID: '1000'
+        run: docker compose --profile gateway --profile mysql --profile sqlite config --quiet
+      - name: Bind verification evidence to source
+        if: always()
+        env:
+          NSC_CHECK_RESULTS: '{"compose":"${{ steps.compose.outcome }}"}'
+        run: node scripts/readiness/gate.mjs record compose coverage/readiness/compose.json
+      - name: Retain source-bound verification envelope
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: readiness-compose-${{ github.run_id }}-${{ github.run_attempt }}
+          path: coverage/readiness/compose.json
+          if-no-files-found: error
+          retention-days: 14
+
+  ha-e2e:
+    name: Three-Controller HA E2E (${{ matrix.driver }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        driver: [postgres, mysql]
+    steps:
+      - name: Check out source
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Set up Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+      - name: Set up Node for the embedded console
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.20.0
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Build embedded console
+        run: make frontend-check
+      - name: Build HA test binary and Controller image
+        id: build
+        run: |
+          make prepare-fixture-images FIXTURE_PROFILE=ha
+          make build docker-build-controller
+          echo "NSC_TEST_IMAGE_TAG=v$(cat VERSION)" >> "$GITHUB_ENV"
+      - name: Verify exclusive ownership and automatic takeover
+        id: ha
+        run: ./scripts/e2e-ha.sh ${{ matrix.driver }}
+      - name: Bind verification evidence to source
+        if: always()
+        env:
+          NSC_CHECK_RESULTS: '{"build":"${{ steps.build.outcome }}","ha":"${{ steps.ha.outcome }}"}'
+          NSC_EVIDENCE_IMAGES: '{"controller":"nsc-controller:${{ env.NSC_TEST_IMAGE_TAG }}"}'
+        run: node scripts/readiness/gate.mjs record ha-${{ matrix.driver }} coverage/readiness/ha-${{ matrix.driver }}.json
+      - name: Retain source-bound verification envelope
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: readiness-ha-${{ matrix.driver }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: coverage/readiness/ha-${{ matrix.driver }}.json
+          if-no-files-found: error
+          retention-days: 14
+
+  docker-e2e:
+    name: Real Compose, ACME, and Swarm E2E
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Check out source
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Set up Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+      - name: Set up Node for the embedded console
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.20.0
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Build embedded console
+        run: make frontend-check
+      - name: Build E2E binaries and images
+        id: build
+        run: |
+          make prepare-fixture-images FIXTURE_PROFILE=docker
+          make build docker-build
+          echo "NSC_TEST_IMAGE_TAG=v$(cat VERSION)" >> "$GITHUB_ENV"
+      - name: Run real Compose discovery and readiness E2E
+        id: compose
+        run: NSC_E2E_NGINX=true ./scripts/e2e-compose.sh
+      - name: Run managed Compose lifecycle, domain, environment, and rollback E2E
+        id: management
+        run: ./scripts/e2e-management.sh
+      - name: Verify isolated multi-environment image delivery
+        id: delivery
+        run: |
+          version=$(cat VERSION)
+          export NSC_CONTROLLER_IMAGE="nsc-controller:v$version" NSC_GATEWAY_IMAGE="nsc-gateway:v$version"
+          NSC_DELIVERY_PRIVATE=true python3 scripts/e2e-delivery.py
+          NSC_DELIVERY_SWARM=true python3 scripts/e2e-delivery.py
+      - name: Run headless browser management UI smoke test
+        id: ui
+        run: ./scripts/e2e-ui.sh
+      - name: Run real Pebble HTTP-01 certificate lifecycle E2E
+        id: acme
+        run: ./scripts/e2e-acme.sh
+      - name: Verify cluster inventory and node labels in an isolated daemon
+        id: cluster
+        run: ./scripts/test-cluster-swarm.sh
+      - name: Initialize isolated single-node Swarm
+        run: docker swarm init
+      - name: Run real Swarm discovery and managed Stack lifecycle E2E
+        id: swarm
+        run: ./scripts/e2e-swarm.sh
+      - name: Leave test Swarm
+        if: always()
+        run: docker swarm leave --force || true
+      - name: Bind verification evidence to source
+        if: always()
+        env:
+          NSC_CHECK_RESULTS: '{"build":"${{ steps.build.outcome }}","compose":"${{ steps.compose.outcome }}","management":"${{ steps.management.outcome }}","delivery":"${{ steps.delivery.outcome }}","ui":"${{ steps.ui.outcome }}","acme":"${{ steps.acme.outcome }}","cluster":"${{ steps.cluster.outcome }}","swarm":"${{ steps.swarm.outcome }}"}'
+          NSC_EVIDENCE_IMAGES: '{"controller":"nsc-controller:${{ env.NSC_TEST_IMAGE_TAG }}","gateway":"nsc-gateway:${{ env.NSC_TEST_IMAGE_TAG }}"}'
+        run: node scripts/readiness/gate.mjs record docker-e2e coverage/readiness/docker-e2e.json
+      - name: Retain source-bound verification envelope
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: readiness-docker-e2e-${{ github.run_id }}-${{ github.run_attempt }}
+          path: coverage/readiness/docker-e2e.json
+          if-no-files-found: error
+          retention-days: 14
+
+  p0-acceptance:
+    name: Core P0 isolated acceptance
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Check out source
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      - name: Set up Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
+        with:
+          go-version: ${{ env.GO_VERSION }}
+      - name: Set up Node for evidence contracts
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24.20.0
+      - name: Build current binaries and images
+        id: build
+        run: |
+          make prepare-fixture-images FIXTURE_PROFILE=p0
+          make build docker-build
+          echo "NSC_TEST_IMAGE_TAG=v$(cat VERSION)" >> "$GITHUB_ENV"
+      - name: Verify real Gateway and both ingress paths
+        id: gateway
+        run: python3 scripts/gateway_acceptance.py --verify-lb-redundancy --output coverage/p0/gateway/summary.json
+      - name: Verify real NSC Swarm rolling upgrades
+        run: |
+          make test-swarm-rollout-unit
+          python3 scripts/swarm_rollout_acceptance.py --controller-image "nsc-controller:v$(cat VERSION)" --gateway-image "nsc-gateway:v$(cat VERSION)" --output coverage/p0/swarm-rollout/summary.json
+      - name: Verify supported installation profiles
+        id: installation
+        run: python3 scripts/e2e-installation.py --controller-image "nsc-controller:v$(cat VERSION)" --gateway-image "nsc-gateway:v$(cat VERSION)" --output coverage/p0/installation
+      - name: Verify remote retention identity and safe exit
+        id: retention
+        run: NSC_RETENTION_ACCEPTANCE=true python3 scripts/e2e-market-swarm.py
+      - name: Verify all-store protected backup restoration
+        id: recovery
+        run: python3 scripts/e2e-recovery.py --image "nsc-controller:v$(cat VERSION)" --output coverage/p0/recovery
+      - name: Verify interrupted runtime reconciliation
+        id: reconciliation
+        run: python3 scripts/e2e-recovery-reconciliation.py --image "nsc-controller:v$(cat VERSION)" --output coverage/p0/reconciliation
+      - name: Verify readiness browser boundaries
+        id: browser
+        run: cd frontend && npm exec playwright install --with-deps chromium && npm run e2e:demo -- tests/workspace/readiness.e2e.ts
+      - name: Verify actual client DNS TLS HTTP and credential boundaries
+        id: access
+        run: python3 scripts/test-verify-access.py
+      - name: Verify Swarm quorum boundaries
+        id: quorum
+        run: python3 scripts/test-swarm-quorum.py --output coverage/p0/quorum.json
+      - name: Verify HA alert firing and resolution
+        id: alerts
+        run: make test-ha-alerts
+      - name: Verify fail-closed readiness admission
+        id: gate_tests
+        run: make test-readiness-gate
+      - name: Bind verification evidence to source
+        if: always()
+        env:
+          NSC_CHECK_RESULTS: '{"build":"${{ steps.build.outcome }}","gateway":"${{ steps.gateway.outcome }}","installation":"${{ steps.installation.outcome }}","retention":"${{ steps.retention.outcome }}","recovery":"${{ steps.recovery.outcome }}","reconciliation":"${{ steps.reconciliation.outcome }}","browser":"${{ steps.browser.outcome }}","access":"${{ steps.access.outcome }}","quorum":"${{ steps.quorum.outcome }}","alerts":"${{ steps.alerts.outcome }}","gate-tests":"${{ steps.gate_tests.outcome }}"}'
+          NSC_EVIDENCE_IMAGES: '{"controller":"nsc-controller:${{ env.NSC_TEST_IMAGE_TAG }}","gateway":"nsc-gateway:${{ env.NSC_TEST_IMAGE_TAG }}"}'
+        run: node scripts/readiness/gate.mjs record p0-acceptance coverage/readiness/p0-acceptance.json
+      - name: Retain source-bound verification envelope
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: readiness-p0-acceptance-${{ github.run_id }}-${{ github.run_attempt }}
+          path: coverage/readiness/p0-acceptance.json
+          if-no-files-found: error
+          retention-days: 14
+
+  readiness:
+    name: Source-bound readiness gate
+    if: always()
+    needs: [repository-privacy, unit, stores, images, compose, ha-e2e, docker-e2e, p0-acceptance]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out source
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      - name: Set up Node for evidence contracts
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24.20.0
+      - name: Download this run's verification envelopes
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: readiness-*-${{ github.run_id }}-${{ github.run_attempt }}
+          path: coverage/readiness-input
+          merge-multiple: true
+      - name: Enforce every required result and identity
+        if: always()
+        env:
+          NSC_REQUIRED_JOBS: '{"repository-privacy":"${{ needs.repository-privacy.result }}","unit":"${{ needs.unit.result }}","stores":"${{ needs.stores.result }}","images":"${{ needs.images.result }}","compose":"${{ needs.compose.result }}","ha-e2e":"${{ needs.ha-e2e.result }}","docker-e2e":"${{ needs.docker-e2e.result }}","p0-acceptance":"${{ needs.p0-acceptance.result }}"}'
+        run: |
+          mkdir -p coverage/readiness-input
+          node scripts/readiness/gate.mjs gate coverage/readiness-input coverage/readiness-gate.json
+      - name: Retain readiness decision
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: readiness-decision-${{ github.run_id }}-${{ github.run_attempt }}
+          path: coverage/readiness-gate.json
+          if-no-files-found: error

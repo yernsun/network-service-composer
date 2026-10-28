@@ -1,0 +1,113 @@
+/* One control language for the archived workspace and newer Vue panels. */
+:root {
+  --form-surface: #fff;
+  --form-border: #d8e2ea;
+  --form-border-hover: #9cb9ad;
+  --form-ring: #0aa66d26;
+  --form-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='m5 7.5 5 5 5-5' stroke='%2367798e' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --form-surface: #1b2a3b;
+  --form-border: #3a4d63;
+  --form-border-hover: #668e83;
+  --form-ring: #38c99138;
+  --form-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='m5 7.5 5 5 5-5' stroke='%23b9c9d8' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  color-scheme: dark;
+}
+
+input:where(:not([type='checkbox'], [type='radio'], [type='hidden'], [type='range'], [type='color'], [type='file'], [type='button'], [type='submit'], [type='reset'], .code-input)),
+select,
+textarea:where(:not(.code-input, .compose-code-input, .y-editor)) {
+  background-color: var(--form-surface);
+  border-color: var(--form-border);
+  border-radius: 8px;
+  color: var(--ink);
+  min-height: 38px;
+  box-shadow: 0 1px 2px #132b3910;
+  transition: border-color var(--motion-fast), box-shadow var(--motion-fast), background-color var(--motion-fast);
+}
+
+:is(input, select, textarea):where(:not(.code-input, .compose-code-input, .y-editor)):not(:disabled):hover {
+  border-color: var(--form-border-hover);
+}
+
+:is(input, select, textarea):where(:not(.code-input, .compose-code-input, .y-editor)):focus-visible {
+  border-color: var(--green);
+  outline: 2px solid var(--green);
+  outline-offset: 1px;
+  box-shadow: 0 0 0 4px var(--form-ring);
+}
+
+:is(input, select, textarea):where(:not(.code-input, .compose-code-input, .y-editor)):where(:disabled, [aria-disabled='true']) {
+  cursor: not-allowed;
+  opacity: .62;
+  box-shadow: none;
+}
+
+:is(input, select, textarea):where([aria-invalid='true'], :user-invalid) {
+  border-color: var(--red);
+}
+
+select:not([multiple]):not([size]) {
+  appearance: none;
+  background-image: var(--form-chevron);
+  background-position: right 10px center;
+  background-repeat: no-repeat;
+  background-size: 18px 18px;
+  padding-right: 34px;
+  text-overflow: ellipsis;
+}
+
+select:is([multiple], [size]) { background-color: var(--form-surface); }
+select :is(option, optgroup) { background: var(--form-surface); color: var(--ink); }
+
+/* These selectors sit inside an already bordered field. Keep their compact layout. */
+.env-selector select,
+.selector-row select,
+.preference-select select {
+  background-color: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  min-height: 30px;
+}
+
+.env-selector select:not([multiple]):not([size]),
+.selector-row select:not([multiple]):not([size]) { padding-right: 27px; background-position: right 3px center; }
+.selector-row select:not([multiple]):not([size]) { background-image: none; padding-right: 0; }
+.preference-select select:not([multiple]):not([size]) { padding-right: 22px; background-position: right 0 center; }
+.preference-select { min-width: 0; }
+
+input:is([type='checkbox'], [type='radio']) { accent-color: var(--green); cursor: pointer; }
+input:is([type='checkbox'], [type='radio']):disabled { cursor: not-allowed; }
+input[type='file'] { color: var(--muted); max-width: 100%; }
+input[type='file']::file-selector-button {
+  font: inherit;
+  font-weight: 650;
+  color: var(--green-dark);
+  background: var(--green-soft);
+  border: 1px solid var(--form-border);
+  border-radius: 7px;
+  padding: 7px 10px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+input[type='file']:hover::file-selector-button { border-color: var(--form-border-hover); }
+input[type='file']:disabled::file-selector-button { cursor: not-allowed; }
+
+/* Vue forms wrap the body and footer in a form element; keep the footer in view. */
+.modal > form { display: flex; flex: 1; flex-direction: column; min-height: 0; }
+.modal > form > .modal-body { flex: 1; min-height: 0; }
+.modal > form > .modal-foot { flex: none; }
+
+.service-persist-choice { display: grid; gap: 10px; margin: 18px 0; padding: 14px; border: 1px solid var(--form-border); border-radius: 8px; }
+.service-persist-choice legend { font-weight: 650; padding: 0 5px; }
+.service-persist-choice label, .service-op-ack { display: flex; align-items: flex-start; gap: 8px; cursor: pointer; }
+.service-persist-choice input, .service-op-ack input { flex: none; margin-top: 3px; }
+.service-op-ack { margin-top: 16px; }
+
+@media (prefers-reduced-motion: reduce) {
+  :is(input, select, textarea) { transition: none; }
+}

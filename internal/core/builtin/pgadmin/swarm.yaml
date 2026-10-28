@@ -1,0 +1,35 @@
+services:
+  pgadmin:
+    image: dpage/pgadmin4:9.17@sha256:2f4ce946ddf8360680d7eff4eaba1d91859eb6b4003e6623bad5c63a322c2f4d
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+        delay: 5s
+      update_config:
+        parallelism: 1
+        order: stop-first
+        failure_action: rollback
+      rollback_config:
+        parallelism: 1
+        order: stop-first
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:?Set administrator email}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:?Set administrator password}
+      PGADMIN_LISTEN_PORT: "80"
+      PGADMIN_DISABLE_POSTFIX: "true"
+    expose: ["80"]
+    volumes: ["data:/var/lib/pgadmin"]
+    networks: [default, database]
+    healthcheck:
+      test: [CMD, /venv/bin/python3, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1/misc/ping', timeout=3).read()"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
+networks:
+  database:
+    external: true
+    name: ${DATABASE_NETWORK:?Set existing database network}
+volumes:
+  data: {}

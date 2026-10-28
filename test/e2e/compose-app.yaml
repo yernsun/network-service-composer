@@ -1,0 +1,26 @@
+services:
+  app:
+    image: nginx:1.31.5-alpine3.24@sha256:72ba65eb42c10344912a84ff42408db7d34f2feb642204570ab8fc5ffd29f1d3
+    networks:
+      nsc-ingress:
+        aliases:
+          - ${NSC_E2E_SERVICE_ALIAS:?set NSC_E2E_SERVICE_ALIAS}
+    labels:
+      nsc.enable: "true"
+      nsc.port: "80"
+      nsc.protocol: http
+      nsc.readiness.mode: auto
+      nsc.routes.public.host: compose.e2e.test
+      nsc.routes.public.path: /
+      nsc.routes.public.entrypoints: http
+    healthcheck:
+      test: ["CMD-SHELL", "test ! -f /tmp/nsc-unhealthy"]
+      interval: 1s
+      timeout: 1s
+      retries: 1
+      start_period: 1s
+
+networks:
+  nsc-ingress:
+    external: true
+    name: ${NSC_E2E_NETWORK:?set NSC_E2E_NETWORK}

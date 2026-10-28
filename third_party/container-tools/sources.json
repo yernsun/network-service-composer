@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "files": [
+    {
+      "path": "third_party/container-tools/docker-cli/LICENSE",
+      "source": "https://raw.githubusercontent.com/docker/cli/v29.9.2/LICENSE",
+      "sha256": "2d81ea060825006fc8f3fe28aa5dc0ffeb80faf325b612c955229157b8c10dc0"
+    },
+    {
+      "path": "third_party/container-tools/docker-cli/NOTICE",
+      "source": "https://raw.githubusercontent.com/docker/cli/v29.9.2/NOTICE",
+      "sha256": "a8c869fbda819afb8d80e0ac19bac52e766bc6c19cb38cf94f52d64c4be2aab6"
+    },
+    {
+      "path": "third_party/container-tools/docker-compose/LICENSE",
+      "source": "https://raw.githubusercontent.com/docker/compose/v5.6.1/LICENSE",
+      "sha256": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd"
+    }
+  ],
+  "limitations": [
+    "Top-level upstream notices only; binary transitive dependency and base-OS redistribution review remains required."
+  ]
+}

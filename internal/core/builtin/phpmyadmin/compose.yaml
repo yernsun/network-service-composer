@@ -1,0 +1,22 @@
+services:
+  phpmyadmin:
+    image: phpmyadmin:5.2.3-apache@sha256:3a8a8d6b5289091f959ba0293f21163b3a2fc5741991a53de70b3497fe8d31db
+    restart: unless-stopped
+    environment:
+      PMA_HOST: ${PMA_HOST:?Set MySQL service DNS}
+      PMA_PORT: ${PMA_PORT:-3306}
+    expose: ["80"]
+    networks: [default, database]
+    volumes: ["sessions:/sessions"]
+    healthcheck:
+      test: [CMD, php, -d, allow_url_fopen=1, -r, "exit(@file_get_contents('http://127.0.0.1/') === false ? 1 : 0);"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+networks:
+  database:
+    external: true
+    name: ${DATABASE_NETWORK:?Set existing database network}
+volumes:
+  sessions: {}

@@ -1,0 +1,232 @@
+syntax = "proto3";
+
+package nsc.gateway.v2;
+
+option go_package = "github.com/yernsun/network-service-composer/api/gen/nsc/gateway/v2;gatewayv2";
+
+service GatewayControl {
+  rpc Connect(stream AgentMessage) returns (stream ControllerMessage);
+}
+
+message AgentMessage {
+  oneof payload {
+    Hello hello = 1;
+    AgentHeartbeat heartbeat = 2;
+    ApplyAck ack = 3;
+    ApplyNack nack = 4;
+    ProbeResult probe_result = 5;
+    ValidationResult validation_result = 6;
+  }
+}
+
+message ControllerMessage {
+  oneof payload {
+    ControllerHeartbeat heartbeat = 1;
+    SnapshotHeader snapshot_header = 2;
+    SnapshotChunk snapshot_chunk = 3;
+    ProbePlan probe_plan = 4;
+    ValidationRequest validation_request = 5;
+  }
+}
+
+message Hello {
+  bool http3_supported = 13;
+  int32 http3_advertised_port = 14;
+  string gateway_id = 1;
+  string pool_id = 2;
+  string name = 3;
+  string agent_version = 4;
+  string address = 5;
+  int32 protocol_version = 6;
+  string renderer_version = 7;
+  string mode = 12;
+  int64 applied_config_revision = 8;
+  string applied_model_digest = 9;
+  string rendered_digest = 10;
+  int64 applied_probe_revision = 11;
+}
+
+message AgentHeartbeat {
+  bool loading_confirmed = 7;
+  string startup_state = 8;
+  string disk_digest = 9;
+  int64 evidence_at_unix_nano = 10;
+  int64 refresh_interval_millis = 11;
+  int64 applied_config_revision = 1;
+  string renderer_version = 2;
+  string rendered_digest = 3;
+  int64 sent_at_unix_nano = 4;
+  int64 applied_probe_revision = 5;
+  string applied_model_digest = 6;
+}
+
+message ControllerHeartbeat {
+  int64 config_revision = 1;
+  int64 probe_revision = 2;
+  int64 sent_at_unix_nano = 3;
+}
+
+message ApplyAck {
+  int64 config_revision = 1;
+  string model_digest = 2;
+  string renderer_version = 3;
+  string rendered_digest = 4;
+  int64 applied_at_unix_nano = 5;
+  int64 nginx_validate_duration_nanos = 6;
+  int64 nginx_reload_duration_nanos = 7;
+}
+
+message ApplyNack {
+  int64 config_revision = 1;
+  string model_digest = 2;
+  string renderer_version = 3;
+  string error = 4;
+  int64 observed_at_unix_nano = 5;
+  int64 nginx_validate_duration_nanos = 6;
+  int64 nginx_reload_duration_nanos = 7;
+  string failed_phase = 8;
+}
+
+message SnapshotHeader {
+  int64 config_revision = 1;
+  string model_digest = 2;
+  string transport_digest = 3;
+  int64 uncompressed_size = 4;
+  int64 compressed_size = 5;
+  int32 chunk_count = 6;
+}
+
+message SnapshotChunk {
+  int64 config_revision = 1;
+  int32 index = 2;
+  bytes data = 3;
+}
+
+message Snapshot {
+  string pool_id = 1;
+  int64 config_revision = 2;
+  int64 generated_at_unix_nano = 3;
+  repeated SnapshotDomain domains = 4;
+  repeated SnapshotRoute routes = 5;
+  repeated SnapshotService services = 6;
+  repeated SnapshotCertificate certificates = 7;
+  string challenge_upstream = 8;
+  repeated ConfigSnippet snippets = 9;
+  repeated IPAccessControl access_controls = 10;
+}
+
+message IPAccessControl {
+  string scope = 1;
+  string resource_id = 2;
+  repeated string access = 3;
+  repeated string forbidden = 4;
+  ClientIPSource client_ip = 5;
+}
+
+message ClientIPSource {
+  string header = 1;
+  repeated string trusted_proxies = 2;
+}
+
+message ConfigSnippet {
+  string scope = 1;
+  string resource_id = 2;
+  string content = 3;
+}
+
+message ValidationRequest {
+  string task_id = 1;
+  Snapshot snapshot = 2;
+  bool activate_sandbox = 3;
+  string checks_json = 4;
+  int64 hold_until_unix = 5;
+  bool cancel = 6;
+}
+message ValidationResult {
+  string task_id = 1;
+  bool success = 2;
+  string error = 3;
+  string checks_json = 4;
+  string rendered_digest = 5;
+}
+
+message SnapshotDomain {
+  bool http3_enabled = 9;
+  string id = 1;
+  string host = 2;
+  bool http_enabled = 3;
+  bool https_enabled = 4;
+  bool redirect_http_to_https = 5;
+  string tls_mode = 6;
+  string certificate_id = 7;
+  string acme_challenge = 8;
+}
+
+message SnapshotRoute {
+  string id = 1;
+  string host = 2;
+  string path = 3;
+  int32 priority = 4;
+  bool strip_path = 5;
+  string service_id = 6;
+  int32 target_port = 7;
+  bool websocket_enabled = 8;
+  string upstream_protocol = 9;
+  string upstream_server_name = 10;
+  string upstream_name = 11;
+  bool paused = 12;
+  string kind = 13;
+  string match = 14;
+  string external_url = 15;
+  int32 response_code = 16;
+  string response_value = 17;
+  int32 read_timeout_seconds = 18;
+  int32 connect_timeout_seconds = 19;
+}
+
+message SnapshotService {
+  string id = 1;
+  string qualified_name = 2;
+  string dns_name = 3;
+}
+
+message SnapshotCertificate {
+  string id = 1;
+  repeated string domains = 2;
+  string certificate_pem = 3;
+  string private_key_pem = 4;
+}
+
+message ProbePlan {
+  string pool_id = 1;
+  int64 epoch = 2;
+  int64 probe_revision = 3;
+  repeated ProbeTarget targets = 4;
+}
+
+message ProbeTarget {
+  string service_id = 1;
+  string dns_name = 2;
+  int32 port = 3;
+  string mode = 4;
+  string path = 5;
+  string scheme = 6;
+  int64 interval_nanos = 7;
+  int64 timeout_nanos = 8;
+  int32 success_threshold = 9;
+  int32 failure_threshold = 10;
+  string target_token = 11;
+}
+
+message ProbeResult {
+  string pool_id = 1;
+  int64 epoch = 2;
+  string service_id = 3;
+  int64 sequence = 4;
+  bool success = 5;
+  int64 latency_nanos = 6;
+  string error = 7;
+  int64 observed_at_unix_nano = 8;
+  int64 probe_revision = 9;
+  string target_token = 10;
+}

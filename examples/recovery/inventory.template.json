@@ -1,0 +1,47 @@
+{
+  "format": 1,
+  "backup_id": "replace-with-private-backup-id",
+  "created_at": "replace-with-UTC-timestamp",
+  "controller_image_digest": "sha256:replace-with-verified-image-digest",
+  "source_commit": "replace-with-verified-Git-SHA",
+  "backup_owner": "replace-with-responsible-team",
+  "required_RTO": "replace-with-reviewed-restoration-time-target",
+  "required_RPO": "replace-with-reviewed-data-loss-target",
+  "database": {
+    "driver": "postgres",
+    "schema_version": "replace-with-observed-schema-version",
+    "method": "consistent-logical-dump",
+    "archive": "database.dump",
+    "sha256": "replace-with-archive-checksum",
+    "restoration_test": "not_run"
+  },
+  "protected_material": [
+    {"kind": "controller_configuration", "location": "separate-protected-storage", "restoration_test": "not_run"},
+    {"kind": "complete_keyring", "location": "separate-protected-storage", "key_ids": ["replace-with-retained-key-IDs"], "restoration_test": "not_run"},
+    {"kind": "file_backed_dns_credentials", "location": "separate-protected-storage", "restoration_test": "not_run"},
+    {"kind": "docker_registry_and_peer_credentials", "location": "separate-protected-storage", "restoration_test": "not_run"},
+    {"kind": "offline_CA", "location": "separate-offline-storage", "restoration_test": "not_run"}
+  ],
+  "business_data": [
+    {
+      "project_id": "replace-with-opaque-project-ID",
+      "environment_id": "replace-with-opaque-environment-ID",
+      "application_id": "replace-with-opaque-application-ID",
+      "runtime_id": "replace-with-immutable-runtime-ID",
+      "engine_id": "replace-with-immutable-engine-ID",
+      "node_id": "replace-with-immutable-node-ID",
+      "cluster_id": "replace-with-immutable-cluster-ID-or-not_applicable",
+      "storage_identity": "replace-with-observed-volume-or-storage-identity",
+      "owner": "replace-with-responsible-team",
+      "method": "replace-with-application-consistent-backup-method",
+      "archive": "replace-with-private-archive-reference",
+      "sha256": "replace-with-archive-checksum",
+      "application_and_data_schema_versions": "replace-with-compatible-version-pair",
+      "restore_target": "replace-with-reviewed-new-storage-identity",
+      "restoration_test": "not_run"
+    }
+  ],
+  "gateway_evidence": "not_supplied",
+  "verification_report": "not_run",
+  "operator_activation_review": "not_run"
+}

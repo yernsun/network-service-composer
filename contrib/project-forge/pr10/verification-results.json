@@ -1,0 +1,482 @@
+{
+  "reviewed_at": "2026-10-13T00:31:07.000457+08:00",
+  "pr_url": "https://github.com/yernsun/project-forge/pull/10",
+  "head_sha": "99eb3e96087f30e932323854afcf0af5c6a81398",
+  "base_sha": "2d06880fbec05e9abe82724a59c6dd30142e9953",
+  "remote_pr_updated": false,
+  "merged": false,
+  "patches": {
+    "frontend-pr10.patch": {
+      "sha256": "f3f0bee86cd55562affb216bf826aaf01be067cb32735533fca01e85247c17dc",
+      "bytes": 62965
+    },
+    "python-baseline.patch": {
+      "sha256": "5cb08085f6ce32d1b78c2c43ded380ccbe7d3f7013d59d84572ffcdec4b15297",
+      "bytes": 3068
+    }
+  },
+  "verification": [
+    {
+      "key": "backend-minimal-final",
+      "cwd": "<verification-root>/fixtures/backend-minimal",
+      "command": [
+        "<verification-root>/repo/.venv/bin/python",
+        "<verification-root>/generated_check.py"
+      ],
+      "node_bin": "<verification-root>/tools/node-v22.13.0-linux-x64/bin",
+      "started_at": "2026-10-12T16:16:48.301338+00:00",
+      "finished_at": "2026-10-12T16:16:57.454482+00:00",
+      "seconds": 9.15,
+      "exit_code": 0,
+      "log": "<verification-root>/evidence/backend-minimal-final.log",
+      "original_log_sha256": "db0ff6ce9ab09164ebc686ab899e9b43d500d92bcb1119acdfd6a8c592e150aa"
+    },
+    {
+      "key": "backend-python-audit-fixed",
+      "cwd": "<verification-root>/backend-audit-fixture/backend",
+      "command": [
+        "uv",
+        "run",
+        "--frozen",
+        "--all-groups",
+        "--extra",
+        "auth",
+        "--extra",
+        "evented",
+        "pip-audit",
+        "--cache-dir",
+        "<verification-root>/audit-cache"
+      ],
+      "node_bin": "<verification-root>/tools/node-v22.13.0-linux-x64/bin",
+      "started_at": "2026-10-12T16:20:05.684470+00:00",
+      "finished_at": "2026-10-12T16:20:27.620175+00:00",
+      "seconds": 21.94,
+      "exit_code": 0,
+      "log": "<verification-root>/evidence/backend-python-audit-fixed.log",
+      "original_log_sha256": "0b44628e90d13798bd9c9f4364683880ba009c9db52950cf5b309f7f5ee1ca5f"
+    },
+    {
+      "key": "base-npm-audit-current",
+      "cwd": "<verification-root>/baseline/src/project_forge/template/frontend",
+      "command": [
+        "npm",
+        "audit",
+        "--audit-level=high",
+        "--json"
+      ],
+      "node_bin": "<verification-root>/tools/node-v22.13.0-linux-x64/bin",
+      "started_at": "2026-10-12T16:25:11.428820+00:00",
+      "finished_at": "2026-10-12T16:25:20.524025+00:00",
+      "seconds": 9.1,
+      "exit_code": 1,
+      "log": "<verification-root>/evidence/base-npm-audit-current.log",
+      "original_log_sha256": "c91b6b94c71a977c9e4c8629e744124fb2fb81cef5bd9cc8eb3513c18950c833"
+    },
+    {
+      "key": "base-python-audit-fixed",
+      "cwd": "<verification-root>/baseline",
+      "command": [
+        "uv",
+        "run",
+        "--frozen",
+        "pip-audit",
+        "--cache-dir",
+        "<verification-root>/audit-cache"
+      ],
+      "node_bin": "<verification-root>/tools/node-v22.13.0-linux-x64/bin",
+      "started_at": "2026-10-12T16:13:15.570529+00:00",
+      "finished_at": "2026-10-12T16:13:19.177966+00:00",
+      "seconds": 3.61,
+      "exit_code": 0,
+      "log": "<verification-root>/evidence/base-python-audit-fixed.log",
+      "original_log_sha256": "2c8d9eb7649c6b246866129da84b3d395a266d2dee5298bf0b4ba2a5fbf84c71"
+    },
+    {
+      "key": "candidate-npm-audit-fix",
+      "cwd": "<verification-root>/frontend-audit-candidate",
+      "command": [
+        "npm",
+        "audit",
+        "fix",
+        "--package-lock-only",
+        "--ignore-scripts",
+        "--engine-strict"
+      ],
+      "node_bin": "<verification-root>/tools/node-v22.13.0-linux-x64/bin",
+      "started_at": "2026-10-12T16:13:11.978927+00:00",
+      "finished_at": "2026-10-12T16:13:14.099044+00:00",
+      "seconds": 2.12,
+      "exit_code": 0,
+      "log": "<verification-root>/evidence/candidate-npm-audit-fix.log",
+      "original_log_sha256": "835b9ec15c1a9a4ee71c1a13d17a44ac5387a5a6d7f9996f2b7f3ef0fa7b0cbc"
+    },
+    {
+      "key": "combined-patches-full",
+      "cwd": "<verification-root>/patch-check",
+      "command": [
+        "uv",
+        "run",
+        "--frozen",
+        "python",
+        "harness/check.py"
+      ],
+      "node_bin": "<verification-root>/tools/node-v22.13.0-linux-x64/bin",
+      "started_at": "2026-10-12T16:24:28.493890+00:00",
+      "finished_at": "2026-10-12T16:25:55.957117+00:00",
+      "seconds": 87.46,
+      "exit_code": 0,
+      "log": "<verification-root>/evidence/combined-patches-full.log",
+      "original_log_sha256": "61206faab82b57620dfd235cf696fe664519c264dfc44e3c87c48365b51c7011"
+    },
+    {
+      "key": "combined-python-audit",
+      "cwd": "<verification-root>/patch-check",
+      "command": [
+        "uv",
+        "run",
+        "--frozen",
+        "pip-audit",
+        "--cache-dir",
+        "<verification-root>/audit-cache"
+      ],
+      "node_bin": "<verification-root>/tools/node-v22.13.0-linux-x64/bin",
+      "started_at": "2026-10-12T16:26:22.017720+00:00",
+      "finished_at": "2026-10-12T16:26:34.968507+00:00",
+      "seconds": 12.95,
+      "exit_code": 0,
+      "log": "<verification-root>/evidence/combined-python-audit.log",
+      "original_log_sha256": "16f2ca9dfd9ffbf99628f5887ba8dd5c60568fc5e17a71e27dcf3d7ef9055630"
+    },
+    {
+      "key": "compose-development-verified",
+      "cwd": "<verification-root>/fixtures/fullstack-maximal",
+      "command": [
+        "python3",
+        "<verification-root>/compose_check.py",
+        "development"
+      ],
+      "node_bin": "<verification-root>/tools/node-v24.0.0-linux-x64/bin",
+      "started_at": "2026-10-12T16:24:23.127957+00:00",
+      "finished_at": "2026-10-12T16:29:45.989606+00:00",
+      "seconds": 322.86,
+      "exit_code": 0,
+      "log": "<verification-root>/evidence/compose-development-verified.log",
+      "original_log_sha256": "d475cc155aa3ddb595d64963902f76582326a69827fe25ef4cfe2f0184500b84"
+    },
+    {
+      "key": "compose-development",
+      "cwd": "<verification-root>/fixtures/fullstack-maximal",
+      "command": [
+        "python3",
+        "<verification-root>/compose_check.py",
+        "development"
+      ],
+      "node_bin": "<verification-root>/tools/node-v24.0.0-linux-x64/bin",
+      "started_at": "2026-10-12T16:22:37.822062+00:00",
+      "finished_at": "2026-10-12T16:22:56.916364+00:00",
+      "seconds": 19.09,
+      "exit_code": 1,
+      "log": "<verification-root>/evidence/compose-development.log",
+      "original_log_sha256": "2675c676cd00ad99036903ed786330fb5acaec021bd3b808c5b883d857925073"
+    },
+    {
+      "key": "compose-production",
+      "cwd": "<verification-root>/fixtures/fullstack-maximal",
+      "command": [
+        "python3",
+        "<verification-root>/compose_check.py",
+        "production"
+      ],
+      "node_bin": "<verification-root>/tools/node-v24.0.0-linux-x64/bin",
+      "started_at": "2026-10-12T16:19:59.134000+00:00",
+      "finished_at": "2026-10-12T16:21:49.635873+00:00",
+      "seconds": 110.5,
+      "exit_code": 0,
+      "log": "<verification-root>/evidence/compose-production.log",
+      "original_log_sha256": "73aac444350eb1618e6d9646c12fc0f233d7628008ee0f3a00f4695dd3fed482"
+    },
+    {
+      "key": "frontend-audit-final",
+      "cwd": "<verification-root>/repo/src/project_forge/template/frontend",
+      "command": [
+        "npm",
+        "audit",
+        "--audit-level=high",
+        "--json"
+      ],
+      "node_bin": "<verification-root>/tools/node-v22.13.0-linux-x64/bin",
+      "started_at": "2026-10-12T16:14:17.056217+00:00",
+      "finished_at": "2026-10-12T16:14:17.998605+00:00",
+      "seconds": 0.94,
+      "exit_code": 0,
+      "log": "<verification-root>/evidence/frontend-audit-final.log",
+      "original_log_sha256": "d09914ee61e0ec22d1dd7f4a1f0972942a9bcf7138458e6c22948aadb2386f78"
+    },
+    {
+      "key": "frontend-npm-audit",
+      "cwd": "<verification-root>/repo/src/project_forge/template/frontend",
+      "command": [
+        "npm",
+        "audit",
+        "--audit-level=high",
+        "--json"
+      ],
+      "node_bin": "<verification-root>/tools/node-v22.13.0-linux-x64/bin",
+      "started_at": "2026-10-12T16:11:41.703697+00:00",
+      "finished_at": "2026-10-12T16:11:43.658909+00:00",
+      "seconds": 1.96,
+      "exit_code": 1,
+      "log": "<verification-root>/evidence/frontend-npm-audit.log",
+      "original_log_sha256": "d1207b2d3eced93b87543d7f9dc5a1b5e0c757ba78791def254fe86677d58a1a"
+    },
+    {
+      "key": "fullstack-auth-evented-final",
+      "cwd": "<verification-root>/fixtures/fullstack-auth-evented",
+      "command": [
+        "<verification-root>/repo/.venv/bin/python",
+        "<verification-root>/generated_check.py"
+      ],
+      "node_bin": "<verification-root>/tools/node-v22.13.0-linux-x64/bin",
+      "started_at": "2026-10-12T16:20:00.865048+00:00",
+      "finished_at": "2026-10-12T16:20:33.822168+00:00",
+      "seconds": 32.96,
+      "exit_code": 0,
+      "log": "<verification-root>/evidence/fullstack-auth-evented-final.log",
+      "original_log_sha256": "38d5b9f1c28b426f02a51105ee776b983cb00dd36860060edf2ec9d468b2effb"
+    },
+    {
+      "key": "fullstack-auth-sample-final",
+      "cwd": "<verification-root>/fixtures/fullstack-auth-sample",
+      "command": [
+        "<verification-root>/repo/.venv/bin/python",
+        "<verification-root>/generated_check.py"
+      ],
+      "node_bin": "<verification-root>/tools/node-v22.13.0-linux-x64/bin",
+      "started_at": "2026-10-12T16:19:57.749717+00:00",
+      "finished_at": "2026-10-12T16:20:30.462389+00:00",
+      "seconds": 32.71,
+      "exit_code": 0,
+      "log": "<verification-root>/evidence/fullstack-auth-sample-final.log",
+      "original_log_sha256": "20e820b61a0e6f3c5dd758ab5327c820f227866b577ad133aa5764c2c401c3a7"
+    },
+    {
+      "key": "generator-full-final",
+      "cwd": "<verification-root>/repo",
+      "command": [
+        "uv",
+        "run",
+        "--frozen",
+        "python",
+        "harness/check.py"
+      ],
+      "node_bin": "<verification-root>/tools/node-v22.13.0-linux-x64/bin",
+      "started_at": "2026-10-12T16:14:15.419658+00:00",
+      "finished_at": "2026-10-12T16:15:30.286633+00:00",
+      "seconds": 74.87,
+      "exit_code": 0,
+      "log": "<verification-root>/evidence/generator-full-final.log",
+      "original_log_sha256": "f3a05ca886bacdebe9526600a1004766ff575d7b0f7b2f838482f72812b4a834"
+    },
+    {
+      "key": "generator-full-verified",
+      "cwd": "<verification-root>/repo",
+      "command": [
+        "uv",
+        "run",
+        "--frozen",
+        "python",
+        "harness/check.py"
+      ],
+      "node_bin": "<verification-root>/tools/node-v22.13.0-linux-x64/bin",
+      "started_at": "2026-10-12T16:20:01.694999+00:00",
+      "finished_at": "2026-10-12T16:21:30.688369+00:00",
+      "seconds": 88.99,
+      "exit_code": 0,
+      "log": "<verification-root>/evidence/generator-full-verified.log",
+      "original_log_sha256": "18fa486427805924317e90507694eba7d20238567ecd1887b1dddd8276e0ec32"
+    },
+    {
+      "key": "generator-quality",
+      "cwd": "<verification-root>/repo",
+      "command": [
+        "uv",
+        "run",
+        "--frozen",
+        "python",
+        "harness/check.py",
+        "--mode",
+        "quality"
+      ],
+      "node_bin": "<verification-root>/tools/node-v22.13.0-linux-x64/bin",
+      "started_at": "2026-10-12T16:11:37.797801+00:00",
+      "finished_at": "2026-10-12T16:12:48.173344+00:00",
+      "seconds": 70.38,
+      "exit_code": 1,
+      "log": "<verification-root>/evidence/generator-quality.log",
+      "original_log_sha256": "86fc11795c1cbf2d765069579a07c6d0f044e905865cc23db37b757384afdc12"
+    },
+    {
+      "key": "node22-frontend-minimal-final",
+      "cwd": "<verification-root>/fixtures/frontend-minimal",
+      "command": [
+        "<verification-root>/repo/.venv/bin/python",
+        "harness/check.py"
+      ],
+      "node_bin": "<verification-root>/tools/node-v22.13.0-linux-x64/bin",
+      "started_at": "2026-10-12T16:15:30.129508+00:00",
+      "finished_at": "2026-10-12T16:15:40.190939+00:00",
+      "seconds": 10.06,
+      "exit_code": 0,
+      "log": "<verification-root>/evidence/node22-frontend-minimal-final.log",
+      "original_log_sha256": "93e6a3932c53cf4aeefb015c6685505a1aba6d3a69c0bed583d4b23f0275cfef"
+    },
+    {
+      "key": "node22-frontend-minimal",
+      "cwd": "<verification-root>/fixtures/frontend-minimal",
+      "command": [
+        "<verification-root>/repo/.venv/bin/python",
+        "harness/check.py"
+      ],
+      "node_bin": "<verification-root>/tools/node-v22.13.0-linux-x64/bin",
+      "started_at": "2026-10-12T16:12:18.525186+00:00",
+      "finished_at": "2026-10-12T16:12:50.903291+00:00",
+      "seconds": 32.38,
+      "exit_code": 0,
+      "log": "<verification-root>/evidence/node22-frontend-minimal.log",
+      "original_log_sha256": "00bc6b28054bb287b0365332915984bfa2baaa3aec0a53696a804ca689c88e8d"
+    },
+    {
+      "key": "node22-frontend-sample-cross",
+      "cwd": "<verification-root>/fixtures/frontend-sample/frontend",
+      "command": [
+        "python3",
+        "<verification-root>/frontend_check.py"
+      ],
+      "node_bin": "<verification-root>/tools/node-v22.13.0-linux-x64/bin",
+      "started_at": "2026-10-12T16:22:16.642199+00:00",
+      "finished_at": "2026-10-12T16:22:32.333680+00:00",
+      "seconds": 15.69,
+      "exit_code": 0,
+      "log": "<verification-root>/evidence/node22-frontend-sample-cross.log",
+      "original_log_sha256": "636bc3fa5124a79a496c78933d5bad24db94841262defc08ef8356782cf084d4"
+    },
+    {
+      "key": "node22-frontend-sample-initial",
+      "cwd": "<verification-root>/fixtures/frontend-sample",
+      "command": [
+        "<verification-root>/repo/.venv/bin/python",
+        "harness/check.py"
+      ],
+      "node_bin": "<verification-root>/tools/node-v22.13.0-linux-x64/bin",
+      "started_at": "2026-10-12T16:12:22.452330+00:00",
+      "finished_at": "2026-10-12T16:12:55.446356+00:00",
+      "seconds": 32.99,
+      "exit_code": 0,
+      "log": "<verification-root>/evidence/node22-frontend-sample-initial.log",
+      "label_corrected_from": "node24-frontend-sample",
+      "original_log_sha256": "6354082e1cb156b1a1126ea20d9b39c07f12d91483228e4f577c847198ec88f5"
+    },
+    {
+      "key": "node24-auth-core",
+      "cwd": "<verification-root>/fixtures/fullstack-auth-evented/frontend",
+      "command": [
+        "python3",
+        "<verification-root>/frontend_check.py"
+      ],
+      "node_bin": "<verification-root>/tools/node-v24.0.0-linux-x64/bin",
+      "started_at": "2026-10-12T16:22:14.505428+00:00",
+      "finished_at": "2026-10-12T16:22:28.977674+00:00",
+      "seconds": 14.47,
+      "exit_code": 0,
+      "log": "<verification-root>/evidence/node24-auth-core.log",
+      "original_log_sha256": "164eed91b5e92dd6b6e09e3f010858391dd8a40e3da751108bd0f359d8f2459f"
+    },
+    {
+      "key": "node24-auth-sample",
+      "cwd": "<verification-root>/fixtures/fullstack-auth-sample/frontend",
+      "command": [
+        "python3",
+        "<verification-root>/frontend_check.py"
+      ],
+      "node_bin": "<verification-root>/tools/node-v24.0.0-linux-x64/bin",
+      "started_at": "2026-10-12T16:22:15.437567+00:00",
+      "finished_at": "2026-10-12T16:22:30.981252+00:00",
+      "seconds": 15.54,
+      "exit_code": 0,
+      "log": "<verification-root>/evidence/node24-auth-sample.log",
+      "original_log_sha256": "4127c177ca5001b59ac4a658f1c212342ace4ae85eaec37ad59c32f4df089ffc"
+    },
+    {
+      "key": "node24-frontend-core-cross",
+      "cwd": "<verification-root>/fixtures/frontend-minimal/frontend",
+      "command": [
+        "python3",
+        "<verification-root>/frontend_check.py"
+      ],
+      "node_bin": "<verification-root>/tools/node-v24.0.0-linux-x64/bin",
+      "started_at": "2026-10-12T16:22:19.727144+00:00",
+      "finished_at": "2026-10-12T16:22:34.159738+00:00",
+      "seconds": 14.43,
+      "exit_code": 0,
+      "log": "<verification-root>/evidence/node24-frontend-core-cross.log",
+      "original_log_sha256": "cef6e5ec02dc68bbda7a9801b23c0f793ea579d3f1f33afd7fd821a196a4171b"
+    },
+    {
+      "key": "node24-frontend-sample-final",
+      "cwd": "<verification-root>/fixtures/frontend-sample",
+      "command": [
+        "<verification-root>/repo/.venv/bin/python",
+        "harness/check.py"
+      ],
+      "node_bin": "<verification-root>/tools/node-v24.0.0-linux-x64/bin",
+      "started_at": "2026-10-12T16:15:26.406494+00:00",
+      "finished_at": "2026-10-12T16:15:37.871213+00:00",
+      "seconds": 11.46,
+      "exit_code": 0,
+      "log": "<verification-root>/evidence/node24-frontend-sample-final.log",
+      "original_log_sha256": "00b548e514a8fbbced5fb89a101740ac305706b9263a2ea2d2e5b81ced03cfcf"
+    },
+    {
+      "key": "openapi-contracts",
+      "cwd": "<verification-root>/repo",
+      "command": [
+        "uv",
+        "run",
+        "--frozen",
+        "python",
+        "harness/check.py",
+        "--mode",
+        "contracts"
+      ],
+      "node_bin": "<verification-root>/tools/node-v22.13.0-linux-x64/bin",
+      "started_at": "2026-10-12T16:11:40.521843+00:00",
+      "finished_at": "2026-10-12T16:12:46.739686+00:00",
+      "seconds": 66.22,
+      "exit_code": 0,
+      "log": "<verification-root>/evidence/openapi-contracts.log",
+      "original_log_sha256": "c4c8607a25af45c36c33ae8ac7ce9cf209dc79351aed15682d03819b264cfab0"
+    }
+  ],
+  "final_required_local_runs": [
+    "combined-patches-full",
+    "generator-full-verified",
+    "node22-frontend-minimal-final",
+    "node24-frontend-sample-final",
+    "node22-frontend-sample-cross",
+    "node24-frontend-core-cross",
+    "fullstack-auth-sample-final",
+    "fullstack-auth-evented-final",
+    "backend-minimal-final",
+    "node24-auth-sample",
+    "node24-auth-core",
+    "frontend-audit-final",
+    "combined-python-audit",
+    "backend-python-audit-fixed",
+    "compose-production",
+    "compose-development-verified"
+  ],
+  "publication": {
+    "original_sha256": "f994c86da00724d37ca822709a251d1956855b4baae81ea675ceed6cfc88e150",
+    "normalization": "Temporary verification-root paths are replaced with <verification-root>; commands, timestamps, exit codes and durations retain their recorded values. Raw logs remain in ignored local storage."
+  }
+}

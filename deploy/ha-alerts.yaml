@@ -1,0 +1,63 @@
+groups:
+  - name: nsc-readiness
+    rules:
+      - alert: NSCGatewayConfigurationLag
+        expr: nsc_gateway_config_revision_lag > 0
+        for: 2m
+        labels: {severity: warning}
+        annotations:
+          summary: Gateway configuration has not converged
+          description: Inspect per-Gateway loaded evidence before retrying publication.
+      - alert: NSCGatewayRejectedConfiguration
+        expr: increase(nsc_nginx_validation_total{result="failure"}[5m]) > 0
+        labels: {severity: critical}
+        annotations:
+          summary: A Gateway rejected a candidate configuration
+      - alert: NSCCertificateExpiresSoon
+        expr: nsc_certificate_expiry_seconds < 604800
+        for: 5m
+        labels: {severity: critical}
+        annotations:
+          summary: A certificate expires within seven days
+      - alert: NSCRuntimeUnavailable
+        expr: nsc_runtime_up == 0
+        for: 2m
+        labels: {severity: critical}
+        annotations:
+          summary: No enabled Runtime of this type is online
+      - alert: NSCDeploymentQueueBacklog
+        expr: nsc_deployment_queue_depth > 10
+        for: 10m
+        labels: {severity: warning}
+        annotations:
+          summary: Deployment queue remains above the internal trial budget
+      - alert: NSCMetricsUnavailable
+        expr: up{job="nsc-controller"} == 0
+        for: 1m
+        labels: {severity: critical}
+        annotations:
+          summary: A Controller metrics target is unavailable
+      - alert: NSCAllControllersUnavailable
+        expr: sum(up{job="nsc-controller"}) == 0 or absent(up{job="nsc-controller"})
+        for: 1m
+        labels: {severity: critical}
+        annotations:
+          summary: All configured NSC Controller targets are unavailable
+      - alert: NSCNoActiveScheduler
+        expr: sum(nsc_controller_scheduler_active{job="nsc-controller"}) == 0
+        for: 1m
+        labels: {severity: critical}
+        annotations:
+          summary: No observed Controller can schedule work
+      - alert: NSCOperationalEvidenceStale
+        expr: (nsc_operational_collection_failed == 1 or time() - nsc_operational_collection_success_seconds > 60) and on(instance, job) nsc_controller_scheduler_active == 1
+        for: 1m
+        labels: {severity: warning}
+        annotations:
+          summary: Operational metrics collection failed or its evidence expired
+      - alert: NSCIngressUnavailable
+        expr: probe_success{job="nsc-external-ingress"} == 0 or up{job="nsc-external-ingress"} == 0
+        for: 30s
+        labels: {severity: critical}
+        annotations:
+          summary: An independently monitored NSC ingress is unavailable

@@ -1,0 +1,1082 @@
+[
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_5853e55306ea",
+    "source": "由 NSC 管理",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_5c55a67935af",
+    "source": "全部",
+    "english": "All"
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_f75619a46f2f",
+    "source": "使用模板",
+    "english": "Use template"
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_bd50041740c9",
+    "source": "NSC 管理",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_3d0a3d9eb82c",
+    "source": "期望 r",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_f81526efce19",
+    "source": " 次",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_5f8aa2050974",
+    "source": "入口草稿",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_3f90761c6e4a",
+    "source": "Nginx 配置",
+    "english": "Nginx configuration"
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_d1a0d368297b",
+    "source": "已配置（演示）",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_ff86c6fa211a",
+    "source": "不是人工部署",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_90c6a41917c9",
+    "source": " · 存在缺口",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_1049329cd553",
+    "source": "演示快照",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_904586ca4cf1",
+    "source": "正常完成",
+    "english": "Completed normally"
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_145c3c1358c5",
+    "source": "人工操作",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_096fbd860a9f",
+    "source": "部署中",
+    "english": "Deploying"
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_251bc40e7027",
+    "source": "等待",
+    "english": "Waiting"
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_b8eabf48e188",
+    "source": "未保存修改",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_970cec634407",
+    "source": "配置漂移",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_8c0231bdeab9",
+    "source": "部分未生效",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_0d8a21fdee81",
+    "source": "管理路由",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_d3aef56cde5a",
+    "source": "添加 Route",
+    "english": "Add route"
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_ce75ae014091",
+    "source": "有效 · 演示",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_6fc7e8a1e27c",
+    "source": "未引用",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_db8db0530432",
+    "source": "查看",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_a8c3698b5b8c",
+    "source": "已停用",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_c6b3d4d90103",
+    "source": "保留完整 URI",
+    "english": "Preserve full URI"
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_a6739d3803ef",
+    "source": "DNS 解析",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_ae6eee4a7b20",
+    "source": "匹配入口地址",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_24ddcce4b58d",
+    "source": "203.0.113.10 · 示例地址",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_c7311111d7e2",
+    "source": "Gateway 同步",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_722415e85495",
+    "source": "期望版本 v",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_23808fba9f66",
+    "source": "配置一致性",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_512c5669c853",
+    "source": "最近事件",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_5e9159fb936b",
+    "source": "存在漂移",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_6a2a8a23c6fc",
+    "source": "Gateway 主配置",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_f69273dbbebf",
+    "source": "格式化",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_f211eb06f59b",
+    "source": "Domain 的 TLS 身份",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_fec6b73546cc",
+    "source": "已引用 · 演示",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_db41a9bcde11",
+    "source": "全部 ",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_3f27bd304dd3",
+    "source": "有草稿 ",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_2b7e92ef5ffa",
+    "source": "全部 Domain",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_5320196ba227",
+    "source": "有漂移",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_c752be4266c1",
+    "source": "演示一致",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_010db786b236",
+    "source": "逐 Domain 版本",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_0a93bc10d017",
+    "source": "有工作草稿",
+    "english": "Has working draft"
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_52496e5aeff4",
+    "source": "未分配",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_fe204e965ab9",
+    "source": "位置 ",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_a3c0f7d9c002",
+    "source": "容器 · Container",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_62f345897b3a",
+    "source": "域名入口",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_e0782ab38fa3",
+    "source": "常用操作",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_45115b166f77",
+    "source": "尚未添加描述",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_b9670c85a4ab",
+    "source": "路由",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_3d5fc9065141",
+    "source": "期望版本",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_3b8ae0dc32ad",
+    "source": "查看配置",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_bd0428eed3d2",
+    "source": "操作事件",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_d28c9d6f5ce9",
+    "source": "添加 Domain",
+    "english": "Add domain"
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_b6e77060db53",
+    "source": "使用指南",
+    "english": "User guide"
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_ae500aacbd91",
+    "source": "} 引用",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_4b8da304f324",
+    "source": "⟨空字符串⟩",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_b7a111a91c5d",
+    "source": "YAML · UTF-8 · Tab 插入 2 空格",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_4d69dcfa86c3",
+    "source": "⟨空值⟩",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_22761326ccce",
+    "source": "第 {v0} 行：需要 key: value。",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_640f0bc5148e",
+    "source": "第 {v0} 行：{v1}",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_35062052eb03",
+    "source": " 需要映射",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_3d780ad3bc4e",
+    "source": " 需要列表",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_a9a65f0f36a1",
+    "source": "env_file 需要字符串或列表",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_acf6ba98d2e1",
+    "source": "environment 需要映射或列表",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_f3d4736dba45",
+    "source": "：演示只支持 replicated / replicated-job；不把 global 模式改成副本模式。",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_5b7eca4459e9",
+    "source": "{v0}.deploy.{v1} 不受演示支持。",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_09c538a9bb27",
+    "source": "{v0}.env_file：缺少文件 {v1}。",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_7b3f1a698530",
+    "source": "反向代理",
+    "english": "Reverse proxy"
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_f421626bbe48",
+    "source": "重定向",
+    "english": "Redirect"
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_fa3084b385bb",
+    "source": "保留未保存的修改？",
+    "english": "Keep unsaved changes?"
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_6d68531608c6",
+    "source": "配置管理方式",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_d763c8f36471",
+    "source": "新增 ",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_80a57e03f071",
+    "source": "未配置",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_e1f0f1cb1ab4",
+    "source": "匹配方式",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_de8184da1ef8",
+    "source": "已配置",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_13606ca3edd5",
+    "source": "未匹配 · 404",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_1b8c5dac9850",
+    "source": "配置匹配成功",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_821c27a22d90",
+    "source": "新 Route",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_1737781a351b",
+    "source": "匹配方式不受支持。",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_2062243996da",
+    "source": "：指令 ",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_bcb107bdeb85",
+    "source": "配置文本：",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_98d786712000",
+    "source": " → 新 Revision",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_665a2416c548",
+    "source": " · 固定 Revision v",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_451755e3831f",
+    "source": "加入",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_ac83d3972fe9",
+    "source": "排除",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_763ec79bc435",
+    "source": "外部配置漂移",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_e630b0ec5be0",
+    "source": "NSC 交互原型 / 使用指南",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_d6eb52fe16e7",
+    "source": "Community / 交互原型 1.1",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_faada43f2f95",
+    "source": "users → 上游 ",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_2a8ce2b15d65",
+    "source": "沙盒",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_a8038634893a",
+    "source": "尚未添加域名",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_1794d2c5f18e",
+    "source": "查看文件副本",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_604c3fab9525",
+    "source": "查看已保留的文件副本",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_90f01b223947",
+    "source": "入口已被 ",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_d844440edfde",
+    "source": " / 路由草稿",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_56fe2afa4cfe",
+    "source": " → 工作草稿",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_9709d8ec678e",
+    "source": "已保留的文件副本",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_70a3d0d7c681",
+    "source": "不能移除已被 ",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_66f7003e49ba",
+    "source": "已保存草稿",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_8b71337f2999",
+    "source": "新草稿",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_da336fdc0dbd",
+    "source": "上一步",
+    "english": "Back"
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_4c2cf534e916",
+    "source": "相同入口已被 ",
+    "english": ""
+  },
+  {
+    "locale": "ja",
+    "key": "archive.message_27b97fffee25",
+    "source": "外部管理",
+    "english": "Externally managed"
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_27b97fffee25",
+    "source": "外部管理",
+    "english": "Externally managed"
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_f006455e3baf",
+    "source": "已停止",
+    "english": "Stopped"
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_c474e26ff2b5",
+    "source": "副本不足",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_1f55855535c5",
+    "source": "待部署",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_ecd8d607a9df",
+    "source": " · 演示快照",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_c921e5e203d2",
+    "source": "未知 / 尚未退出",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_9552fe3bd366",
+    "source": "第 ",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_ee723a803895",
+    "source": "此模板未提供 ",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_ab972479b82e",
+    "source": " 的入口草稿",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_efe13b34ae4e",
+    "source": "保存部署草稿",
+    "english": "Save deployment draft"
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_6910bec97018",
+    "source": "首次部署",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_391b4c6f7254",
+    "source": "admin · 本地演示",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_5fbc2d6e4ce3",
+    "source": "固定快照",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_d30c83cc43c0",
+    "source": "操作原因",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_fe985eafa4a9",
+    "source": "至今",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_4f51d0285e88",
+    "source": "控制",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_deed9d71629e",
+    "source": "下一次部署：",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_a6815db95ff5",
+    "source": "有 ",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_670ec25af841",
+    "source": "保留",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_89b2be438d7d",
+    "source": "需要 services 映射。",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_f1c10da84402",
+    "source": "全局搜索",
+    "english": "Global search"
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_7c97cad29227",
+    "source": "{v12}使用指南",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_1f005b4048b4",
+    "source": "查看 NSCEXPR1END 的配置",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_4e3e4fb3c2b0",
+    "source": "{v0} 存在外部修改",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_e156befed187",
+    "source": "命中 Route",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_74d7b37a3600",
+    "source": "期望版本 v{v2}",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_56d0b345f701",
+    "source": "待匹配 URL",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_adb17cb5109b",
+    "source": "搜索路由",
+    "english": "Search routes"
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_22c38786fcd5",
+    "source": "配置版本 {v2}",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_722d044416fa",
+    "source": "示例到期日期",
+    "english": "Example expiration date"
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_2dee5c184207",
+    "source": "引用位置",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_24c58da52174",
+    "source": "搜索 Domain",
+    "english": "Search domains"
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_85b10455c513",
+    "source": "入口 / TLS",
+    "english": "Ingress / TLS"
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_0f3c10407bc0",
+    "source": "Gateway 生效",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_2a2fd29bd27a",
+    "source": "草稿",
+    "english": "Draft"
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_d210bbecab35",
+    "source": "修改 API 路由",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_052c32ddb1b3",
+    "source": "引用的 Domain",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_2ff1a695b3bc",
+    "source": "工作模型",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_2065fdd4ba1b",
+    "source": "引用 Gateway",
+    "english": "Referenced gateways"
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_f938903ab4ab",
+    "source": "管理方式",
+    "english": "Authoring mode"
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_30ce4fa62ce6",
+    "source": "· v{v1} → 工作草稿",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_fbf541a8be28",
+    "source": "{v4}Endpoint 快照",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_e9450a96023e",
+    "source": "{v6}反向引用",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_ed1f74c64ac9",
+    "source": "期望",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_bc7cec45c14a",
+    "source": "搜索 Domain、Service 或功能…",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_51d8ce3cf644",
+    "source": " 草稿",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_0abfd282b40d",
+    "source": "配置方式",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_d0a8807b70f3",
+    "source": "{v0}已保留的文件副本 ",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_608380e3d9f5",
+    "source": "完整域名",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_c50728c2f9b1",
+    "source": "例如：preview.example.net",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_04991370538d",
+    "source": "演示 Endpoint IP（可留空）",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_3b869505d94f",
+    "source": "有 {v1} 份部署草稿。{v2}",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_9d554c492468",
+    "source": "部署位置",
+    "english": "Deployment target"
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_7c33ba90c3b4",
+    "source": "部署版本",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_b00c1b6cdc4f",
+    "source": "{v2} · {v3} · 位置 {v4}",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_b0cd08b4c7f9",
+    "source": "退出信息",
+    "english": ""
+  },
+  {
+    "locale": "ja",
+    "key": "archive.message_ac4a13e4c47c",
+    "source": "管理能力",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_ac4a13e4c47c",
+    "source": "管理能力",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_d8ecdcac6873",
+    "source": "最近快照 {v14} · 演示",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_753cf38a26e9",
+    "source": "{v14} · UTC+8（演示）",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_3e85c142eda0",
+    "source": "CPU 使用",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_c560201b331c",
+    "source": "事件",
+    "english": "Events"
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_abd161962f3d",
+    "source": "部署 / 操作",
+    "english": "Deployment / operation"
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_fb433d3b1943",
+    "source": "Compose / Stack 文件",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_156c52acaea6",
+    "source": "入口 Gateway",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_e4370493b42f",
+    "source": "本次部署",
+    "english": "This deployment"
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_91697a026c35",
+    "source": "方式",
+    "english": "Mode"
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_d8ce7f460a2f",
+    "source": "第 {v1} 次 · {v2} · {v3}",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_47a270081ab2",
+    "source": "模式",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_24b1dc29f662",
+    "source": "{v4} 起（演示）",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_d6fbd9a8201f",
+    "source": "管理角色",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_7903a5a9663f",
+    "source": "例如 MEMORY_LIMIT",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_c0ceeb704316",
+    "source": "Ctrl / ⌘ S 保存草稿",
+    "english": ""
+  },
+  {
+    "locale": "zh-TW",
+    "key": "archive.message_f40ebc5dca02",
+    "source": "第 {v0} 次 · {v1} · {v2}",
+    "english": ""
+  }
+]

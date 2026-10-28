@@ -1,0 +1,142 @@
+{
+  "run_url": "https://github.com/yernsun/project-forge/actions/runs/37848142992",
+  "run_id": 37848142992,
+  "total_jobs": 20,
+  "failed_jobs": 16,
+  "groups": {
+    "typescript-peer-conflict": [
+      {
+        "id": 113554082970,
+        "name": "generated-projects (fullstack-auth-evented, --profile fullstack --auth --evented --no-sample, tru...",
+        "conclusion": "failure",
+        "failed_steps": [
+          "Validate generated project"
+        ]
+      },
+      {
+        "id": 113554082972,
+        "name": "openapi-contracts",
+        "conclusion": "failure",
+        "failed_steps": [
+          "Run uv run --frozen python harness/check.py --mode contracts"
+        ]
+      },
+      {
+        "id": 113554082984,
+        "name": "generated-projects (fullstack-auth-sample, --profile fullstack --auth --sample, true, --extra auth)",
+        "conclusion": "failure",
+        "failed_steps": [
+          "Validate generated project"
+        ]
+      },
+      {
+        "id": 113554083041,
+        "name": "production-compose-smoke",
+        "conclusion": "failure",
+        "failed_steps": [
+          "Validate and start internal production Compose topology"
+        ]
+      },
+      {
+        "id": 113554083066,
+        "name": "frontend-runtime-compatibility (24)",
+        "conclusion": "failure",
+        "failed_steps": [
+          "Validate frontend on Node 24"
+        ]
+      },
+      {
+        "id": 113554083097,
+        "name": "fullstack-auth-compose-e2e",
+        "conclusion": "failure",
+        "failed_steps": [
+          "Install browser test dependencies"
+        ]
+      },
+      {
+        "id": 113554083179,
+        "name": "frontend-runtime-compatibility (22)",
+        "conclusion": "failure",
+        "failed_steps": [
+          "Validate frontend on Node 22"
+        ]
+      },
+      {
+        "id": 113554083201,
+        "name": "generated-projects (frontend-minimal, --profile frontend --no-sample, false)",
+        "conclusion": "failure",
+        "failed_steps": [
+          "Validate generated project"
+        ]
+      },
+      {
+        "id": 113554083307,
+        "name": "generated-projects (frontend-sample, --profile frontend --sample, false)",
+        "conclusion": "failure",
+        "failed_steps": [
+          "Validate generated project"
+        ]
+      }
+    ],
+    "node-types-contract-assertion": [
+      {
+        "id": 113554082721,
+        "name": "generator-platform-smoke (windows-latest)",
+        "conclusion": "failure",
+        "failed_steps": [
+          "Exercise CLI, state evolution, and atomic updates"
+        ]
+      },
+      {
+        "id": 113554082934,
+        "name": "generator-python-compatibility (3.14)",
+        "conclusion": "failure",
+        "failed_steps": [
+          "Run uv run --frozen python harness/check.py --mode compatibility"
+        ]
+      },
+      {
+        "id": 113554082997,
+        "name": "generator-python-compatibility (3.11)",
+        "conclusion": "failure",
+        "failed_steps": [
+          "Run uv run --frozen python harness/check.py --mode compatibility"
+        ]
+      },
+      {
+        "id": 113554083126,
+        "name": "generator-python-compatibility (3.12)",
+        "conclusion": "failure",
+        "failed_steps": [
+          "Run uv run --frozen python harness/check.py --mode compatibility"
+        ]
+      },
+      {
+        "id": 113554083166,
+        "name": "generator-platform-smoke (macos-latest)",
+        "conclusion": "failure",
+        "failed_steps": [
+          "Exercise CLI, state evolution, and atomic updates"
+        ]
+      },
+      {
+        "id": 113554083190,
+        "name": "generator-quality",
+        "conclusion": "failure",
+        "failed_steps": [
+          "Run uv run --frozen python harness/check.py --mode quality"
+        ]
+      }
+    ],
+    "python-audit-baseline": [
+      {
+        "id": 113554083030,
+        "name": "security-audit",
+        "conclusion": "failure",
+        "failed_steps": [
+          "Audit locked Python environment"
+        ]
+      }
+    ]
+  }
+}

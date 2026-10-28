@@ -1,0 +1,14 @@
+{
+  "name": "Redis",
+  "version": "7.4.11-alpine",
+  "description": "Redis — Compose template with persistent storage and explicit credentials",
+  "variables": [
+    {
+      "key": "REDIS_PASSWORD",
+      "required": true,
+      "description": "Redis authentication password",
+      "secret": true,
+      "min_length": 16
+    }
+  ]
+}

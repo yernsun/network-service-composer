@@ -1,0 +1,34 @@
+[
+  {
+    "code": "en",
+    "name": "English"
+  },
+  {
+    "code": "ja",
+    "name": "日本語"
+  },
+  {
+    "code": "de",
+    "name": "Deutsch"
+  },
+  {
+    "code": "zh-CN",
+    "name": "简体中文"
+  },
+  {
+    "code": "zh-TW",
+    "name": "繁體中文"
+  },
+  {
+    "code": "fr",
+    "name": "Français"
+  },
+  {
+    "code": "ru",
+    "name": "Русский"
+  },
+  {
+    "code": "es",
+    "name": "Español"
+  }
+]

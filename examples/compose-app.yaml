@@ -1,0 +1,24 @@
+services:
+  api:
+    image: traefik/whoami:v1.11.0
+    networks: [nsc-ingress]
+    labels:
+      nsc.enable: "true"
+      nsc.port: "80"
+      nsc.protocol: http
+      nsc.readiness.mode: http
+      nsc.readiness.path: /
+      nsc.readiness.interval: 2s
+      nsc.readiness.timeout: 1s
+      nsc.readiness.success-threshold: "2"
+      nsc.readiness.failure-threshold: "3"
+      nsc.routes.public.host: api.example.test
+      nsc.routes.public.path: /
+      nsc.routes.public.tls: disabled
+      nsc.routes.public.priority: "0"
+      nsc.routes.public.strip-path: "false"
+      nsc.routes.public.websocket: "true"
+
+networks:
+  nsc-ingress:
+    external: true

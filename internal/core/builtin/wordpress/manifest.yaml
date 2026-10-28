@@ -1,0 +1,44 @@
+{
+  "name": "WordPress",
+  "version": "7.1.0-php8.3-apache",
+  "description": "WordPress — Compose template with persistent storage and explicit credentials",
+  "variables": [
+    {
+      "key": "MYSQL_ROOT_PASSWORD",
+      "required": true,
+      "description": "Database root password",
+      "secret": true,
+      "min_length": 16
+    },
+    {
+      "key": "MYSQL_PASSWORD",
+      "required": true,
+      "description": "Application database password",
+      "secret": true,
+      "min_length": 16
+    },
+    {
+      "key": "MYSQL_DATABASE",
+      "required": false,
+      "description": "Initial database",
+      "default": "app",
+      "pattern": "^[a-zA-Z][a-zA-Z0-9_]{0,62}$"
+    },
+    {
+      "key": "MYSQL_USER",
+      "required": false,
+      "description": "Non-root application user",
+      "default": "app",
+      "pattern": "^[a-zA-Z][a-zA-Z0-9_]{0,30}$"
+    }
+  ],
+  "recommended_domains": [
+    {
+      "service": "wordpress",
+      "host": "wordpress.example.com",
+      "path": "/",
+      "target_port": 80,
+      "tls_mode": "managed"
+    }
+  ]
+}

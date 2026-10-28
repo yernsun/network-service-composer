@@ -1,0 +1,108 @@
+rule_files: [ha-alerts.yaml]
+evaluation_interval: 1m
+tests:
+  - name: failure conditions remain visible
+    interval: 1m
+    input_series:
+      - {series: 'nsc_gateway_config_revision_lag{pool="fixture"}', values: '1+0x20'}
+      - {series: 'nsc_nginx_validation_total{result="failure"}', values: '0+1x20'}
+      - {series: 'nsc_certificate_expiry_seconds{pool="fixture"}', values: '-10+0x20'}
+      - {series: 'nsc_runtime_up{runtime_type="docker"}', values: '0+0x20'}
+      - {series: 'nsc_deployment_queue_depth', values: '11+0x20'}
+      - {series: 'up{job="nsc-controller",instance="fixture"}', values: '0+0x20'}
+    alert_rule_test:
+      - eval_time: 12m
+        alertname: NSCGatewayConfigurationLag
+        exp_alerts:
+          - exp_labels: {pool: fixture, severity: warning}
+            exp_annotations:
+              summary: Gateway configuration has not converged
+              description: Inspect per-Gateway loaded evidence before retrying publication.
+      - eval_time: 12m
+        alertname: NSCGatewayRejectedConfiguration
+        exp_alerts:
+          - exp_labels: {severity: critical, result: failure}
+            exp_annotations: {summary: A Gateway rejected a candidate configuration}
+      - eval_time: 12m
+        alertname: NSCCertificateExpiresSoon
+        exp_alerts:
+          - exp_labels: {pool: fixture, severity: critical}
+            exp_annotations: {summary: A certificate expires within seven days}
+      - eval_time: 12m
+        alertname: NSCRuntimeUnavailable
+        exp_alerts:
+          - exp_labels: {runtime_type: docker, severity: critical}
+            exp_annotations: {summary: No enabled Runtime of this type is online}
+      - eval_time: 12m
+        alertname: NSCDeploymentQueueBacklog
+        exp_alerts:
+          - exp_labels: {severity: warning}
+            exp_annotations: {summary: Deployment queue remains above the internal trial budget}
+      - eval_time: 12m
+        alertname: NSCMetricsUnavailable
+        exp_alerts:
+          - exp_labels: {job: nsc-controller, instance: fixture, severity: critical}
+            exp_annotations: {summary: A Controller metrics target is unavailable}
+  - name: actual recovery resolves rather than acknowledgment
+    interval: 1m
+    input_series:
+      - {series: 'nsc_gateway_config_revision_lag{pool="fixture"}', values: '1+0x5 0+0x15'}
+      - {series: 'nsc_nginx_validation_total{result="failure"}', values: '0 1+0x20'}
+      - {series: 'nsc_certificate_expiry_seconds{pool="fixture"}', values: '-10+0x5 1000000+0x15'}
+      - {series: 'nsc_runtime_up{runtime_type="docker"}', values: '0+0x5 1+0x15'}
+      - {series: 'nsc_deployment_queue_depth', values: '11+0x11 0+0x10'}
+      - {series: 'up{job="nsc-controller",instance="fixture"}', values: '0+0x5 1+0x15'}
+    alert_rule_test:
+      - {eval_time: 20m, alertname: NSCGatewayConfigurationLag, exp_alerts: []}
+      - {eval_time: 20m, alertname: NSCGatewayRejectedConfiguration, exp_alerts: []}
+      - {eval_time: 20m, alertname: NSCCertificateExpiresSoon, exp_alerts: []}
+      - {eval_time: 20m, alertname: NSCRuntimeUnavailable, exp_alerts: []}
+      - {eval_time: 20m, alertname: NSCDeploymentQueueBacklog, exp_alerts: []}
+      - {eval_time: 20m, alertname: NSCMetricsUnavailable, exp_alerts: []}
+  - name: independent controller and ingress failure detection
+    interval: 1m
+    input_series:
+      - {series: 'up{job="nsc-controller",instance="one"}', values: '0+0x5'}
+      - {series: 'up{job="nsc-controller",instance="two"}', values: '0+0x5'}
+      - {series: 'nsc_controller_scheduler_active{job="nsc-controller",instance="one"}', values: '0+0x5'}
+      - {series: 'probe_success{job="nsc-external-ingress",instance="entry-a"}', values: '0+0x5'}
+      - {series: 'up{job="nsc-external-ingress",instance="entry-a"}', values: '1+0x5'}
+    alert_rule_test:
+      - eval_time: 3m
+        alertname: NSCAllControllersUnavailable
+        exp_alerts:
+          - exp_labels: {severity: critical}
+            exp_annotations: {summary: All configured NSC Controller targets are unavailable}
+      - eval_time: 3m
+        alertname: NSCNoActiveScheduler
+        exp_alerts:
+          - exp_labels: {severity: critical}
+            exp_annotations: {summary: No observed Controller can schedule work}
+      - eval_time: 3m
+        alertname: NSCIngressUnavailable
+        exp_alerts:
+          - exp_labels: {severity: critical, job: nsc-external-ingress, instance: entry-a}
+            exp_annotations: {summary: An independently monitored NSC ingress is unavailable}
+  - name: stale operational evidence cannot stay healthy
+    interval: 1m
+    input_series:
+      - {series: 'nsc_controller_scheduler_active{job="nsc-controller",instance="leader"}', values: '1+0x10'}
+      - {series: 'nsc_controller_scheduler_active{job="nsc-controller",instance="follower"}', values: '0+0x10'}
+      - {series: 'nsc_operational_collection_failed{job="nsc-controller",instance="leader"}', values: '0+0x10'}
+      - {series: 'nsc_operational_collection_success_seconds{job="nsc-controller",instance="leader"}', values: '0+0x10'}
+      - {series: 'nsc_operational_collection_failed{job="nsc-controller",instance="follower"}', values: '1+0x10'}
+      - {series: 'nsc_operational_collection_success_seconds{job="nsc-controller",instance="follower"}', values: '0+0x10'}
+    alert_rule_test:
+      - eval_time: 4m
+        alertname: NSCOperationalEvidenceStale
+        exp_alerts:
+          - exp_labels: {severity: warning, job: nsc-controller, instance: leader}
+            exp_annotations: {summary: Operational metrics collection failed or its evidence expired}
+  - name: operational collection recovery clears failure without treating followers as collectors
+    interval: 1m
+    input_series:
+      - {series: 'nsc_controller_scheduler_active{job="nsc-controller",instance="leader"}', values: '1+0x10'}
+      - {series: 'nsc_operational_collection_failed{job="nsc-controller",instance="leader"}', values: '1+0x2 0+0x8'}
+      - {series: 'nsc_operational_collection_success_seconds{job="nsc-controller",instance="leader"}', values: '0+0x2 180+60x8'}
+    alert_rule_test:
+      - {eval_time: 5m, alertname: NSCOperationalEvidenceStale, exp_alerts: []}

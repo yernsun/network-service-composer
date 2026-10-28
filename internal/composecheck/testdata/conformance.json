@@ -1,0 +1,47 @@
+[
+  {
+    "name": "duplicate",
+    "yaml": "services:\n  web:\n    image: a\n    image: b\n",
+    "code": "YAML_SYNTAX_ERROR"
+  },
+  {
+    "name": "multiple-documents",
+    "yaml": "services: {}\n---\nservices: {}\n",
+    "code": "YAML_SYNTAX_ERROR"
+  },
+  {
+    "name": "wrong-image",
+    "yaml": "services:\n  web:\n    image: [wrong]\n",
+    "code": "COMPOSE_SCHEMA_ERROR"
+  },
+  {
+    "name": "scalar",
+    "yaml": "hello",
+    "code": "COMPOSE_SCHEMA_ERROR"
+  },
+  {
+    "name": "empty",
+    "yaml": "",
+    "code": "COMPOSE_SCHEMA_ERROR"
+  },
+  {
+    "name": "replicas",
+    "yaml": "services:\n  web:\n    image: nginx:1\n    deploy:\n      replicas: abc\n",
+    "code": "COMPOSE_REPLICAS_INVALID"
+  },
+  {
+    "name": "anonymous",
+    "yaml": "services:\n  web:\n    image: nginx:1\n    volumes: [/data]\n",
+    "code": "SWARM_LOCAL_VOLUME_WITHOUT_PLACEMENT"
+  },
+  {
+    "name": "long-bind",
+    "yaml": "services:\n  web:\n    image: nginx:1\n    volumes:\n      - type: bind\n        source: /srv/data\n        target: /data\n",
+    "code": "SWARM_BIND_MOUNT_WITHOUT_PLACEMENT"
+  },
+  {
+    "name": "tmpfs",
+    "yaml": "services:\n  web:\n    image: nginx:1\n    volumes:\n      - type: tmpfs\n        target: /tmp\n",
+    "code": ""
+  }
+]

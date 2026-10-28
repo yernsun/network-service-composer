@@ -1,0 +1,68 @@
+{
+  "default_language": "en",
+  "current_roots": [
+    "README.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "AGENTS.md",
+    "ARCHITECTURE.md",
+    "docs",
+    "frontend/README.md",
+    ".agents"
+  ],
+  "localized_root": "internal/core/builtin",
+  "historical": [
+    "docs/community-development.md",
+    "docs/regression-2026-09-13.md",
+    "docs/http3-regression-2026-09-13.md",
+    "docs/nginx-preview-regression-2026-09-13.md",
+    "docs/service-update-2026-09-12.md"
+  ],
+  "provenance": [
+    "frontend/PROVENANCE.md",
+    "docs/frontend-migration.md"
+  ],
+  "legal": [
+    "LICENSE",
+    "NOTICE",
+    "THIRD_PARTY_NOTICES.md"
+  ],
+  "immutable": [
+    {
+      "path": "internal/core/builtin/redis/README.md",
+      "sha256": "b5184d82e160e0916cd27298e8a4946c65c864c182578e78af529654b1189167",
+      "reason": "Immutable legacy installation artifact; changing bytes changes the published digest.",
+      "english": "internal/core/builtin/redis/docs/en/README.md"
+    },
+    {
+      "path": "internal/core/builtin/mysql/README.md",
+      "sha256": "0744609f535bf4ec4d05747ba089ac8e7aed0fe01a3f85b6839d24ba645cea76",
+      "reason": "Immutable legacy installation artifact; changing bytes changes the published digest.",
+      "english": "internal/core/builtin/mysql/docs/en/README.md"
+    },
+    {
+      "path": "internal/core/builtin/postgresql/README.md",
+      "sha256": "5df76a067c509d3dc9c137093ddc5607009ebfe5aa3cf4a5d71dae4d7e5c18cf",
+      "reason": "Immutable legacy installation artifact; changing bytes changes the published digest.",
+      "english": "internal/core/builtin/postgresql/docs/en/README.md"
+    },
+    {
+      "path": "internal/core/builtin/wordpress/README.md",
+      "sha256": "06830f986860d39bd475b27e5ea6d798d35316ed727596af8b22304b6fc799f9",
+      "reason": "Immutable legacy installation artifact; changing bytes changes the published digest.",
+      "english": "internal/core/builtin/wordpress/docs/en/README.md"
+    },
+    {
+      "path": "internal/core/builtin/pgadmin/README.md",
+      "sha256": "21d1c711cd833dfa8c46d66498f586160af81865562b4eb9a22c099c698ea4d5",
+      "reason": "Immutable legacy installation artifact; changing bytes changes the published digest.",
+      "english": "internal/core/builtin/pgadmin/docs/en/README.md"
+    },
+    {
+      "path": "internal/core/builtin/phpmyadmin/README.md",
+      "sha256": "348bc6e6304a63f029702bb91f7395911f00e180fffcf5db2824a32201947651",
+      "reason": "Immutable legacy installation artifact; changing bytes changes the published digest.",
+      "english": "internal/core/builtin/phpmyadmin/docs/en/README.md"
+    }
+  ]
+}

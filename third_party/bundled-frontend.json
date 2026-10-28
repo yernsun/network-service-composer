@@ -1,0 +1,77 @@
+{
+  "schema": 1,
+  "packages": [
+    {
+      "name": "@intlify/core-base",
+      "version": "11.4.8"
+    },
+    {
+      "name": "@intlify/message-compiler",
+      "version": "11.4.8"
+    },
+    {
+      "name": "@intlify/shared",
+      "version": "11.4.8"
+    },
+    {
+      "name": "@tanstack/query-core",
+      "version": "5.101.4"
+    },
+    {
+      "name": "@tanstack/vue-query",
+      "version": "5.101.4"
+    },
+    {
+      "name": "@vue/reactivity",
+      "version": "3.5.44"
+    },
+    {
+      "name": "@vue/runtime-core",
+      "version": "3.5.44"
+    },
+    {
+      "name": "@vue/runtime-dom",
+      "version": "3.5.44"
+    },
+    {
+      "name": "@vue/shared",
+      "version": "3.5.44"
+    },
+    {
+      "name": "ajv",
+      "version": "8.20.0"
+    },
+    {
+      "name": "entities",
+      "version": "6.0.1"
+    },
+    {
+      "name": "fast-deep-equal",
+      "version": "3.1.3"
+    },
+    {
+      "name": "openapi-fetch",
+      "version": "0.14.1"
+    },
+    {
+      "name": "pinia",
+      "version": "3.0.4"
+    },
+    {
+      "name": "vue-i18n",
+      "version": "11.4.8"
+    },
+    {
+      "name": "vue-router",
+      "version": "4.6.4"
+    },
+    {
+      "name": "yaml",
+      "version": "2.9.1"
+    }
+  ],
+  "generatedCode": [
+    "Ajv standalone validator",
+    "Compose Specification schema"
+  ]
+}

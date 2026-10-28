@@ -1,0 +1,1742 @@
+[
+  {
+    "action": "about",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 2042
+  },
+  {
+    "action": "backdrop",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 1684
+  },
+  {
+    "action": "close",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 1681
+  },
+  {
+    "action": "config-toggle",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 1779
+  },
+  {
+    "action": "config-view",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 1768
+  },
+  {
+    "action": "conflict",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 1996
+  },
+  {
+    "action": "conflict-current",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 1999
+  },
+  {
+    "action": "conflict-rebase",
+    "status": "Submit boundary",
+    "priority": "P1",
+    "evidence": "GET /domains, GET /routes; PUT /gateway-pools/{id}/nginx/draft; POST /gateway-pools/{id}/nginx/releases",
+    "gap": "[domain-drafts](#gap-domain-drafts): Domain/Route writes affect active resources. NGINX candidates and releases belong to the whole Gateway Pool, whereas the archive reviews an independent domain and selected gateways. Add revisioned domain candidates, immutable history and explicit, validated publication scope.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Saving must leave active resources unchanged. Publish and recovery must name all affected resources and return actual target evidence.",
+    "source_line": 2008
+  },
+  {
+    "action": "copy-config",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 1828
+  },
+  {
+    "action": "deployment-detail",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET /domains, GET /routes; PUT /gateway-pools/{id}/nginx/draft; POST /gateway-pools/{id}/nginx/releases",
+    "gap": "[domain-drafts](#gap-domain-drafts): Domain/Route writes affect active resources. NGINX candidates and releases belong to the whole Gateway Pool, whereas the archive reviews an independent domain and selected gateways. Add revisioned domain candidates, immutable history and explicit, validated publication scope.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Saving must leave active resources unchanged. Publish and recovery must name all affected resources and return actual target evidence.",
+    "source_line": 1889
+  },
+  {
+    "action": "diagnose",
+    "status": "Original step / capability gap",
+    "priority": "P2",
+    "evidence": "GET /gateway-pools/{id}/route-trace?host=...&path=...",
+    "gap": "[route-trace](#gap-route-trace): Current configured HTTP route tracing maps to the original target source. Draft/native/per-Gateway trace, listener/redirect evaluation and upstream URI evidence are not represented by this API.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Target HTTP tracing returns the actual matched route. Unsupported source/listener choices report an error; a trace never claims a successful upstream request.",
+    "source_line": 1873
+  },
+  {
+    "action": "discard-leave",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 1687
+  },
+  {
+    "action": "domain-add",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET /domains, GET /routes; PUT /gateway-pools/{id}/nginx/draft; POST /gateway-pools/{id}/nginx/releases",
+    "gap": "[domain-drafts](#gap-domain-drafts): Domain/Route writes affect active resources. NGINX candidates and releases belong to the whole Gateway Pool, whereas the archive reviews an independent domain and selected gateways. Add revisioned domain candidates, immutable history and explicit, validated publication scope.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Saving must leave active resources unchanged. Publish and recovery must name all affected resources and return actual target evidence.",
+    "source_line": 1867
+  },
+  {
+    "action": "domain-create",
+    "status": "Submit boundary",
+    "priority": "P1",
+    "evidence": "GET /domains, GET /routes; PUT /gateway-pools/{id}/nginx/draft; POST /gateway-pools/{id}/nginx/releases",
+    "gap": "[domain-drafts](#gap-domain-drafts): Domain/Route writes affect active resources. NGINX candidates and releases belong to the whole Gateway Pool, whereas the archive reviews an independent domain and selected gateways. Add revisioned domain candidates, immutable history and explicit, validated publication scope.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Saving must leave active resources unchanged. Publish and recovery must name all affected resources and return actual target evidence.",
+    "source_line": 1870
+  },
+  {
+    "action": "domain-settings",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET /domains, GET /routes; PUT /gateway-pools/{id}/nginx/draft; POST /gateway-pools/{id}/nginx/releases",
+    "gap": "[domain-drafts](#gap-domain-drafts): Domain/Route writes affect active resources. NGINX candidates and releases belong to the whole Gateway Pool, whereas the archive reviews an independent domain and selected gateways. Add revisioned domain candidates, immutable history and explicit, validated publication scope.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Saving must leave active resources unchanged. Publish and recovery must name all affected resources and return actual target evidence.",
+    "source_line": 1857
+  },
+  {
+    "action": "drift",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET /gateway-pools/{id}/nginx/preview; pool draft/snippet/validation APIs",
+    "gap": "[native-configuration](#gap-native-configuration): The API does not expose whole-domain native file ownership, drift takeover or domain file backups. Add explicit ownership transitions and revision-checked evidence.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Mode switching preserves editor input; no takeover or drift recovery succeeds without server evidence.",
+    "source_line": 1955
+  },
+  {
+    "action": "drift-adopt",
+    "status": "Submit boundary",
+    "priority": "P1",
+    "evidence": "GET /gateway-pools/{id}/nginx/preview; pool draft/snippet/validation APIs",
+    "gap": "[native-configuration](#gap-native-configuration): The API does not expose whole-domain native file ownership, drift takeover or domain file backups. Add explicit ownership transitions and revision-checked evidence.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Mode switching preserves editor input; no takeover or drift recovery succeeds without server evidence.",
+    "source_line": 1958
+  },
+  {
+    "action": "drift-restore",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET /gateway-pools/{id}/nginx/preview; pool draft/snippet/validation APIs",
+    "gap": "[native-configuration](#gap-native-configuration): The API does not expose whole-domain native file ownership, drift takeover or domain file backups. Add explicit ownership transitions and revision-checked evidence.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Mode switching preserves editor input; no takeover or drift recovery succeeds without server evidence.",
+    "source_line": 1973
+  },
+  {
+    "action": "drift-restore-confirm",
+    "status": "Submit boundary",
+    "priority": "P1",
+    "evidence": "GET /gateway-pools/{id}/nginx/preview; pool draft/snippet/validation APIs",
+    "gap": "[native-configuration](#gap-native-configuration): The API does not expose whole-domain native file ownership, drift takeover or domain file backups. Add explicit ownership transitions and revision-checked evidence.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Mode switching preserves editor input; no takeover or drift recovery succeeds without server evidence.",
+    "source_line": 1981
+  },
+  {
+    "action": "export",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 1834
+  },
+  {
+    "action": "export-state",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 1838
+  },
+  {
+    "action": "file",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 1772
+  },
+  {
+    "action": "filter",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 2028
+  },
+  {
+    "action": "format-code",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 1816
+  },
+  {
+    "action": "gateway-detail",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "GET /gateways/{id}",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 1854
+  },
+  {
+    "action": "go-ops",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 1898
+  },
+  {
+    "action": "help",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 2039
+  },
+  {
+    "action": "impact",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET /domains, GET /routes; PUT /gateway-pools/{id}/nginx/draft; POST /gateway-pools/{id}/nginx/releases",
+    "gap": "[domain-drafts](#gap-domain-drafts): Domain/Route writes affect active resources. NGINX candidates and releases belong to the whole Gateway Pool, whereas the archive reviews an independent domain and selected gateways. Add revisioned domain candidates, immutable history and explicit, validated publication scope.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Saving must leave active resources unchanged. Publish and recovery must name all affected resources and return actual target evidence.",
+    "source_line": 1675
+  },
+  {
+    "action": "managed-confirm",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET /gateway-pools/{id}/nginx/preview; pool draft/snippet/validation APIs",
+    "gap": "[native-configuration](#gap-native-configuration): The API does not expose whole-domain native file ownership, drift takeover or domain file backups. Add explicit ownership transitions and revision-checked evidence.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Mode switching preserves editor input; no takeover or drift recovery succeeds without server evidence.",
+    "source_line": 1806
+  },
+  {
+    "action": "managed-mode",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET /gateway-pools/{id}/nginx/preview; pool draft/snippet/validation APIs",
+    "gap": "[native-configuration](#gap-native-configuration): The API does not expose whole-domain native file ownership, drift takeover or domain file backups. Add explicit ownership transitions and revision-checked evidence.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Mode switching preserves editor input; no takeover or drift recovery succeeds without server evidence.",
+    "source_line": 1792
+  },
+  {
+    "action": "menu",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 1652
+  },
+  {
+    "action": "native-confirm",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET /gateway-pools/{id}/nginx/preview; pool draft/snippet/validation APIs",
+    "gap": "[native-configuration](#gap-native-configuration): The API does not expose whole-domain native file ownership, drift takeover or domain file backups. Add explicit ownership transitions and revision-checked evidence.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Mode switching preserves editor input; no takeover or drift recovery succeeds without server evidence.",
+    "source_line": 1795
+  },
+  {
+    "action": "native-mode",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET /gateway-pools/{id}/nginx/preview; pool draft/snippet/validation APIs",
+    "gap": "[native-configuration](#gap-native-configuration): The API does not expose whole-domain native file ownership, drift takeover or domain file backups. Add explicit ownership transitions and revision-checked evidence.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Mode switching preserves editor input; no takeover or drift recovery succeeds without server evidence.",
+    "source_line": 1789
+  },
+  {
+    "action": "nav",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 1624
+  },
+  {
+    "action": "open-domain",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 1628
+  },
+  {
+    "action": "open-example",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 1646
+  },
+  {
+    "action": "p-backup-export",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET /gateway-pools/{id}/nginx/preview; pool draft/snippet/validation APIs",
+    "gap": "[native-configuration](#gap-native-configuration): The API does not expose whole-domain native file ownership, drift takeover or domain file backups. Add explicit ownership transitions and revision-checked evidence.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Mode switching preserves editor input; no takeover or drift recovery succeeds without server evidence.",
+    "source_line": 3331
+  },
+  {
+    "action": "p-copy",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET /domains, GET /routes; PUT /gateway-pools/{id}/nginx/draft; POST /gateway-pools/{id}/nginx/releases",
+    "gap": "[domain-drafts](#gap-domain-drafts): Domain/Route writes affect active resources. NGINX candidates and releases belong to the whole Gateway Pool, whereas the archive reviews an independent domain and selected gateways. Add revisioned domain candidates, immutable history and explicit, validated publication scope.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Saving must leave active resources unchanged. Publish and recovery must name all affected resources and return actual target evidence.",
+    "source_line": 3343
+  },
+  {
+    "action": "p-copy-back",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET /domains, GET /routes; PUT /gateway-pools/{id}/nginx/draft; POST /gateway-pools/{id}/nginx/releases",
+    "gap": "[domain-drafts](#gap-domain-drafts): Domain/Route writes affect active resources. NGINX candidates and releases belong to the whole Gateway Pool, whereas the archive reviews an independent domain and selected gateways. Add revisioned domain candidates, immutable history and explicit, validated publication scope.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Saving must leave active resources unchanged. Publish and recovery must name all affected resources and return actual target evidence.",
+    "source_line": 3349
+  },
+  {
+    "action": "p-copy-create",
+    "status": "Submit boundary",
+    "priority": "P1",
+    "evidence": "GET /domains, GET /routes; PUT /gateway-pools/{id}/nginx/draft; POST /gateway-pools/{id}/nginx/releases",
+    "gap": "[domain-drafts](#gap-domain-drafts): Domain/Route writes affect active resources. NGINX candidates and releases belong to the whole Gateway Pool, whereas the archive reviews an independent domain and selected gateways. Add revisioned domain candidates, immutable history and explicit, validated publication scope.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Saving must leave active resources unchanged. Publish and recovery must name all affected resources and return actual target evidence.",
+    "source_line": 3354
+  },
+  {
+    "action": "p-copy-next",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET /domains, GET /routes; PUT /gateway-pools/{id}/nginx/draft; POST /gateway-pools/{id}/nginx/releases",
+    "gap": "[domain-drafts](#gap-domain-drafts): Domain/Route writes affect active resources. NGINX candidates and releases belong to the whole Gateway Pool, whereas the archive reviews an independent domain and selected gateways. Add revisioned domain candidates, immutable history and explicit, validated publication scope.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Saving must leave active resources unchanged. Publish and recovery must name all affected resources and return actual target evidence.",
+    "source_line": 3346
+  },
+  {
+    "action": "p-domain-in-env",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET /domains, GET /routes; PUT /gateway-pools/{id}/nginx/draft; POST /gateway-pools/{id}/nginx/releases",
+    "gap": "[domain-drafts](#gap-domain-drafts): Domain/Route writes affect active resources. NGINX candidates and releases belong to the whole Gateway Pool, whereas the archive reviews an independent domain and selected gateways. Add revisioned domain candidates, immutable history and explicit, validated publication scope.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Saving must leave active resources unchanged. Publish and recovery must name all affected resources and return actual target evidence.",
+    "source_line": 3314
+  },
+  {
+    "action": "p-domain-targets",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET /domains, GET /routes; PUT /gateway-pools/{id}/nginx/draft; POST /gateway-pools/{id}/nginx/releases",
+    "gap": "[domain-drafts](#gap-domain-drafts): Domain/Route writes affect active resources. NGINX candidates and releases belong to the whole Gateway Pool, whereas the archive reviews an independent domain and selected gateways. Add revisioned domain candidates, immutable history and explicit, validated publication scope.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Saving must leave active resources unchanged. Publish and recovery must name all affected resources and return actual target evidence.",
+    "source_line": 3308
+  },
+  {
+    "action": "p-domain-targets-save",
+    "status": "Submit boundary",
+    "priority": "P1",
+    "evidence": "GET /domains, GET /routes; PUT /gateway-pools/{id}/nginx/draft; POST /gateway-pools/{id}/nginx/releases",
+    "gap": "[domain-drafts](#gap-domain-drafts): Domain/Route writes affect active resources. NGINX candidates and releases belong to the whole Gateway Pool, whereas the archive reviews an independent domain and selected gateways. Add revisioned domain candidates, immutable history and explicit, validated publication scope.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Saving must leave active resources unchanged. Publish and recovery must name all affected resources and return actual target evidence.",
+    "source_line": 3311
+  },
+  {
+    "action": "p-env",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 3267
+  },
+  {
+    "action": "p-env-add",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "POST /projects; POST /projects/{id}/environments; GET /environments/{id}",
+    "gap": "[environment-management](#gap-environment-management): Projects have name/slug but no description. Environment creation requires runtime_id, has one name and no separate display name/slug/type or gateway eligibility. Update/delete are absent. Preserve explicit ownership; add metadata, gateway eligibility and guarded empty deletion.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Foreign IDs and nonempty deletion fail. Metadata is never silently discarded; eligibility changes never migrate existing routes.",
+    "source_line": 3276
+  },
+  {
+    "action": "p-env-delete",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "POST /projects; POST /projects/{id}/environments; GET /environments/{id}",
+    "gap": "[environment-management](#gap-environment-management): Projects have name/slug but no description. Environment creation requires runtime_id, has one name and no separate display name/slug/type or gateway eligibility. Update/delete are absent. Preserve explicit ownership; add metadata, gateway eligibility and guarded empty deletion.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Foreign IDs and nonempty deletion fail. Metadata is never silently discarded; eligibility changes never migrate existing routes.",
+    "source_line": 3285
+  },
+  {
+    "action": "p-env-delete-confirm",
+    "status": "Submit boundary",
+    "priority": "P1",
+    "evidence": "POST /projects; POST /projects/{id}/environments; GET /environments/{id}",
+    "gap": "[environment-management](#gap-environment-management): Projects have name/slug but no description. Environment creation requires runtime_id, has one name and no separate display name/slug/type or gateway eligibility. Update/delete are absent. Preserve explicit ownership; add metadata, gateway eligibility and guarded empty deletion.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Foreign IDs and nonempty deletion fail. Metadata is never silently discarded; eligibility changes never migrate existing routes.",
+    "source_line": 3288
+  },
+  {
+    "action": "p-env-domain-add",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET /domains, GET /routes; PUT /gateway-pools/{id}/nginx/draft; POST /gateway-pools/{id}/nginx/releases",
+    "gap": "[domain-drafts](#gap-domain-drafts): Domain/Route writes affect active resources. NGINX candidates and releases belong to the whole Gateway Pool, whereas the archive reviews an independent domain and selected gateways. Add revisioned domain candidates, immutable history and explicit, validated publication scope.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Saving must leave active resources unchanged. Publish and recovery must name all affected resources and return actual target evidence.",
+    "source_line": 3305
+  },
+  {
+    "action": "p-env-save",
+    "status": "API subset",
+    "priority": "P1",
+    "evidence": "POST /projects; POST /projects/{id}/environments; GET /environments/{id}",
+    "gap": "[environment-management](#gap-environment-management): Projects have name/slug but no description. Environment creation requires runtime_id, has one name and no separate display name/slug/type or gateway eligibility. Update/delete are absent. Preserve explicit ownership; add metadata, gateway eligibility and guarded empty deletion.",
+    "behavior": "Execute the supported subset stated below using concrete IDs; refresh server state after writes. Other cases keep the original form and show a submit error.",
+    "acceptance": "Foreign IDs and nonempty deletion fail. Metadata is never silently discarded; eligibility changes never migrate existing routes.",
+    "source_line": 3282
+  },
+  {
+    "action": "p-env-settings",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "POST /projects; POST /projects/{id}/environments; GET /environments/{id}",
+    "gap": "[environment-management](#gap-environment-management): Projects have name/slug but no description. Environment creation requires runtime_id, has one name and no separate display name/slug/type or gateway eligibility. Update/delete are absent. Preserve explicit ownership; add metadata, gateway eligibility and guarded empty deletion.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Foreign IDs and nonempty deletion fail. Metadata is never silently discarded; eligibility changes never migrate existing routes.",
+    "source_line": 3279
+  },
+  {
+    "action": "p-file-backups",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET /gateway-pools/{id}/nginx/preview; pool draft/snippet/validation APIs",
+    "gap": "[native-configuration](#gap-native-configuration): The API does not expose whole-domain native file ownership, drift takeover or domain file backups. Add explicit ownership transitions and revision-checked evidence.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Mode switching preserves editor input; no takeover or drift recovery succeeds without server evidence.",
+    "source_line": 3328
+  },
+  {
+    "action": "p-mode-file",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET /gateway-pools/{id}/nginx/preview; pool draft/snippet/validation APIs",
+    "gap": "[native-configuration](#gap-native-configuration): The API does not expose whole-domain native file ownership, drift takeover or domain file backups. Add explicit ownership transitions and revision-checked evidence.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Mode switching preserves editor input; no takeover or drift recovery succeeds without server evidence.",
+    "source_line": 3322
+  },
+  {
+    "action": "p-mode-form",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET /gateway-pools/{id}/nginx/preview; pool draft/snippet/validation APIs",
+    "gap": "[native-configuration](#gap-native-configuration): The API does not expose whole-domain native file ownership, drift takeover or domain file backups. Add explicit ownership transitions and revision-checked evidence.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Mode switching preserves editor input; no takeover or drift recovery succeeds without server evidence.",
+    "source_line": 3325
+  },
+  {
+    "action": "p-project",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 3264
+  },
+  {
+    "action": "p-project-add",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "POST /projects; POST /projects/{id}/environments; GET /environments/{id}",
+    "gap": "[environment-management](#gap-environment-management): Projects have name/slug but no description. Environment creation requires runtime_id, has one name and no separate display name/slug/type or gateway eligibility. Update/delete are absent. Preserve explicit ownership; add metadata, gateway eligibility and guarded empty deletion.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Foreign IDs and nonempty deletion fail. Metadata is never silently discarded; eligibility changes never migrate existing routes.",
+    "source_line": 3270
+  },
+  {
+    "action": "p-project-create",
+    "status": "API subset",
+    "priority": "P1",
+    "evidence": "POST /projects; POST /projects/{id}/environments; GET /environments/{id}",
+    "gap": "[environment-management](#gap-environment-management): Projects have name/slug but no description. Environment creation requires runtime_id, has one name and no separate display name/slug/type or gateway eligibility. Update/delete are absent. Preserve explicit ownership; add metadata, gateway eligibility and guarded empty deletion.",
+    "behavior": "Execute the supported subset stated below using concrete IDs; refresh server state after writes. Other cases keep the original form and show a submit error.",
+    "acceptance": "Foreign IDs and nonempty deletion fail. Metadata is never silently discarded; eligibility changes never migrate existing routes.",
+    "source_line": 3273
+  },
+  {
+    "action": "p-service-add",
+    "status": "Original step / capability gap",
+    "priority": "P2",
+    "evidence": "GET /services; runtime discovery and managed application installs",
+    "gap": "[logical-services](#gap-logical-services): The original manual service registration form lacks a compatible managed application/runtime ownership contract. Do not fabricate a discovered or managed service from entered labels.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Keep the form; submission fails until explicit service ownership and routing eligibility can be created atomically.",
+    "source_line": 3337
+  },
+  {
+    "action": "p-service-create",
+    "status": "Submit boundary",
+    "priority": "P2",
+    "evidence": "GET /services; runtime discovery and managed application installs",
+    "gap": "[logical-services](#gap-logical-services): The original manual service registration form lacks a compatible managed application/runtime ownership contract. Do not fabricate a discovered or managed service from entered labels.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Keep the form; submission fails until explicit service ownership and routing eligibility can be created atomically.",
+    "source_line": 3340
+  },
+  {
+    "action": "palette",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 2032
+  },
+  {
+    "action": "palette-config",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 2035
+  },
+  {
+    "action": "publish",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET /domains, GET /routes; PUT /gateway-pools/{id}/nginx/draft; POST /gateway-pools/{id}/nginx/releases",
+    "gap": "[domain-drafts](#gap-domain-drafts): Domain/Route writes affect active resources. NGINX candidates and releases belong to the whole Gateway Pool, whereas the archive reviews an independent domain and selected gateways. Add revisioned domain candidates, immutable history and explicit, validated publication scope.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Saving must leave active resources unchanged. Publish and recovery must name all affected resources and return actual target evidence.",
+    "source_line": 1678
+  },
+  {
+    "action": "release-start",
+    "status": "Submit boundary",
+    "priority": "P1",
+    "evidence": "GET /domains, GET /routes; PUT /gateway-pools/{id}/nginx/draft; POST /gateway-pools/{id}/nginx/releases",
+    "gap": "[domain-drafts](#gap-domain-drafts): Domain/Route writes affect active resources. NGINX candidates and releases belong to the whole Gateway Pool, whereas the archive reviews an independent domain and selected gateways. Add revisioned domain candidates, immutable history and explicit, validated publication scope.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Saving must leave active resources unchanged. Publish and recovery must name all affected resources and return actual target evidence.",
+    "source_line": 1886
+  },
+  {
+    "action": "reload-state",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 2084
+  },
+  {
+    "action": "reset",
+    "status": "Demo execution only",
+    "priority": "—",
+    "evidence": "No business API for simulation.",
+    "gap": "No backend simulation extension proposed.",
+    "behavior": "Original demo interaction in the demo build. Real-mode simulation submission reports unsupported and leaves server state unchanged.",
+    "acceptance": "Demo makes zero business API requests; production bundle contains no simulator execution.",
+    "source_line": 2059
+  },
+  {
+    "action": "reset-confirm",
+    "status": "Demo execution only",
+    "priority": "—",
+    "evidence": "No business API for simulation.",
+    "gap": "No backend simulation extension proposed.",
+    "behavior": "Original demo interaction in the demo build. Real-mode simulation submission reports unsupported and leaves server state unchanged.",
+    "acceptance": "Demo makes zero business API requests; production bundle contains no simulator execution.",
+    "source_line": 2051
+  },
+  {
+    "action": "resource-domain",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 1631
+  },
+  {
+    "action": "resource-route",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 1635
+  },
+  {
+    "action": "restore-confirm",
+    "status": "Submit boundary",
+    "priority": "P1",
+    "evidence": "GET /domains, GET /routes; PUT /gateway-pools/{id}/nginx/draft; POST /gateway-pools/{id}/nginx/releases",
+    "gap": "[domain-drafts](#gap-domain-drafts): Domain/Route writes affect active resources. NGINX candidates and releases belong to the whole Gateway Pool, whereas the archive reviews an independent domain and selected gateways. Add revisioned domain candidates, immutable history and explicit, validated publication scope.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Saving must leave active resources unchanged. Publish and recovery must name all affected resources and return actual target evidence.",
+    "source_line": 1933
+  },
+  {
+    "action": "restore-deployment",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET /domains, GET /routes; PUT /gateway-pools/{id}/nginx/draft; POST /gateway-pools/{id}/nginx/releases",
+    "gap": "[domain-drafts](#gap-domain-drafts): Domain/Route writes affect active resources. NGINX candidates and releases belong to the whole Gateway Pool, whereas the archive reviews an independent domain and selected gateways. Add revisioned domain candidates, immutable history and explicit, validated publication scope.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Saving must leave active resources unchanged. Publish and recovery must name all affected resources and return actual target evidence.",
+    "source_line": 1906
+  },
+  {
+    "action": "restore-revision",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET /domains, GET /routes; PUT /gateway-pools/{id}/nginx/draft; POST /gateway-pools/{id}/nginx/releases",
+    "gap": "[domain-drafts](#gap-domain-drafts): Domain/Route writes affect active resources. NGINX candidates and releases belong to the whole Gateway Pool, whereas the archive reviews an independent domain and selected gateways. Add revisioned domain candidates, immutable history and explicit, validated publication scope.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Saving must leave active resources unchanged. Publish and recovery must name all affected resources and return actual target evidence.",
+    "source_line": 1930
+  },
+  {
+    "action": "retry-deployment",
+    "status": "Submit boundary",
+    "priority": "P1",
+    "evidence": "GET /domains, GET /routes; PUT /gateway-pools/{id}/nginx/draft; POST /gateway-pools/{id}/nginx/releases",
+    "gap": "[domain-drafts](#gap-domain-drafts): Domain/Route writes affect active resources. NGINX candidates and releases belong to the whole Gateway Pool, whereas the archive reviews an independent domain and selected gateways. Add revisioned domain candidates, immutable history and explicit, validated publication scope.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Saving must leave active resources unchanged. Publish and recovery must name all affected resources and return actual target evidence.",
+    "source_line": 1895
+  },
+  {
+    "action": "revision-view",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET /domains, GET /routes; PUT /gateway-pools/{id}/nginx/draft; POST /gateway-pools/{id}/nginx/releases",
+    "gap": "[domain-drafts](#gap-domain-drafts): Domain/Route writes affect active resources. NGINX candidates and releases belong to the whole Gateway Pool, whereas the archive reviews an independent domain and selected gateways. Add revisioned domain candidates, immutable history and explicit, validated publication scope.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Saving must leave active resources unchanged. Publish and recovery must name all affected resources and return actual target evidence.",
+    "source_line": 1918
+  },
+  {
+    "action": "route-add",
+    "status": "Original step / capability gap",
+    "priority": "P2",
+    "evidence": "POST/PATCH /routes; path, priority, backend, strip_path and websocket_enabled",
+    "gap": "[advanced-routes](#gap-advanced-routes): Exact/preferred-prefix selection, fixed return/redirect, per-route timeouts and native snippets exceed the structured route contract. Furthermore route editor Apply only stages the archive domain working copy; it cannot directly call the active Route API.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Retain original editor steps and local draft. Unsupported save/publish fails without touching active routes; supported backend extensions must preserve actual NGINX semantics.",
+    "source_line": 1704
+  },
+  {
+    "action": "route-apply",
+    "status": "Original step / capability gap",
+    "priority": "P2",
+    "evidence": "POST/PATCH /routes; path, priority, backend, strip_path and websocket_enabled",
+    "gap": "[advanced-routes](#gap-advanced-routes): Exact/preferred-prefix selection, fixed return/redirect, per-route timeouts and native snippets exceed the structured route contract. Furthermore route editor Apply only stages the archive domain working copy; it cannot directly call the active Route API.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Retain original editor steps and local draft. Unsupported save/publish fails without touching active routes; supported backend extensions must preserve actual NGINX semantics.",
+    "source_line": 1733
+  },
+  {
+    "action": "route-code",
+    "status": "Original step / capability gap",
+    "priority": "P2",
+    "evidence": "POST/PATCH /routes; path, priority, backend, strip_path and websocket_enabled",
+    "gap": "[advanced-routes](#gap-advanced-routes): Exact/preferred-prefix selection, fixed return/redirect, per-route timeouts and native snippets exceed the structured route contract. Furthermore route editor Apply only stages the archive domain working copy; it cannot directly call the active Route API.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Retain original editor steps and local draft. Unsupported save/publish fails without touching active routes; supported backend extensions must preserve actual NGINX semantics.",
+    "source_line": 1760
+  },
+  {
+    "action": "route-delete",
+    "status": "Original step / capability gap",
+    "priority": "P2",
+    "evidence": "POST/PATCH /routes; path, priority, backend, strip_path and websocket_enabled",
+    "gap": "[advanced-routes](#gap-advanced-routes): Exact/preferred-prefix selection, fixed return/redirect, per-route timeouts and native snippets exceed the structured route contract. Furthermore route editor Apply only stages the archive domain working copy; it cannot directly call the active Route API.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Retain original editor steps and local draft. Unsupported save/publish fails without touching active routes; supported backend extensions must preserve actual NGINX semantics.",
+    "source_line": 1742
+  },
+  {
+    "action": "route-delete-confirm",
+    "status": "Original step / capability gap",
+    "priority": "P2",
+    "evidence": "POST/PATCH /routes; path, priority, backend, strip_path and websocket_enabled",
+    "gap": "[advanced-routes](#gap-advanced-routes): Exact/preferred-prefix selection, fixed return/redirect, per-route timeouts and native snippets exceed the structured route contract. Furthermore route editor Apply only stages the archive domain working copy; it cannot directly call the active Route API.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Retain original editor steps and local draft. Unsupported save/publish fails without touching active routes; supported backend extensions must preserve actual NGINX semantics.",
+    "source_line": 1752
+  },
+  {
+    "action": "route-discard",
+    "status": "Original step / capability gap",
+    "priority": "P2",
+    "evidence": "POST/PATCH /routes; path, priority, backend, strip_path and websocket_enabled",
+    "gap": "[advanced-routes](#gap-advanced-routes): Exact/preferred-prefix selection, fixed return/redirect, per-route timeouts and native snippets exceed the structured route contract. Furthermore route editor Apply only stages the archive domain working copy; it cannot directly call the active Route API.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Retain original editor steps and local draft. Unsupported save/publish fails without touching active routes; supported backend extensions must preserve actual NGINX semantics.",
+    "source_line": 1739
+  },
+  {
+    "action": "route-edit",
+    "status": "Original step / capability gap",
+    "priority": "P2",
+    "evidence": "POST/PATCH /routes; path, priority, backend, strip_path and websocket_enabled",
+    "gap": "[advanced-routes](#gap-advanced-routes): Exact/preferred-prefix selection, fixed return/redirect, per-route timeouts and native snippets exceed the structured route contract. Furthermore route editor Apply only stages the archive domain working copy; it cannot directly call the active Route API.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Retain original editor steps and local draft. Unsupported save/publish fails without touching active routes; supported backend extensions must preserve actual NGINX semantics.",
+    "source_line": 1707
+  },
+  {
+    "action": "route-kind",
+    "status": "Original step / capability gap",
+    "priority": "P2",
+    "evidence": "POST/PATCH /routes; path, priority, backend, strip_path and websocket_enabled",
+    "gap": "[advanced-routes](#gap-advanced-routes): Exact/preferred-prefix selection, fixed return/redirect, per-route timeouts and native snippets exceed the structured route contract. Furthermore route editor Apply only stages the archive domain working copy; it cannot directly call the active Route API.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Retain original editor steps and local draft. Unsupported save/publish fails without touching active routes; supported backend extensions must preserve actual NGINX semantics.",
+    "source_line": 1717
+  },
+  {
+    "action": "route-resume",
+    "status": "Original step / capability gap",
+    "priority": "P2",
+    "evidence": "POST/PATCH /routes; path, priority, backend, strip_path and websocket_enabled",
+    "gap": "[advanced-routes](#gap-advanced-routes): Exact/preferred-prefix selection, fixed return/redirect, per-route timeouts and native snippets exceed the structured route contract. Furthermore route editor Apply only stages the archive domain working copy; it cannot directly call the active Route API.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Retain original editor steps and local draft. Unsupported save/publish fails without touching active routes; supported backend extensions must preserve actual NGINX semantics.",
+    "source_line": 1736
+  },
+  {
+    "action": "route-toggle",
+    "status": "Original step / capability gap",
+    "priority": "P2",
+    "evidence": "POST/PATCH /routes; path, priority, backend, strip_path and websocket_enabled",
+    "gap": "[advanced-routes](#gap-advanced-routes): Exact/preferred-prefix selection, fixed return/redirect, per-route timeouts and native snippets exceed the structured route contract. Furthermore route editor Apply only stages the archive domain working copy; it cannot directly call the active Route API.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Retain original editor steps and local draft. Unsupported save/publish fails without touching active routes; supported backend extensions must preserve actual NGINX semantics.",
+    "source_line": 1729
+  },
+  {
+    "action": "run-diag",
+    "status": "API subset",
+    "priority": "P2",
+    "evidence": "GET /gateway-pools/{id}/route-trace?host=...&path=...",
+    "gap": "[route-trace](#gap-route-trace): Current configured HTTP route tracing maps to the original target source. Draft/native/per-Gateway trace, listener/redirect evaluation and upstream URI evidence are not represented by this API.",
+    "behavior": "Execute the supported subset stated below using concrete IDs; refresh server state after writes. Other cases keep the original form and show a submit error.",
+    "acceptance": "Target HTTP tracing returns the actual matched route. Unsupported source/listener choices report an error; a trace never claims a successful upstream request.",
+    "source_line": 1883
+  },
+  {
+    "action": "save",
+    "status": "Submit boundary",
+    "priority": "P1",
+    "evidence": "GET /domains, GET /routes; PUT /gateway-pools/{id}/nginx/draft; POST /gateway-pools/{id}/nginx/releases",
+    "gap": "[domain-drafts](#gap-domain-drafts): Domain/Route writes affect active resources. NGINX candidates and releases belong to the whole Gateway Pool, whereas the archive reviews an independent domain and selected gateways. Add revisioned domain candidates, immutable history and explicit, validated publication scope.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Saving must leave active resources unchanged. Publish and recovery must name all affected resources and return actual target evidence.",
+    "source_line": 1668
+  },
+  {
+    "action": "save-leave",
+    "status": "Submit boundary",
+    "priority": "P1",
+    "evidence": "GET /domains, GET /routes; PUT /gateway-pools/{id}/nginx/draft; POST /gateway-pools/{id}/nginx/releases",
+    "gap": "[domain-drafts](#gap-domain-drafts): Domain/Route writes affect active resources. NGINX candidates and releases belong to the whole Gateway Pool, whereas the archive reviews an independent domain and selected gateways. Add revisioned domain candidates, immutable history and explicit, validated publication scope.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Saving must leave active resources unchanged. Publish and recovery must name all affected resources and return actual target evidence.",
+    "source_line": 1695
+  },
+  {
+    "action": "scenario-set",
+    "status": "Demo execution only",
+    "priority": "—",
+    "evidence": "No business API for simulation.",
+    "gap": "No backend simulation extension proposed.",
+    "behavior": "Original demo interaction in the demo build. Real-mode simulation submission reports unsupported and leaves server state unchanged.",
+    "acceptance": "Demo makes zero business API requests; production bundle contains no simulator execution.",
+    "source_line": 2025
+  },
+  {
+    "action": "scenarios",
+    "status": "Demo execution only",
+    "priority": "—",
+    "evidence": "No business API for simulation.",
+    "gap": "No backend simulation extension proposed.",
+    "behavior": "Original demo interaction in the demo build. Real-mode simulation submission reports unsupported and leaves server state unchanged.",
+    "acceptance": "Demo makes zero business API requests; production bundle contains no simulator execution.",
+    "source_line": 2022
+  },
+  {
+    "action": "scope-all-projects",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": null
+  },
+  {
+    "action": "scope-create-in-env",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": null
+  },
+  {
+    "action": "service-detail",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "GET /services/{id}",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 1851
+  },
+  {
+    "action": "settings-to-config",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 1860
+  },
+  {
+    "action": "tab",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 1663
+  },
+  {
+    "action": "validate",
+    "status": "Submit boundary",
+    "priority": "P1",
+    "evidence": "GET /domains, GET /routes; PUT /gateway-pools/{id}/nginx/draft; POST /gateway-pools/{id}/nginx/releases",
+    "gap": "[domain-drafts](#gap-domain-drafts): Domain/Route writes affect active resources. NGINX candidates and releases belong to the whole Gateway Pool, whereas the archive reviews an independent domain and selected gateways. Add revisioned domain candidates, immutable history and explicit, validated publication scope.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Saving must leave active resources unchanged. Publish and recovery must name all affected resources and return actual target evidence.",
+    "source_line": 1672
+  },
+  {
+    "action": "view",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 1656
+  },
+  {
+    "action": "x-all-services",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 5575
+  },
+  {
+    "action": "x-app",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "GET /applications; GET /applications/{id}/revisions",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 5556
+  },
+  {
+    "action": "x-app-tab",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "Application/revision/operation collections",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 5559
+  },
+  {
+    "action": "x-category",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "GET /catalog/apps",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 5552
+  },
+  {
+    "action": "x-connect",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "POST /runtimes; PATCH /runtimes/{id}",
+    "gap": "[runtime-connection](#gap-runtime-connection): The archive connection form has name/type/environment/management permission but no endpoint or pool. Existing APIs require endpoint and pool. Add a separately provisioned connection/profile reference or a server default contract before supporting submission without changing the form.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "No fake endpoint, guessed socket, pool, or environment eligibility is submitted.",
+    "source_line": 5744
+  },
+  {
+    "action": "x-connect-save",
+    "status": "Submit boundary",
+    "priority": "P1",
+    "evidence": "POST /runtimes; PATCH /runtimes/{id}",
+    "gap": "[runtime-connection](#gap-runtime-connection): The archive connection form has name/type/environment/management permission but no endpoint or pool. Existing APIs require endpoint and pool. Add a separately provisioned connection/profile reference or a server default contract before supporting submission without changing the form.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "No fake endpoint, guessed socket, pool, or environment eligibility is submitted.",
+    "source_line": 5747
+  },
+  {
+    "action": "x-demo",
+    "status": "Demo execution only",
+    "priority": "—",
+    "evidence": "No business API for simulation.",
+    "gap": "No backend simulation extension proposed.",
+    "behavior": "Original demo interaction in the demo build. Real-mode simulation submission reports unsupported and leaves server state unchanged.",
+    "acceptance": "Demo makes zero business API requests; production bundle contains no simulator execution.",
+    "source_line": 5750
+  },
+  {
+    "action": "x-demo-save",
+    "status": "Demo execution only",
+    "priority": "—",
+    "evidence": "No business API for simulation.",
+    "gap": "No backend simulation extension proposed.",
+    "behavior": "Original demo interaction in the demo build. Real-mode simulation submission reports unsupported and leaves server state unchanged.",
+    "acceptance": "Demo makes zero business API requests; production bundle contains no simulator execution.",
+    "source_line": 5753
+  },
+  {
+    "action": "x-deployment",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "GET /operations/{id}",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 5643
+  },
+  {
+    "action": "x-event",
+    "status": "Original step / capability gap",
+    "priority": "P2",
+    "evidence": "GET /runtimes/{id}/cluster/nodes; GET /runtimes/{id}/cluster/nodes/{nodeId}/instances?history=true",
+    "gap": "[runtime-events](#gap-runtime-events): Inventory/history/metrics exist; per-instance logs, runtime event streams, confirmed replacement chains, exit/OOM and start/finish timestamps do not. Controller activity is not runtime events.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Missing evidence is unavailable. Keep historical IDs; deduplicate repeated observations. Never infer start time from collection time, or success from a missing event.",
+    "source_line": 5633
+  },
+  {
+    "action": "x-event-filter",
+    "status": "Original step / capability gap",
+    "priority": "P2",
+    "evidence": "GET /runtimes/{id}/cluster/nodes; GET /runtimes/{id}/cluster/nodes/{nodeId}/instances?history=true",
+    "gap": "[runtime-events](#gap-runtime-events): Inventory/history/metrics exist; per-instance logs, runtime event streams, confirmed replacement chains, exit/OOM and start/finish timestamps do not. Controller activity is not runtime events.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Missing evidence is unavailable. Keep historical IDs; deduplicate repeated observations. Never infer start time from collection time, or success from a missing event.",
+    "source_line": 5639
+  },
+  {
+    "action": "x-export-app",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 5722
+  },
+  {
+    "action": "x-export-events",
+    "status": "Original step / capability gap",
+    "priority": "P2",
+    "evidence": "GET /runtimes/{id}/cluster/nodes; GET /runtimes/{id}/cluster/nodes/{nodeId}/instances?history=true",
+    "gap": "[runtime-events](#gap-runtime-events): Inventory/history/metrics exist; per-instance logs, runtime event streams, confirmed replacement chains, exit/OOM and start/finish timestamps do not. Controller activity is not runtime events.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Missing evidence is unavailable. Keep historical IDs; deduplicate repeated observations. Never infer start time from collection time, or success from a missing event.",
+    "source_line": 5732
+  },
+  {
+    "action": "x-history-tab",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 5646
+  },
+  {
+    "action": "x-install",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "POST /applications; POST /environments/{id}/preflight; POST /environments/{id}/deployments",
+    "gap": "[environment-applications](#gap-environment-applications): An environment has one application_id. Environment deployment fixes application name to environment.name and key to environment.project_name; catalog provenance and the original optional domain-draft step cannot be represented. Direct application install cannot attach a new application to an existing environment. Add atomic explicit membership and reviewed identity/catalog inputs.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "File/image installs use an empty environment and identical backend identity; mismatching names, occupied environments, catalog installs, credential references and domain-draft requests fail before execution. No silent renaming or replacement.",
+    "source_line": 5536
+  },
+  {
+    "action": "x-install-file",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "POST /applications; POST /environments/{id}/preflight; POST /environments/{id}/deployments",
+    "gap": "[environment-applications](#gap-environment-applications): An environment has one application_id. Environment deployment fixes application name to environment.name and key to environment.project_name; catalog provenance and the original optional domain-draft step cannot be represented. Direct application install cannot attach a new application to an existing environment. Add atomic explicit membership and reviewed identity/catalog inputs.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "File/image installs use an empty environment and identical backend identity; mismatching names, occupied environments, catalog installs, credential references and domain-draft requests fail before execution. No silent renaming or replacement.",
+    "source_line": 5539
+  },
+  {
+    "action": "x-install-image",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "POST /applications; POST /environments/{id}/preflight; POST /environments/{id}/deployments",
+    "gap": "[environment-applications](#gap-environment-applications): An environment has one application_id. Environment deployment fixes application name to environment.name and key to environment.project_name; catalog provenance and the original optional domain-draft step cannot be represented. Direct application install cannot attach a new application to an existing environment. Add atomic explicit membership and reviewed identity/catalog inputs.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "File/image installs use an empty environment and identical backend identity; mismatching names, occupied environments, catalog installs, credential references and domain-draft requests fail before execution. No silent renaming or replacement.",
+    "source_line": 5542
+  },
+  {
+    "action": "x-instance",
+    "status": "Original step / capability gap",
+    "priority": "P2",
+    "evidence": "GET /runtimes/{id}/cluster/nodes; GET /runtimes/{id}/cluster/nodes/{nodeId}/instances?history=true",
+    "gap": "[runtime-events](#gap-runtime-events): Inventory/history/metrics exist; per-instance logs, runtime event streams, confirmed replacement chains, exit/OOM and start/finish timestamps do not. Controller activity is not runtime events.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Missing evidence is unavailable. Keep historical IDs; deduplicate repeated observations. Never infer start time from collection time, or success from a missing event.",
+    "source_line": 5636
+  },
+  {
+    "action": "x-layout",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 5582
+  },
+  {
+    "action": "x-nav",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 5533
+  },
+  {
+    "action": "x-node",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "GET /runtimes/{id}/cluster/nodes/{nodeId}",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 5630
+  },
+  {
+    "action": "x-op-confirm",
+    "status": "API subset",
+    "priority": "P1",
+    "evidence": "POST /services/{id}/restart with If-Match and Idempotency-Key; GET /operations/{id}",
+    "gap": "Restart is supported when lifecycle_operations includes restart. Original image/scale entry follows the original Compose editor; independent source/draft support is missing.",
+    "behavior": "Keep the original confirmation. Submit the service ID with current ETag/idempotency key, then show and reread the real operation.",
+    "acceptance": "Verify terminal operation and refreshed service/instance state; network failures do not invent an execution result.",
+    "source_line": 5698
+  },
+  {
+    "action": "x-op-form",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "POST /services/{id}/restart; archive image/scale actions open Compose editor",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 5695
+  },
+  {
+    "action": "x-page-next",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 5592
+  },
+  {
+    "action": "x-page-prev",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 5588
+  },
+  {
+    "action": "x-restore",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "POST /applications/{id}/revisions/{revisionID}/restore-preview; POST /applications/{id}/restore",
+    "gap": "[environment-restore](#gap-environment-restore): Historical environment ConfigurationSource can carry an obsolete environment_revision into restore. Prior isolated run d90d9fb68c returned HTTP 412. Add a review of historical content against the current environment/variable tuple without rewriting history.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Original recovery entry and review remain available. A 412 preserves the recovery draft and is reported as a failure, never simulated success. Recovery must not claim database/volume rollback.",
+    "source_line": 5710
+  },
+  {
+    "action": "x-restore-deploy",
+    "status": "API subset",
+    "priority": "P1",
+    "evidence": "POST /applications/{id}/revisions/{revisionID}/restore-preview; POST /applications/{id}/restore",
+    "gap": "[environment-restore](#gap-environment-restore): Historical environment ConfigurationSource can carry an obsolete environment_revision into restore. Prior isolated run d90d9fb68c returned HTTP 412. Add a review of historical content against the current environment/variable tuple without rewriting history.",
+    "behavior": "Execute the supported subset stated below using concrete IDs; refresh server state after writes. Other cases keep the original form and show a submit error.",
+    "acceptance": "Original recovery entry and review remain available. A 412 preserves the recovery draft and is reported as a failure, never simulated success. Recovery must not claim database/volume rollback.",
+    "source_line": 5719
+  },
+  {
+    "action": "x-restore-review",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "POST /applications/{id}/revisions/{revisionID}/restore-preview; POST /applications/{id}/restore",
+    "gap": "[environment-restore](#gap-environment-restore): Historical environment ConfigurationSource can carry an obsolete environment_revision into restore. Prior isolated run d90d9fb68c returned HTTP 412. Add a review of historical content against the current environment/variable tuple without rewriting history.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Original recovery entry and review remain available. A 412 preserves the recovery draft and is reported as a failure, never simulated success. Recovery must not claim database/volume rollback.",
+    "source_line": 5716
+  },
+  {
+    "action": "x-restore-save",
+    "status": "API subset",
+    "priority": "P1",
+    "evidence": "POST /applications/{id}/revisions/{revisionID}/restore-preview; POST /applications/{id}/restore",
+    "gap": "[environment-restore](#gap-environment-restore): Historical environment ConfigurationSource can carry an obsolete environment_revision into restore. Prior isolated run d90d9fb68c returned HTTP 412. Add a review of historical content against the current environment/variable tuple without rewriting history.",
+    "behavior": "Execute the supported subset stated below using concrete IDs; refresh server state after writes. Other cases keep the original form and show a submit error.",
+    "acceptance": "Original recovery entry and review remain available. A 412 preserves the recovery draft and is reported as a failure, never simulated success. Recovery must not claim database/volume rollback.",
+    "source_line": 5713
+  },
+  {
+    "action": "x-resume-wizard",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET /applications/{id}/revisions; POST /applications/{id}/preflight; POST /environments/{id}/preflight",
+    "gap": "[compose-drafts](#gap-compose-drafts): Revision lists expose metadata, not independently retrievable Compose/runtime.env source. There is no draft read/write or multi-file provenance contract. Add authorized source and revisioned draft endpoints.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Save/reload restores the same draft without deployment. Until supported, Save reports an error and preserves in-memory edits; no replacement Save-session button is added.",
+    "source_line": 5683
+  },
+  {
+    "action": "x-retry",
+    "status": "Submit boundary",
+    "priority": "P1",
+    "evidence": "GET /operations; GET /operations/{id}; existing NGINX release verification APIs",
+    "gap": "[operation-retry](#gap-operation-retry): Application APIs do not expose the archive per-target retry or operator-entered verification result contract. Add idempotent retries and server-derived verification with preserved attempts.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "A retry never reruns successful targets implicitly. Unknown stays unknown until fresh server evidence is available.",
+    "source_line": 5701
+  },
+  {
+    "action": "x-runtime",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "GET /runtimes; cluster node collections",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 5596
+  },
+  {
+    "action": "x-runtime-events",
+    "status": "Original step / capability gap",
+    "priority": "P2",
+    "evidence": "GET /runtimes/{id}/cluster/nodes; GET /runtimes/{id}/cluster/nodes/{nodeId}/instances?history=true",
+    "gap": "[runtime-events](#gap-runtime-events): Inventory/history/metrics exist; per-instance logs, runtime event streams, confirmed replacement chains, exit/OOM and start/finish timestamps do not. Controller activity is not runtime events.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Missing evidence is unavailable. Keep historical IDs; deduplicate repeated observations. Never infer start time from collection time, or success from a missing event.",
+    "source_line": 5599
+  },
+  {
+    "action": "x-runtime-info",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "GET /runtimes/{id}",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 5607
+  },
+  {
+    "action": "x-runtime-tab",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "GET /runtimes/{id}/cluster/nodes",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 5602
+  },
+  {
+    "action": "x-runtime-toggle",
+    "status": "Demo execution only",
+    "priority": "—",
+    "evidence": "No business API for simulation.",
+    "gap": "No backend simulation extension proposed.",
+    "behavior": "Original demo interaction in the demo build. Real-mode simulation submission reports unsupported and leaves server state unchanged.",
+    "acceptance": "Demo makes zero business API requests; production bundle contains no simulator execution.",
+    "source_line": 5610
+  },
+  {
+    "action": "x-service",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "GET /services; cluster node/instance collections",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 5564
+  },
+  {
+    "action": "x-service-events",
+    "status": "Original step / capability gap",
+    "priority": "P2",
+    "evidence": "GET /runtimes/{id}/cluster/nodes; GET /runtimes/{id}/cluster/nodes/{nodeId}/instances?history=true",
+    "gap": "[runtime-events](#gap-runtime-events): Inventory/history/metrics exist; per-instance logs, runtime event streams, confirmed replacement chains, exit/OOM and start/finish timestamps do not. Controller activity is not runtime events.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Missing evidence is unavailable. Keep historical IDs; deduplicate repeated observations. Never infer start time from collection time, or success from a missing event.",
+    "source_line": 5567
+  },
+  {
+    "action": "x-service-tab",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 5570
+  },
+  {
+    "action": "x-template",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "POST /applications; POST /environments/{id}/preflight; POST /environments/{id}/deployments",
+    "gap": "[environment-applications](#gap-environment-applications): An environment has one application_id. Environment deployment fixes application name to environment.name and key to environment.project_name; catalog provenance and the original optional domain-draft step cannot be represented. Direct application install cannot attach a new application to an existing environment. Add atomic explicit membership and reviewed identity/catalog inputs.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "File/image installs use an empty environment and identical backend identity; mismatching names, occupied environments, catalog installs, credential references and domain-draft requests fail before execution. No silent renaming or replacement.",
+    "source_line": 5545
+  },
+  {
+    "action": "x-template-info",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "GET /catalog/apps",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 5549
+  },
+  {
+    "action": "x-verify",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET /operations; GET /operations/{id}; existing NGINX release verification APIs",
+    "gap": "[operation-retry](#gap-operation-retry): Application APIs do not expose the archive per-target retry or operator-entered verification result contract. Add idempotent retries and server-derived verification with preserved attempts.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "A retry never reruns successful targets implicitly. Unknown stays unknown until fresh server evidence is available.",
+    "source_line": 5704
+  },
+  {
+    "action": "x-verify-result",
+    "status": "Submit boundary",
+    "priority": "P1",
+    "evidence": "GET /operations; GET /operations/{id}; existing NGINX release verification APIs",
+    "gap": "[operation-retry](#gap-operation-retry): Application APIs do not expose the archive per-target retry or operator-entered verification result contract. Add idempotent retries and server-derived verification with preserved attempts.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "A retry never reruns successful targets implicitly. Unknown stays unknown until fresh server evidence is available.",
+    "source_line": 5707
+  },
+  {
+    "action": "x-wback",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "POST /applications; POST /environments/{id}/preflight; POST /environments/{id}/deployments",
+    "gap": "[environment-applications](#gap-environment-applications): An environment has one application_id. Environment deployment fixes application name to environment.name and key to environment.project_name; catalog provenance and the original optional domain-draft step cannot be represented. Direct application install cannot attach a new application to an existing environment. Add atomic explicit membership and reviewed identity/catalog inputs.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "File/image installs use an empty environment and identical backend identity; mismatching names, occupied environments, catalog installs, credential references and domain-draft requests fail before execution. No silent renaming or replacement.",
+    "source_line": 5664
+  },
+  {
+    "action": "x-wdeploy",
+    "status": "API subset",
+    "priority": "P1",
+    "evidence": "POST /applications; POST /environments/{id}/preflight; POST /environments/{id}/deployments",
+    "gap": "[environment-applications](#gap-environment-applications): An environment has one application_id. Environment deployment fixes application name to environment.name and key to environment.project_name; catalog provenance and the original optional domain-draft step cannot be represented. Direct application install cannot attach a new application to an existing environment. Add atomic explicit membership and reviewed identity/catalog inputs.",
+    "behavior": "Execute the supported subset stated below using concrete IDs; refresh server state after writes. Other cases keep the original form and show a submit error.",
+    "acceptance": "File/image installs use an empty environment and identical backend identity; mismatching names, occupied environments, catalog installs, credential references and domain-draft requests fail before execution. No silent renaming or replacement.",
+    "source_line": 5673
+  },
+  {
+    "action": "x-wdiscard",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 5679
+  },
+  {
+    "action": "x-wnext",
+    "status": "API subset",
+    "priority": "P1",
+    "evidence": "POST /applications; POST /environments/{id}/preflight; POST /environments/{id}/deployments",
+    "gap": "[environment-applications](#gap-environment-applications): An environment has one application_id. Environment deployment fixes application name to environment.name and key to environment.project_name; catalog provenance and the original optional domain-draft step cannot be represented. Direct application install cannot attach a new application to an existing environment. Add atomic explicit membership and reviewed identity/catalog inputs.",
+    "behavior": "Execute the supported subset stated below using concrete IDs; refresh server state after writes. Other cases keep the original form and show a submit error.",
+    "acceptance": "File/image installs use an empty environment and identical backend identity; mismatching names, occupied environments, catalog installs, credential references and domain-draft requests fail before execution. No silent renaming or replacement.",
+    "source_line": 5661
+  },
+  {
+    "action": "x-wresume",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET /applications/{id}/revisions; POST /applications/{id}/preflight; POST /environments/{id}/preflight",
+    "gap": "[compose-drafts](#gap-compose-drafts): Revision lists expose metadata, not independently retrievable Compose/runtime.env source. There is no draft read/write or multi-file provenance contract. Add authorized source and revisioned draft endpoints.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Save/reload restores the same draft without deployment. Until supported, Save reports an error and preserves in-memory edits; no replacement Save-session button is added.",
+    "source_line": 5676
+  },
+  {
+    "action": "x-wsample",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 5657
+  },
+  {
+    "action": "x-wsave",
+    "status": "Submit boundary",
+    "priority": "P1",
+    "evidence": "GET /applications/{id}/revisions; POST /applications/{id}/preflight; POST /environments/{id}/preflight",
+    "gap": "[compose-drafts](#gap-compose-drafts): Revision lists expose metadata, not independently retrievable Compose/runtime.env source. There is no draft read/write or multi-file provenance contract. Add authorized source and revisioned draft endpoints.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Save/reload restores the same draft without deployment. Until supported, Save reports an error and preserves in-memory edits; no replacement Save-session button is added.",
+    "source_line": 5670
+  },
+  {
+    "action": "x-wsource",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "POST /applications; POST /environments/{id}/preflight; POST /environments/{id}/deployments",
+    "gap": "[environment-applications](#gap-environment-applications): An environment has one application_id. Environment deployment fixes application name to environment.name and key to environment.project_name; catalog provenance and the original optional domain-draft step cannot be represented. Direct application install cannot attach a new application to an existing environment. Add atomic explicit membership and reviewed identity/catalog inputs.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "File/image installs use an empty environment and identical backend identity; mismatching names, occupied environments, catalog installs, credential references and domain-draft requests fail before execution. No silent renaming or replacement.",
+    "source_line": 5650
+  },
+  {
+    "action": "y-compose-deploy",
+    "status": "Submit boundary",
+    "priority": "P1",
+    "evidence": "GET /applications/{id}/revisions; POST /applications/{id}/preflight; POST /environments/{id}/preflight",
+    "gap": "[compose-drafts](#gap-compose-drafts): Revision lists expose metadata, not independently retrievable Compose/runtime.env source. There is no draft read/write or multi-file provenance contract. Add authorized source and revisioned draft endpoints.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Save/reload restores the same draft without deployment. Until supported, Save reports an error and preserves in-memory edits; no replacement Save-session button is added.",
+    "source_line": 6813
+  },
+  {
+    "action": "y-compose-review",
+    "status": "Submit boundary",
+    "priority": "P1",
+    "evidence": "GET /applications/{id}/revisions; POST /applications/{id}/preflight; POST /environments/{id}/preflight",
+    "gap": "[compose-drafts](#gap-compose-drafts): Revision lists expose metadata, not independently retrievable Compose/runtime.env source. There is no draft read/write or multi-file provenance contract. Add authorized source and revisioned draft endpoints.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Save/reload restores the same draft without deployment. Until supported, Save reports an error and preserves in-memory edits; no replacement Save-session button is added.",
+    "source_line": 6810
+  },
+  {
+    "action": "y-compose-save",
+    "status": "Submit boundary",
+    "priority": "P1",
+    "evidence": "GET /applications/{id}/revisions; POST /applications/{id}/preflight; POST /environments/{id}/preflight",
+    "gap": "[compose-drafts](#gap-compose-drafts): Revision lists expose metadata, not independently retrievable Compose/runtime.env source. There is no draft read/write or multi-file provenance contract. Add authorized source and revisioned draft endpoints.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Save/reload restores the same draft without deployment. Until supported, Save reports an error and preserves in-memory edits; no replacement Save-session button is added.",
+    "source_line": 6807
+  },
+  {
+    "action": "y-copy-link",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 6856
+  },
+  {
+    "action": "y-env-import",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET/PUT /projects/{id}/variables; GET/PUT /environments/{id}/variables",
+    "gap": "[application-variables](#gap-application-variables): Only project/environment string values and masked existing secrets map directly. Application layer, persisted types/notes, versioned secret:// references, complete source usage and history are absent. A secret reference must not be saved as a secret value.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Preserve empty strings, masks, overrides and stale ETags. Unsupported metadata/references fail without writes; returned history and usage must be complete and redacted.",
+    "source_line": 6789
+  },
+  {
+    "action": "y-file",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 6820
+  },
+  {
+    "action": "y-guard-discard",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": null
+  },
+  {
+    "action": "y-guard-save",
+    "status": "API subset",
+    "priority": "P1",
+    "evidence": "GET/PUT /projects/{id}/variables; GET/PUT /environments/{id}/variables",
+    "gap": "[application-variables](#gap-application-variables): Only project/environment string values and masked existing secrets map directly. Application layer, persisted types/notes, versioned secret:// references, complete source usage and history are absent. A secret reference must not be saved as a secret value.",
+    "behavior": "Execute the supported subset stated below using concrete IDs; refresh server state after writes. Other cases keep the original form and show a submit error.",
+    "acceptance": "Preserve empty strings, masks, overrides and stale ETags. Unsupported metadata/references fail without writes; returned history and usage must be complete and redacted.",
+    "source_line": null
+  },
+  {
+    "action": "y-guard-stay",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": null
+  },
+  {
+    "action": "y-import-analyze",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET/PUT /projects/{id}/variables; GET/PUT /environments/{id}/variables",
+    "gap": "[application-variables](#gap-application-variables): Only project/environment string values and masked existing secrets map directly. Application layer, persisted types/notes, versioned secret:// references, complete source usage and history are absent. A secret reference must not be saved as a secret value.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Preserve empty strings, masks, overrides and stale ETags. Unsupported metadata/references fail without writes; returned history and usage must be complete and redacted.",
+    "source_line": 6792
+  },
+  {
+    "action": "y-import-apply",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET/PUT /projects/{id}/variables; GET/PUT /environments/{id}/variables",
+    "gap": "[application-variables](#gap-application-variables): Only project/environment string values and masked existing secrets map directly. Application layer, persisted types/notes, versioned secret:// references, complete source usage and history are absent. A secret reference must not be saved as a secret value.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Preserve empty strings, masks, overrides and stale ETags. Unsupported metadata/references fail without writes; returned history and usage must be complete and redacted.",
+    "source_line": 6795
+  },
+  {
+    "action": "y-instance",
+    "status": "Original step / capability gap",
+    "priority": "P2",
+    "evidence": "GET /runtimes/{id}/cluster/nodes; GET /runtimes/{id}/cluster/nodes/{nodeId}/instances?history=true",
+    "gap": "[runtime-events](#gap-runtime-events): Inventory/history/metrics exist; per-instance logs, runtime event streams, confirmed replacement chains, exit/OOM and start/finish timestamps do not. Controller activity is not runtime events.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Missing evidence is unavailable. Keep historical IDs; deduplicate repeated observations. Never infer start time from collection time, or success from a missing event.",
+    "source_line": 6849
+  },
+  {
+    "action": "y-instance-tab",
+    "status": "Original step / capability gap",
+    "priority": "P2",
+    "evidence": "GET /runtimes/{id}/cluster/nodes; GET /runtimes/{id}/cluster/nodes/{nodeId}/instances?history=true",
+    "gap": "[runtime-events](#gap-runtime-events): Inventory/history/metrics exist; per-instance logs, runtime event streams, confirmed replacement chains, exit/OOM and start/finish timestamps do not. Controller activity is not runtime events.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Missing evidence is unavailable. Keep historical IDs; deduplicate repeated observations. Never infer start time from collection time, or success from a missing event.",
+    "source_line": 6852
+  },
+  {
+    "action": "y-layer",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET/PUT /projects/{id}/variables; GET/PUT /environments/{id}/variables",
+    "gap": "[application-variables](#gap-application-variables): Only project/environment string values and masked existing secrets map directly. Application layer, persisted types/notes, versioned secret:// references, complete source usage and history are absent. A secret reference must not be saved as a secret value.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Preserve empty strings, masks, overrides and stale ETags. Unsupported metadata/references fail without writes; returned history and usage must be complete and redacted.",
+    "source_line": 6752
+  },
+  {
+    "action": "y-node-parent",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 6846
+  },
+  {
+    "action": "y-node-tab",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "Cluster node/instance history collections",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 6834
+  },
+  {
+    "action": "y-open-compose",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET /applications/{id}/revisions; POST /applications/{id}/preflight; POST /environments/{id}/preflight",
+    "gap": "[compose-drafts](#gap-compose-drafts): Revision lists expose metadata, not independently retrievable Compose/runtime.env source. There is no draft read/write or multi-file provenance contract. Add authorized source and revisioned draft endpoints.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Save/reload restores the same draft without deployment. Until supported, Save reports an error and preserves in-memory edits; no replacement Save-session button is added.",
+    "source_line": 6804
+  },
+  {
+    "action": "y-service-on-node",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 6840
+  },
+  {
+    "action": "y-var-add",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET/PUT /projects/{id}/variables; GET/PUT /environments/{id}/variables",
+    "gap": "[application-variables](#gap-application-variables): Only project/environment string values and masked existing secrets map directly. Application layer, persisted types/notes, versioned secret:// references, complete source usage and history are absent. A secret reference must not be saved as a secret value.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Preserve empty strings, masks, overrides and stale ETags. Unsupported metadata/references fail without writes; returned history and usage must be complete and redacted.",
+    "source_line": 6766
+  },
+  {
+    "action": "y-var-apply",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET/PUT /projects/{id}/variables; GET/PUT /environments/{id}/variables",
+    "gap": "[application-variables](#gap-application-variables): Only project/environment string values and masked existing secrets map directly. Application layer, persisted types/notes, versioned secret:// references, complete source usage and history are absent. A secret reference must not be saved as a secret value.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Preserve empty strings, masks, overrides and stale ETags. Unsupported metadata/references fail without writes; returned history and usage must be complete and redacted.",
+    "source_line": 6772
+  },
+  {
+    "action": "y-var-edit",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET/PUT /projects/{id}/variables; GET/PUT /environments/{id}/variables",
+    "gap": "[application-variables](#gap-application-variables): Only project/environment string values and masked existing secrets map directly. Application layer, persisted types/notes, versioned secret:// references, complete source usage and history are absent. A secret reference must not be saved as a secret value.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Preserve empty strings, masks, overrides and stale ETags. Unsupported metadata/references fail without writes; returned history and usage must be complete and redacted.",
+    "source_line": 6769
+  },
+  {
+    "action": "y-var-history",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET/PUT /projects/{id}/variables; GET/PUT /environments/{id}/variables",
+    "gap": "[application-variables](#gap-application-variables): Only project/environment string values and masked existing secrets map directly. Application layer, persisted types/notes, versioned secret:// references, complete source usage and history are absent. A secret reference must not be saved as a secret value.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Preserve empty strings, masks, overrides and stale ETags. Unsupported metadata/references fail without writes; returned history and usage must be complete and redacted.",
+    "source_line": 6786
+  },
+  {
+    "action": "y-var-remove",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET/PUT /projects/{id}/variables; GET/PUT /environments/{id}/variables",
+    "gap": "[application-variables](#gap-application-variables): Only project/environment string values and masked existing secrets map directly. Application layer, persisted types/notes, versioned secret:// references, complete source usage and history are absent. A secret reference must not be saved as a secret value.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Preserve empty strings, masks, overrides and stale ETags. Unsupported metadata/references fail without writes; returned history and usage must be complete and redacted.",
+    "source_line": 6775
+  },
+  {
+    "action": "y-var-remove-confirm",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET/PUT /projects/{id}/variables; GET/PUT /environments/{id}/variables",
+    "gap": "[application-variables](#gap-application-variables): Only project/environment string values and masked existing secrets map directly. Application layer, persisted types/notes, versioned secret:// references, complete source usage and history are absent. A secret reference must not be saved as a secret value.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Preserve empty strings, masks, overrides and stale ETags. Unsupported metadata/references fail without writes; returned history and usage must be complete and redacted.",
+    "source_line": 6778
+  },
+  {
+    "action": "y-var-usage",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET/PUT /projects/{id}/variables; GET/PUT /environments/{id}/variables",
+    "gap": "[application-variables](#gap-application-variables): Only project/environment string values and masked existing secrets map directly. Application layer, persisted types/notes, versioned secret:// references, complete source usage and history are absent. A secret reference must not be saved as a secret value.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Preserve empty strings, masks, overrides and stale ETags. Unsupported metadata/references fail without writes; returned history and usage must be complete and redacted.",
+    "source_line": 6783
+  },
+  {
+    "action": "y-vars-from-compose",
+    "status": "Original step / capability gap",
+    "priority": "P1",
+    "evidence": "GET /applications/{id}/revisions; POST /applications/{id}/preflight; POST /environments/{id}/preflight",
+    "gap": "[compose-drafts](#gap-compose-drafts): Revision lists expose metadata, not independently retrievable Compose/runtime.env source. There is no draft read/write or multi-file provenance contract. Add authorized source and revisioned draft endpoints.",
+    "behavior": "Preserve the original entry and steps. At an unsupported commit, use the original error/toast, keep inputs and send no mutation.",
+    "acceptance": "Save/reload restores the same draft without deployment. Until supported, Save reports an error and preserves in-memory edits; no replacement Save-session button is added.",
+    "source_line": 6825
+  },
+  {
+    "action": "y-vars-save",
+    "status": "API subset",
+    "priority": "P1",
+    "evidence": "GET/PUT /projects/{id}/variables; GET/PUT /environments/{id}/variables",
+    "gap": "[application-variables](#gap-application-variables): Only project/environment string values and masked existing secrets map directly. Application layer, persisted types/notes, versioned secret:// references, complete source usage and history are absent. A secret reference must not be saved as a secret value.",
+    "behavior": "Execute the supported subset stated below using concrete IDs; refresh server state after writes. Other cases keep the original form and show a submit error.",
+    "acceptance": "Preserve empty strings, masks, overrides and stale ETags. Unsupported metadata/references fail without writes; returned history and usage must be complete and redacted.",
+    "source_line": 6763
+  },
+  {
+    "action": "y-view",
+    "status": "Client",
+    "priority": "—",
+    "evidence": "No mutation endpoint: original local interaction over the loaded API inventory.",
+    "gap": "No backend extension for this local action.",
+    "behavior": "Run the original event handler, navigation, editor state and leave confirmation.",
+    "acceptance": "Match the untouched archive for URL, selected section, scope, input and keyboard behavior.",
+    "source_line": 6816
+  }
+]

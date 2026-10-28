@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "assets": [
+    {
+      "id": "restored-frontend",
+      "paths": ["frontend/reference"],
+      "status": "PENDING_OWNER_CONFIRMATION",
+      "evidence": "frontend/PROVENANCE.md",
+      "reason": "Archive provenance is recorded; redistribution authorization is not yet documented."
+    },
+    {
+      "id": "container-distribution",
+      "paths": ["build/Dockerfile.controller", "build/Dockerfile.gateway"],
+      "status": "PENDING_ARTIFACT_REVIEW",
+      "reason": "Final image SBOM, upstream license copies and redistributed Docker CLI/Compose notices require inspection."
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+# Standalone Gateways require the Controller's shared PostgreSQL/MySQL leader
+# store. Set the actual private DSN through NSC_STORAGE__DSN or a protected
+# installation config; Compose supplies it from the selected database profile.
+# SQLite uses controller.local_gateway and never a separate Agent process.
+storage:
+  driver: postgres
+  dsn: ""
+  auto_migrate: false
+  ha: true
+
+agent:
+  mode: production
+  gateway_id: ""
+  pool_id: ""
+  name: gateway
+  # Public IP or DNS hostname used to produce A/AAAA/CNAME setup hints.
+  public_address: ""
+  controller_address: "controller:9443"
+  server_name: controller
+  ca_cert_file: "/run/nsc/ca.crt"
+  tls_cert_file: "/run/nsc/agent.crt"
+  tls_key_file: "/run/nsc/agent.key"
+  state_dir: "/var/lib/nsc"
+  probe_workers: 32
+  heartbeat_interval: 5s
+
+nginx:
+  binary: "/usr/sbin/nginx"
+  generation_dir: "/var/lib/nsc/generations"
+  main_config_path: "/etc/nginx/nginx.conf"
+  keep_generations: 3
+  worker_processes: auto
+  # External HTTPS/UDP port advertised to clients; sandbox overrides to 18443.
+  http3_advertised_port: 443

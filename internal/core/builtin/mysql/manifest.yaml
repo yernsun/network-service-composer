@@ -1,0 +1,35 @@
+{
+  "name": "MySQL",
+  "version": "8.4.11",
+  "description": "MySQL — Compose template with persistent storage and explicit credentials",
+  "variables": [
+    {
+      "key": "MYSQL_ROOT_PASSWORD",
+      "required": true,
+      "description": "Database root password",
+      "secret": true,
+      "min_length": 16
+    },
+    {
+      "key": "MYSQL_PASSWORD",
+      "required": true,
+      "description": "Application database password",
+      "secret": true,
+      "min_length": 16
+    },
+    {
+      "key": "MYSQL_DATABASE",
+      "required": false,
+      "description": "Initial database",
+      "default": "app",
+      "pattern": "^[a-zA-Z][a-zA-Z0-9_]{0,62}$"
+    },
+    {
+      "key": "MYSQL_USER",
+      "required": false,
+      "description": "Non-root application user",
+      "default": "app",
+      "pattern": "^[a-zA-Z][a-zA-Z0-9_]{0,30}$"
+    }
+  ]
+}

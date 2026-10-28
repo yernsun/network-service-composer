@@ -1,0 +1,64 @@
+# Placement/configuration reference. One Compose host does not provide HA.
+# Use separately owned configurations; DB/LB/host failover remains external.
+name: nsc-ha-reference
+x-controller: &controller
+  image: ${NSC_HA_CONTROLLER_IMAGE:?Set an immutable Controller image digest}
+  command: [serve, --config, /etc/nsc/controller.yaml]
+  read_only: true
+  restart: unless-stopped
+  security_opt: [no-new-privileges:true]
+  cap_drop: [ALL]
+  tmpfs: [/tmp:uid=65532,gid=65532,mode=1777]
+  networks: [control]
+  healthcheck:
+    test: [CMD-SHELL, "wget -q -O /dev/null http://127.0.0.1:8080/readyz"]
+    interval: 5s
+    timeout: 3s
+    retries: 3
+x-gateway: &gateway
+  image: ${NSC_HA_GATEWAY_IMAGE:?Set an immutable Gateway image digest}
+  read_only: true
+  restart: unless-stopped
+  security_opt: [no-new-privileges:true]
+  cap_drop: [ALL]
+  sysctls: {net.ipv4.ip_unprivileged_port_start: "0"}
+  tmpfs: [/tmp:uid=101,gid=101,mode=1777, /var/cache/nginx:uid=101,gid=101,mode=0750]
+  networks: [control, ingress]
+services:
+  controller-a:
+    <<: *controller
+    volumes:
+      - ${NSC_HA_CONFIG_DIR:?Set an operator-owned config directory}/controller-a.yaml:/etc/nsc/controller.yaml:ro
+      - ${NSC_HA_SECRET_DIR:?Set an operator-owned secret directory}/controller-a:/run/secrets:ro
+  controller-b:
+    <<: *controller
+    volumes:
+      - ${NSC_HA_CONFIG_DIR}/controller-b.yaml:/etc/nsc/controller.yaml:ro
+      - ${NSC_HA_SECRET_DIR}/controller-b:/run/secrets:ro
+  controller-c:
+    <<: *controller
+    volumes:
+      - ${NSC_HA_CONFIG_DIR}/controller-c.yaml:/etc/nsc/controller.yaml:ro
+      - ${NSC_HA_SECRET_DIR}/controller-c:/run/secrets:ro
+  gateway-a:
+    <<: *gateway
+    volumes:
+      - ${NSC_HA_CONFIG_DIR}/gateway-a.yaml:/etc/nsc/agent.yaml:ro
+      - ${NSC_HA_SECRET_DIR}/gateway-a:/run/secrets:ro
+      - gateway-a-state:/var/lib/nsc
+      - gateway-a-config:/etc/nginx
+  gateway-b:
+    <<: *gateway
+    volumes:
+      - ${NSC_HA_CONFIG_DIR}/gateway-b.yaml:/etc/nsc/agent.yaml:ro
+      - ${NSC_HA_SECRET_DIR}/gateway-b:/run/secrets:ro
+      - gateway-b-state:/var/lib/nsc
+      - gateway-b-config:/etc/nginx
+networks:
+  control: {}
+  ingress: {external: true, name: "${NSC_HA_INGRESS_NETWORK:?Set a private ingress network}"}
+volumes:
+  gateway-a-state: {}
+  gateway-a-config: {}
+  gateway-b-state: {}
+  gateway-b-config: {}

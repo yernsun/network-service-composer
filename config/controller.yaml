@@ -1,0 +1,144 @@
+server:
+  http_listen: ":8080"
+  public_url: "http://controller:8080"
+  http_tls_cert_file: ""
+  http_tls_key_file: ""
+  grpc_listen: ":9443"
+  grpc_tls_cert_file: "/run/nsc/controller.crt"
+  grpc_tls_key_file: "/run/nsc/controller.key"
+  grpc_client_ca_file: "/run/nsc/ca.crt"
+  read_timeout: 15s
+  write_timeout: 30s
+  rate_limit_rps: 50
+  rate_limit_burst: 100
+
+metrics:
+  listen: ":9090"
+
+storage:
+  driver: postgres
+  dsn: "postgres://nsc:replace-me@postgres:5432/nsc?sslmode=disable"
+  auto_migrate: true
+  ha: true
+
+# Docker writes require both this global switch and management_enabled on the
+# selected Runtime. Keep both disabled until explicit application management
+# is intended.
+management:
+  # Optional fallback for atomic project creation; existing environments do not migrate.
+  default_runtime_id: ""
+  enabled: false
+  docker_cli: /usr/local/bin/docker
+  work_dir: /tmp/nsc-applications
+  # Exact names of administrator-provisioned Docker resources that managed
+  # Compose/Stack definitions may reference with external: true.
+  external_secrets: []
+  external_configs: []
+  poll_interval: 1s
+  heartbeat_interval: 5s
+  stale_after: 30s
+  deploy_timeout: 10m
+
+security:
+  admin_username: admin
+  admin_token: ""
+  admin_token_file: ""
+  session_key: ""
+  session_key_file: ""
+  primary_key_id: v1
+  encryption_keys: {}
+  encryption_keys_file: ""
+
+controller:
+  # Cluster Gateway ownership is explicitly provisioned after the Swarm runtime
+  # is registered. Generate IDs with scripts/system-project-registration.py and
+  # install the same registration on every Controller; no name-based adoption.
+  # system_project:
+  #   runtime_id: rt_<registered-swarm-runtime>
+  #   cluster_id: <actual-swarm-cluster-id>
+  #   services:
+  #     - object_id: <actual-controller-or-database-service-id>
+  #       environment: prod
+  #     - object_id: <actual-isolated-sandbox-service-id>
+  #       environment: sandbox
+  instance_id: "controller"
+  internal:
+    listen: ":9444"
+    url: "https://controller:9444"
+    ca_file: "/run/nsc/ca.crt"
+    cert_file: "/run/nsc/controller.crt"
+    key_file: "/run/nsc/controller.key"
+    grpc_address: "controller:9443"
+  local_gateway: false
+  # Provisioned independently from each node's Docker engine. Cluster mode
+  # requires one unique binding per instance and a shared PostgreSQL/MySQL store.
+  # Each internal URL must be covered by that instance's TLS certificate.
+  nodes: []
+  # For host metrics, bind /proc read-only here and the host / read-only at
+  # host_root (with recursive slave propagation). Empty paths report unavailable.
+  host_proc: ""
+  host_root: ""
+  # - instance_id: controller-main
+  #   node_id: <swarm-node-id>
+  #   engine_id: <docker-engine-id>
+  #   cluster_id: <swarm-cluster-id>
+  #   url: https://controller-main:9444
+  discovery:
+    events:
+      enabled: true
+      debounce: 500ms
+      max_delay: 3s
+    reconcile:
+      interval: 15s
+      debounce: 0s
+      max_delay: 0s
+    full_reconcile:
+      interval: 5m
+      debounce: 0s
+      max_delay: 0s
+    stale_endpoint_timeout: 60s
+    offline_policy: retain-ready
+  runtime_events:
+    enabled: true
+    retention: 2160h
+  endpoint:
+    readiness:
+      mode: auto
+      path: ""
+      scheme: http
+      interval: 2s
+      timeout: 1s
+      success_threshold: 2
+      failure_threshold: 3
+      startup_grace_period: 2s
+      startup_timeout: 60s
+      tcp_fallback: true
+    drain_timeout: 30s
+  gateway:
+    reconcile:
+      interval: 0s
+      debounce: 250ms
+      max_delay: 2s
+    periodic_interval: 30s
+    offline_timeout: 15s
+  certificate:
+    reconcile_interval: 1h
+    renew_before_expiry: 720h
+  gc:
+    endpoint_retention: 24h
+    failed_certificate_retention: 720h
+
+acme:
+  directory_url: "https://acme-v02.api.letsencrypt.org/directory"
+  email: ""
+  accept_terms: false
+  dns_providers: {}
+
+i18n:
+  default_language: en
+
+docker_credentials: {}
+
+# Optional administrator-owned Docker config.json Secrets. Applications store
+# only one of these references; credentials are never copied into the database.
+registry_credentials: {}

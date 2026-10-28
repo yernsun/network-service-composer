@@ -1,0 +1,5 @@
+src/shared/api/schema.d.ts
+src/shared/i18n/generated
+node_modules
+coverage
+test-results

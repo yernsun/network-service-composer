@@ -1,0 +1,4 @@
+{
+  "variant": "nsc",
+  "source": "../api/openapi.yaml"
+}

@@ -1,0 +1,28 @@
+name: network-service-composer-entrypoint
+services:
+  entrypoint:
+    image: nginx:1.30.4-alpine
+    container_name: network-service-composer-entrypoint
+    entrypoint: [nginx]
+    command: [-g, "daemon off;"]
+    user: "101:101"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
+    labels:
+      nsc.component: controller-entrypoint
+    ports:
+      - "7080:8080"
+    volumes:
+      - ./controller-entrypoint.conf:/etc/nginx/nginx.conf:ro
+    tmpfs:
+      - /tmp:rw,nosuid,noexec,size=32m
+    networks: [nsc-ingress]
+    healthcheck:
+      test: [CMD-SHELL, "wget -q -O /dev/null http://127.0.0.1:8080/readyz"]
+      interval: 10s
+      retries: 3
+networks:
+  nsc-ingress:
+    external: true

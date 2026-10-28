@@ -1,0 +1,35 @@
+{
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "tests/**/*.ts",
+    "src/**/*.js"
+  ],
+  "compilerOptions": {
+    "composite": true,
+    "baseUrl": ".",
+    "paths": {
+      "@project-lifecycle": ["./src/data/project-lifecycle-real.ts"],
+      "@/*": [
+        "./src/*"
+      ],
+      "@workspace-transport": [
+        "./src/data/transport.ts"
+      ],
+      "@workspace-data": [
+        "./src/data/api.js"
+      ]
+    },
+    "resolveJsonModule": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "types": [
+      "vitest/globals",
+      "node"
+    ],
+    "allowJs": true,
+    "checkJs": false
+  }
+}

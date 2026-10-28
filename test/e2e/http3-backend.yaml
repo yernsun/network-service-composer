@@ -1,0 +1,30 @@
+# Optional isolated backend for manual HTTP/3 regression. No host ports or volumes.
+services:
+  web:
+    image: nginx:1.31.5-alpine3.24@sha256:72ba65eb42c10344912a84ff42408db7d34f2feb642204570ab8fc5ffd29f1d3
+    command:
+      - /bin/sh
+      - -ec
+      - |
+        sed -i 's/worker_processes  auto;/worker_processes  1;/' /etc/nginx/nginx.conf
+        exec nginx -g 'daemon off;'
+    cpus: 0.25
+    mem_limit: 64m
+    restart: unless-stopped
+    labels:
+      nsc.enable: "true"
+      nsc.port: "80"
+      nsc.protocol: http
+      nsc.readiness.mode: auto
+    networks:
+      ingress:
+        aliases: [nsc-http3-regression_web]
+    healthcheck:
+      test: [CMD-SHELL, "wget -q -O /dev/null http://127.0.0.1/"]
+      interval: 5s
+      timeout: 2s
+      retries: 3
+networks:
+  ingress:
+    external: true
+    name: ${NSC_HTTP3_NETWORK:-nsc-ingress}

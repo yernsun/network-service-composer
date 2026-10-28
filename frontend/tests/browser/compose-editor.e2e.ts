@@ -1,0 +1,23 @@
+import { expect, test } from '@playwright/test'
+
+test('Compose editor shows dark numbered lines, current diagnostics and live preview', async ({ page }) => {
+  await page.goto('/tests/browser/compose-editor.html')
+  const editor = page.locator('#y-compose-code')
+  await expect(editor).toHaveValue(/image: nginx:\$\{TAG\}/)
+  await expect(page.locator('.compose-code-gutter span')).toHaveCount(4)
+  await expect(page.locator('.compose-code-wrap')).toHaveCSS('background-color', 'rgb(20, 37, 50)')
+  await page.locator('.y-tabs button').nth(2).click()
+  await expect(page.locator('.compose-preview pre')).toContainText('image: nginx:1.29')
+  await page.locator('.y-tabs button').first().click()
+  await editor.fill('services:\n  web: [')
+  await expect(page.getByText('YAML_SYNTAX_ERROR')).toBeVisible()
+  await expect(page.locator('.compose-code-gutter .invalid')).toHaveCount(1)
+  await page.getByText('YAML_SYNTAX_ERROR').click()
+  await expect(editor).toBeFocused()
+  await editor.fill('services:\n  web:\n    image: nginx:${TAG}\n')
+  await editor.focus()
+  await editor.press('Control+Home')
+  await editor.press('Tab')
+  await expect(editor).toHaveValue(/^ {2}services:/)
+  await page.screenshot({ path: test.info().outputPath('compose-editor.png') })
+})
