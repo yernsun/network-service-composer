@@ -107,6 +107,17 @@ Volume management behavior and the API contract are described in [volume managem
 
 Tag `v*` builds `linux/amd64` and `linux/arm64` binaries and multi-platform `controller`/`gateway` OCI images. The release workflow attaches checksums, SPDX SBOM and provenance. Image bases must be updated together with [image-lock.json](../build/image-lock.json) and reviewed as a dependency change.
 
+The Controller rebuilds Docker Compose from checksum-pinned upstream source,
+applying [a locked dependency patch](../build/compose-dependencies.patch) for
+CVE-2026-78669. The plugin reports `v5.6.1-nsc.1`; Docker CLI still comes from the
+pinned CLI image. Keep the source checksum, module checksums, image lock and
+third-party modification notice consistent when updating Compose. Validate the
+bundled plugin as the Controller user, including manifest validation and an
+isolated Compose lifecycle, and scan the final image with the existing
+HIGH/CRITICAL gate. Upgrading NSC's own Go modules does not update this separate
+binary. Remove the local patch only after a pinned upstream replacement has
+passed the same checks.
+
 ## Vue management console
 
 The frontend was generated using Project Forge 0.3.0 and imported into frontend/; see [provenance](../frontend/PROVENANCE.md). The NSC root is not generator-managed. Node 24.20.0 is a build dependency; production remains a Go executable.

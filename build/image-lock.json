@@ -15,8 +15,20 @@
     "docker_dind": "docker:28-dind@sha256:2a232a42256f70d78e3cc5d2b5d6b3276710a0de0596c145f627ecfae90282ac",
     "registry": "registry:2@sha256:a3d8aaa63ed8681a604f1dea0aa03f100d5895b6a58ace528858a7b332415373"
   },
+  "compose_build": {
+    "upstream_version": "v5.6.1",
+    "version": "v5.6.1-nsc.1",
+    "source": "https://codeload.github.com/docker/compose/tar.gz/6cbc19a3fd59e305fb814dca4d854a4fb67d2941",
+    "sha256": "2293b570f258dfc6e38e0bfdd3fa0e710324a7cf0449994304b524af8fb4f06c",
+    "patch": "build/compose-dependencies.patch",
+    "modules": {
+      "golang.org/x/net": "v0.60.0",
+      "golang.org/x/crypto": "v0.57.0",
+      "golang.org/x/text": "v0.42.0"
+    }
+  },
   "tools": {
     "docker_cli": "29.9.2",
-    "docker_compose": "5.6.1"
+    "docker_compose": "5.6.1-nsc.1"
   }
 }

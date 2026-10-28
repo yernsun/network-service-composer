@@ -47,3 +47,11 @@ Pinned Docker CLI and Compose top-level licenses are retained in
 [container tool notices](third_party/container-tools/sources.json). Their binary
 transitive dependencies and the base distribution still require artifact review;
 these copies alone do not close that release gate.
+
+The Controller includes a modified Docker Compose v5.6.1 build, identified as
+`v5.6.1-nsc.1`. NSC upgrades `golang.org/x/net` to v0.60.0 to address
+CVE-2026-78669, with the required `x/crypto` v0.57.0 and `x/text` v0.42.0
+dependencies. The upstream source archive is checksum-pinned in
+[the image lock](build/image-lock.json); the exact module changes are recorded in
+[the dependency patch](build/compose-dependencies.patch). Docker CLI remains the
+unmodified binary from its pinned upstream image.

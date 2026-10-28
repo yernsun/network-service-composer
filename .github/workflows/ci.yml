@@ -270,6 +270,9 @@ jobs:
           -v /tmp/nsc-agent-tests:/nsc-agent-tests:ro
           nsc-gateway:ci
           -test.run TestGenerationManagerWithRealNGINX -test.v
+      - name: Test bundled Compose lifecycle and volume retention
+        if: matrix.name == 'controller'
+        run: python3 scripts/test-controller-compose.py --image nsc-controller:ci
       - name: Scan image
         id: scan
         uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # 0.35.0

@@ -17,6 +17,17 @@
       "sha256": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd"
     }
   ],
+  "modifications": [
+    {
+      "component": "docker-compose",
+      "upstream_version": "v5.6.1",
+      "distributed_version": "v5.6.1-nsc.1",
+      "source_commit": "6cbc19a3fd59e305fb814dca4d854a4fb67d2941",
+      "build_lock": "build/image-lock.json",
+      "patch": "build/compose-dependencies.patch",
+      "description": "NSC rebuild with golang.org/x/net v0.60.0 for CVE-2026-78669, including its required x/crypto v0.57.0 and x/text v0.42.0 dependencies."
+    }
+  ],
   "limitations": [
     "Top-level upstream notices only; binary transitive dependency and base-OS redistribution review remains required."
   ]
