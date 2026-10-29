@@ -10,6 +10,12 @@ for examples, local report storage and the separate history-cleanup boundary.
 
 ## CI isolation and recovery fixtures
 
+CI cancels superseded runs for the same workflow, event and branch or pull
+request. Cancelled checks remain cancelled; their evidence cannot satisfy the
+readiness gate. Validate changes locally and batch related fixes before pushing
+to avoid repeated full CI runs. A passing local check does not substitute for
+required remote release evidence.
+
 The Ubuntu 24.04 unit job grants user namespace access to `/usr/bin/unshare`
 through a dedicated AppArmor profile and verifies that the resulting network
 namespace contains only loopback. It does not disable the system-wide AppArmor

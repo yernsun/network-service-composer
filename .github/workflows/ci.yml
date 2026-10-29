@@ -9,6 +9,11 @@ on:
 permissions:
   contents: read
 
+# A newer commit supersedes pending verification for the same branch or PR.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 env:
   GO_VERSION: 1.27.3
 
