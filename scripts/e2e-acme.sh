@@ -232,6 +232,12 @@ wait_gateway_converged() {
   return 1
 }
 
+wait_gateway_certificate() {
+  python3 "$script_dir/wait_gateway_certificate.py" \
+    --ca-file "$secrets/pebble-issued-root.pem" --connect-host "$fixture_host" \
+    --port "$gateway_https_port" --server-name "$1" --fingerprint "$2"
+}
+
 certificate_json() {
   curl -fsS -H 'Authorization: Bearer e2e-admin-token' "$api/api/v1/certificates/$1" | jq -c '.data'
 }
@@ -299,6 +305,7 @@ curl -fsS -X POST -H 'Authorization: Bearer e2e-admin-token' \
   "$api/api/v1/certificates/$certificate_one_id/renew" >/dev/null
 certificate_one=$(wait_certificate_active "$certificate_one_id")
 fingerprint_one=$(printf '%s' "$certificate_one" | jq -r '.fingerprint')
+wait_gateway_certificate "$domain_one" "$fingerprint_one"
 wait_gateway_converged
 curl -sS --cacert "$secrets/pebble-issued-root.pem" \
   --resolve "$domain_one:$gateway_https_port:$fixture_host" \
@@ -309,7 +316,9 @@ domain_state=$(curl -fsS -H 'Authorization: Bearer e2e-admin-token' "$api/api/v1
 stage=renewal
 curl -fsS -X POST -H 'Authorization: Bearer e2e-admin-token' \
   "$api/api/v1/certificates/$certificate_one_id/renew" >/dev/null
-wait_certificate_active "$certificate_one_id" "$fingerprint_one" >/dev/null
+certificate_renewed=$(wait_certificate_active "$certificate_one_id" "$fingerprint_one")
+fingerprint_renewed=$(printf '%s' "$certificate_renewed" | jq -r '.fingerprint')
+wait_gateway_certificate "$domain_one" "$fingerprint_renewed"
 wait_gateway_converged
 curl -sS --cacert "$secrets/pebble-issued-root.pem" \
   --resolve "$domain_one:$gateway_https_port:$fixture_host" \
@@ -330,7 +339,9 @@ docker network connect --alias pebble "$network" "$pebble"
 sleep 2
 curl -fsS -X POST -H 'Authorization: Bearer e2e-admin-token' \
   "$api/api/v1/certificates/$certificate_two_id/renew" >/dev/null
-wait_certificate_active "$certificate_two_id" >/dev/null
+certificate_two=$(wait_certificate_active "$certificate_two_id")
+fingerprint_two=$(printf '%s' "$certificate_two" | jq -r '.fingerprint')
+wait_gateway_certificate "$domain_two" "$fingerprint_two"
 wait_gateway_converged
 curl -sS --cacert "$secrets/pebble-issued-root.pem" \
   --resolve "$domain_two:$gateway_https_port:$fixture_host" \

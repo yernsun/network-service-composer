@@ -15,3 +15,16 @@ def wait_for_postgres(inner, node, attempts=60, delay=1, sleep=time.sleep):
             if attempt + 1 < attempts:
                 sleep(delay)
     raise RuntimeError('fixture database TCP readiness timed out')
+
+
+def start_migrated_controllers(inner, nodes, image):
+    mounts = ('--network', 'host', '--user', '0',
+              '-v', '/fixture/pki:/run/nsc:ro',
+              '-v', '/fixture/controller.json:/etc/nsc/controller.yaml:ro')
+    # Match HA installation: migrate once before any controller is started.
+    # The per-node configurations must set storage.auto_migrate=false.
+    inner(nodes[0], 'run', '--rm', *mounts, image,
+          'migrate', '--config', '/etc/nsc/controller.yaml')
+    for node in nodes:
+        inner(node, 'run', '-d', '--name', 'fixture-controller', *mounts,
+              '-v', '/var/run/docker.sock:/var/run/docker.sock', image)

@@ -19,6 +19,12 @@ contention during SQLite coverage and race suites. Both `TMPDIR` and `GOTMPDIR`
 point there because Go 1.27 test directories honor `GOTMPDIR`. Build caches and
 performance benchmarks remain on disk.
 This is not evidence of disk durability or production storage performance.
+CI allows 60 minutes per race-test package and 120 minutes for the combined unit
+job, including frontend checks, compilation, fuzzing, benchmarks and vulnerability
+scanning. These are cumulative execution budgets for hosted runners; individual
+production operation deadlines and coverage thresholds remain unchanged.
+Retention tests cancel at an observed state boundary rather than assuming a SQL
+write will complete within 20 milliseconds under race instrumentation.
 
 Recovery and reconciliation helpers are built with `CGO_ENABLED=0` because they
 run inside the Alpine controller image, independently of the build host's libc.
@@ -26,6 +32,14 @@ Both fixtures retain their real database, protected-write and recovery checks.
 The Swarm retention fixture waits for PostgreSQL TCP readiness before starting
 controllers. Socket-only readiness can succeed against the image's temporary
 initialization server; exhausting the readiness deadline must fail the fixture.
+After readiness, the fixture runs a single migration before starting either HA
+controller, with automatic migration disabled in both controller configurations.
+Concurrent schema initialization is not part of the supported HA install sequence.
+ACME acceptance also waits for the actual TLS endpoint to serve the newly issued
+certificate fingerprint, with CA and hostname verification enabled. An ACTIVE
+certificate or a previous configuration ACK alone does not prove distribution.
+The same check applies to renewal and recovery, so serving an old certificate
+cannot satisfy the new generation's acceptance.
 
 ## Temporarily disabled verification
 

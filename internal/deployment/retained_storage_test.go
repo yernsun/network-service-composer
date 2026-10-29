@@ -14,6 +14,15 @@ type retentionRuntimeFixture struct {
 	stopRuntimeFixture
 	verifyErr      error
 	verifyFailures int
+	afterObserve   func()
+}
+
+func (f *retentionRuntimeFixture) Observe(ctx context.Context, rt model.Runtime, app model.Application, services []model.Service) (projectlife.Observation, error) {
+	observed, err := f.stopRuntimeFixture.Observe(ctx, rt, app, services)
+	if f.afterObserve != nil {
+		f.afterObserve()
+	}
+	return observed, err
 }
 
 func (f *retentionRuntimeFixture) VerifyRetention(context.Context, model.Runtime, model.Application, []projectlife.RetainedVolume) error {
@@ -107,12 +116,19 @@ func TestCaptureStorageRecordsDataBeforeReadinessFailure(t *testing.T) {
 			}
 			w := NewWorkerWithRunner(f.store, nil, f.keyring, f.config, nil, &recordingRunner{})
 			w.lifecycle = life
-			timeout := 20 * time.Millisecond
-			if mode == "healthy" || mode == "unhealthy" {
-				timeout = 5 * time.Second
-			}
-			ctx, cancel := context.WithTimeout(context.Background(), timeout)
+			guard, stop := context.WithTimeout(t.Context(), 30*time.Second)
+			defer stop()
+			ctx, cancel := context.WithCancel(guard)
 			defer cancel()
+			observations := 0
+			life.afterObserve = func() {
+				observations++
+				// A second observation means the first retained-volume record has
+				// completed. Cancel at that boundary, not during a timed SQL write.
+				if mode == "unknown storage" || mode == "starting" && observations == 2 {
+					cancel()
+				}
+			}
 			err := w.captureRetainedStorage(ctx, f.runtime, app)
 			if mode == "healthy" && err != nil {
 				t.Fatal("healthy mounted service rejected", err)
@@ -120,7 +136,7 @@ func TestCaptureStorageRecordsDataBeforeReadinessFailure(t *testing.T) {
 			if mode == "unhealthy" && !errors.Is(err, projectlife.ErrReadiness) {
 				t.Fatal("failed readiness misreported", err)
 			}
-			if (mode == "starting" || mode == "unknown storage") && !errors.Is(err, context.DeadlineExceeded) {
+			if (mode == "starting" || mode == "unknown storage") && !errors.Is(err, context.Canceled) {
 				t.Fatal("unknown readiness accepted", err)
 			}
 			_, _, recordErr := w.retainedStorage(context.Background(), app)

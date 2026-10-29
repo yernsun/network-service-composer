@@ -1,6 +1,6 @@
 """Run official marketplace acceptance in disposable Docker-in-Docker nodes."""
 import atexit,base64,json,os,pathlib,subprocess,time,uuid,urllib.request,urllib.error
-from postgres_fixture import wait_for_postgres
+from postgres_fixture import wait_for_postgres, start_migrated_controllers
 prefix='nsc-market-swarm-'+uuid.uuid4().hex[:8]
 work=pathlib.Path('/tmp/'+prefix);work.mkdir();os.chmod(work,0o700)
 created_nodes=[];created_network=None
@@ -60,9 +60,9 @@ for n,ip in zip(nodes,ips):
 inner(nodes[0],'run','-d','--name','fixture-db','-p','5439:5432','-e','POSTGRES_DB=nsc','-e','POSTGRES_USER=nsc','-e','POSTGRES_PASSWORD='+secret,postgres_image_id)
 wait_for_postgres(inner,nodes[0])
 for n,ip in zip(nodes,ips):
- config={'management':{'enabled':True,'deploy_timeout':'8m'},'storage':{'driver':'postgres','dsn':'postgres://nsc:'+secret+'@'+ips[0]+':5439/nsc?sslmode=disable','ha':True},'security':{'admin_token':secret,'session_key':secret+'session','primary_key_id':'v1','encryption_keys':{'v1':base64.b64encode(b'01234567890123456789012345678901').decode()}},'server':{'http_listen':':8080','grpc_listen':':9443','grpc_tls_cert_file':'/run/nsc/'+n+'.crt','grpc_tls_key_file':'/run/nsc/'+n+'.key','grpc_client_ca_file':'/run/nsc/ca.crt'},'controller':{'instance_id':n,'local_gateway':False,'nodes':bindings,'internal':{'listen':':9444','url':'https://'+ip+':9444','grpc_address':ip+':9443','ca_file':'/run/nsc/ca.crt','cert_file':'/run/nsc/'+n+'.crt','key_file':'/run/nsc/'+n+'.key'}}}
+ config={'management':{'enabled':True,'deploy_timeout':'8m'},'storage':{'driver':'postgres','dsn':'postgres://nsc:'+secret+'@'+ips[0]+':5439/nsc?sslmode=disable','ha':True,'auto_migrate':False},'security':{'admin_token':secret,'session_key':secret+'session','primary_key_id':'v1','encryption_keys':{'v1':base64.b64encode(b'01234567890123456789012345678901').decode()}},'server':{'http_listen':':8080','grpc_listen':':9443','grpc_tls_cert_file':'/run/nsc/'+n+'.crt','grpc_tls_key_file':'/run/nsc/'+n+'.key','grpc_client_ca_file':'/run/nsc/ca.crt'},'controller':{'instance_id':n,'local_gateway':False,'nodes':bindings,'internal':{'listen':':9444','url':'https://'+ip+':9444','grpc_address':ip+':9443','ca_file':'/run/nsc/ca.crt','cert_file':'/run/nsc/'+n+'.crt','key_file':'/run/nsc/'+n+'.key'}}}
  (work/(n+'.json')).write_text(json.dumps(config));os.chmod(work/(n+'.json'),0o600);cmd('docker','exec',n,'mkdir','-p','/fixture');cmd('docker','cp',str(pki),n+':/fixture/pki');cmd('docker','cp',str(work/(n+'.json')),n+':/fixture/controller.json');cmd('docker','exec',n,'chmod','-R','go-rwx','/fixture')
- inner(n,'run','-d','--name','fixture-controller','--network','host','--user','0','-v','/var/run/docker.sock:/var/run/docker.sock','-v','/fixture/pki:/run/nsc:ro','-v','/fixture/controller.json:/etc/nsc/controller.yaml:ro',image)
+start_migrated_controllers(inner,nodes,image)
 # Both HA controllers must have started before marketplace behavior is tested.
 # A failed collector controller is a fixture startup failure, not storage proof.
 health_opener=urllib.request.build_opener(urllib.request.ProxyHandler({}))
