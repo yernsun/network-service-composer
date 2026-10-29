@@ -80,7 +80,7 @@ class ReconciliationFixture(module.RecoveryFixture):
         if self.args.controller_binary:
             self.summary['controller_binary_sha256'] = hashlib.sha256(Path(self.args.controller_binary).read_bytes()).hexdigest()
         if not self.args.helper:
-            self.run(os.environ.get('GO', 'go'), 'build', '-trimpath', '-buildvcs=false', '-o', str(self.helper), './scripts/recovery-fixture')
+            self.build_helper()
         daemon_image = self.images.get('docker_dind', LEGACY_DIND_PIN)
         self.summary['dind_reference_source'] = 'IMAGE_LOCK' if 'docker_dind' in self.images else 'EXISTING_SCHEDULER_FIXTURE_PIN'
         self.summary['dind_image_reference'] = daemon_image

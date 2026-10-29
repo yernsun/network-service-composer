@@ -70,6 +70,26 @@ jobs:
           echo "$RUNNER_TEMP/protoc/bin" >> "$GITHUB_PATH"
           go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.12
           go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.6.0
+      - name: Prepare isolated unit test execution
+        run: |
+          # Permit only unshare to create the user namespaces required by tests.
+          # Keep Ubuntu's system-wide AppArmor restriction enabled.
+          cat > "$RUNNER_TEMP/nsc-ci-unshare" <<'PROFILE'
+          abi <abi/4.0>,
+          include <tunables/global>
+          profile nsc-ci-unshare /usr/bin/unshare flags=(unconfined) {
+            userns,
+          }
+          PROFILE
+          sudo apparmor_parser -r "$RUNNER_TEMP/nsc-ci-unshare"
+          unshare -Urn -- sh -ec 'ip link set lo up; test "$(ip -o link show | wc -l)" -eq 1'
+          # SQLite fsync on the runner disk dominates the instrumented suites.
+          # Go 1.27 testing.T.TempDir also consults GOTMPDIR.
+          test_tmp="$RUNNER_TEMP/nsc-test-data"
+          mkdir -m 700 "$test_tmp"
+          sudo mount -t tmpfs -o "size=2G,mode=0700,uid=$(id -u),gid=$(id -g),nosuid,nodev" tmpfs "$test_tmp"
+          echo "TMPDIR=$test_tmp" >> "$GITHUB_ENV"
+          echo "GOTMPDIR=$test_tmp" >> "$GITHUB_ENV"
       - name: NSC engineering harness
         id: harness
         continue-on-error: true
@@ -103,10 +123,19 @@ jobs:
           GOMAXPROCS=2 go test -run '^$' -fuzz '^FuzzNGINXPathValidation$' -fuzztime=5s ./internal/nginx
       - name: Large capacity benchmarks
         id: benchmarks
-        run: make bench-large
+        run: TMPDIR="$RUNNER_TEMP" GOTMPDIR="$RUNNER_TEMP" make bench-large
       - name: Go vulnerability scan
         id: vulnerability
         run: go run golang.org/x/vuln/cmd/govulncheck@v1.7.0 ./...
+      - name: Clean isolated unit test data
+        if: always()
+        run: |
+          if mountpoint -q "$RUNNER_TEMP/nsc-test-data"; then
+            sudo umount "$RUNNER_TEMP/nsc-test-data"
+          fi
+          if test -f "$RUNNER_TEMP/nsc-ci-unshare"; then
+            sudo apparmor_parser -R "$RUNNER_TEMP/nsc-ci-unshare"
+          fi
       - name: Enforce harness outcome
         if: always()
         env:
@@ -495,7 +524,9 @@ jobs:
         run: NSC_RETENTION_ACCEPTANCE=true python3 scripts/e2e-market-swarm.py
       - name: Verify all-store protected backup restoration
         id: recovery
-        run: python3 scripts/e2e-recovery.py --image "nsc-controller:v$(cat VERSION)" --output coverage/p0/recovery
+        run: |
+          python3 -m unittest discover -s scripts -p 'test_recovery*.py' -v
+          python3 scripts/e2e-recovery.py --image "nsc-controller:v$(cat VERSION)" --output coverage/p0/recovery
       - name: Verify interrupted runtime reconciliation
         id: reconciliation
         run: python3 scripts/e2e-recovery-reconciliation.py --image "nsc-controller:v$(cat VERSION)" --output coverage/p0/reconciliation

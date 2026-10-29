@@ -8,6 +8,22 @@ Keep operator deployment evidence and environment files outside Git. Run
 CI also checks its committed snapshot. See [repository privacy](repository-privacy.md)
 for examples, local report storage and the separate history-cleanup boundary.
 
+## CI isolation and recovery fixtures
+
+The Ubuntu 24.04 unit job grants user namespace access to `/usr/bin/unshare`
+through a dedicated AppArmor profile and verifies that the resulting network
+namespace contains only loopback. It does not disable the system-wide AppArmor
+restriction or bypass namespace tests. The profile is unloaded after the checks.
+Disposable unit-test data uses a private tmpfs directory to avoid disk fsync
+contention during SQLite coverage and race suites. Both `TMPDIR` and `GOTMPDIR`
+point there because Go 1.27 test directories honor `GOTMPDIR`. Build caches and
+performance benchmarks remain on disk.
+This is not evidence of disk durability or production storage performance.
+
+Recovery and reconciliation helpers are built with `CGO_ENABLED=0` because they
+run inside the Alpine controller image, independently of the build host's libc.
+Both fixtures retain their real database, protected-write and recovery checks.
+
 ## Temporarily disabled verification
 
 At the maintainer's request, the OVH-specific provider-construction and profile

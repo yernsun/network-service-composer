@@ -37,10 +37,10 @@ class RecoveryFixture:
         self.sequence = 0
         self.helper = Path(args.helper).resolve() if args.helper else self.output / 'fixture-helper'
 
-    def run(self, *arguments, stdout=None, check=True):
+    def run(self, *arguments, stdout=None, check=True, env=None):
         self.sequence += 1
         result = subprocess.run(arguments, stdout=stdout or subprocess.PIPE, stderr=subprocess.PIPE, timeout=240,
-                                cwd=self.repository)
+                                cwd=self.repository, env=env)
         if result.returncode:
             path = self.output / f'command-{self.sequence}-error.log'
             path.write_bytes(result.stderr)
@@ -48,6 +48,13 @@ class RecoveryFixture:
             if check:
                 raise RuntimeError(f'isolated fixture command failed (exit {result.returncode}); see private diagnostics')
         return result.returncode, result.stdout or b''
+
+    def build_helper(self):
+        # The helper executes inside the Alpine controller image, even when the
+        # runner has glibc and enables CGO by default.
+        self.run(os.environ.get('GO', 'go'), 'build', '-trimpath', '-buildvcs=false',
+                 '-o', str(self.helper), './scripts/recovery-fixture',
+                 env={**os.environ, 'CGO_ENABLED': '0'})
 
     def docker(self, *arguments, **kwargs):
         return self.run('docker', *arguments, **kwargs)
@@ -203,7 +210,7 @@ class RecoveryFixture:
         if self.args.controller_binary:
             self.summary['controller_binary_sha256'] = hashlib.sha256(Path(self.args.controller_binary).read_bytes()).hexdigest()
         if not self.args.helper:
-            self.run(os.environ.get('GO', 'go'), 'build', '-trimpath', '-buildvcs=false', '-o', str(self.helper), './scripts/recovery-fixture')
+            self.build_helper()
         self.summary['fixture_helper_sha256'] = hashlib.sha256(self.helper.read_bytes()).hexdigest()
         for driver in [self.args.driver] if self.args.driver else ('postgres', 'mysql', 'sqlite'):
             self.driver(driver)
