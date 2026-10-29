@@ -521,7 +521,9 @@ jobs:
         run: python3 scripts/e2e-installation.py --controller-image "nsc-controller:v$(cat VERSION)" --gateway-image "nsc-gateway:v$(cat VERSION)" --output coverage/p0/installation
       - name: Verify remote retention identity and safe exit
         id: retention
-        run: NSC_RETENTION_ACCEPTANCE=true python3 scripts/e2e-market-swarm.py
+        run: |
+          python3 -m unittest discover -s scripts -p 'test_postgres_fixture.py' -v
+          NSC_RETENTION_ACCEPTANCE=true python3 scripts/e2e-market-swarm.py
       - name: Verify all-store protected backup restoration
         id: recovery
         run: |

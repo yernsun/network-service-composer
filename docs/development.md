@@ -23,6 +23,9 @@ This is not evidence of disk durability or production storage performance.
 Recovery and reconciliation helpers are built with `CGO_ENABLED=0` because they
 run inside the Alpine controller image, independently of the build host's libc.
 Both fixtures retain their real database, protected-write and recovery checks.
+The Swarm retention fixture waits for PostgreSQL TCP readiness before starting
+controllers. Socket-only readiness can succeed against the image's temporary
+initialization server; exhausting the readiness deadline must fail the fixture.
 
 ## Temporarily disabled verification
 
