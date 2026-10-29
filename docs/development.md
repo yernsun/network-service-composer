@@ -19,10 +19,15 @@ contention during SQLite coverage and race suites. Both `TMPDIR` and `GOTMPDIR`
 point there because Go 1.27 test directories honor `GOTMPDIR`. Build caches and
 performance benchmarks remain on disk.
 This is not evidence of disk durability or production storage performance.
-CI allows 60 minutes per race-test package and 120 minutes for the combined unit
-job, including frontend checks, compilation, fuzzing, benchmarks and vulnerability
-scanning. These are cumulative execution budgets for hosted runners; individual
-production operation deadlines and coverage thresholds remain unchanged.
+CI runs race checks in five independent jobs: four disjoint partitions of the
+Core package's discovered tests, examples and fuzz seeds, and one job containing
+all other packages. Each job has a 60-minute budget and each test invocation a
+30-minute deadline. The runner lists the current tests rather than maintaining a
+manual allowlist; every Core test belongs to exactly one partition. The final
+source-bound gate requires evidence from all five jobs, including failed or
+cancelled partitions. The separate unit job retains the complete unpartitioned
+harness, coverage, frontend, fuzz, benchmark and vulnerability checks. Production
+operation deadlines and coverage thresholds remain unchanged.
 Retention tests cancel at an observed state boundary rather than assuming a SQL
 write will complete within 20 milliseconds under race instrumentation.
 
@@ -85,9 +90,9 @@ measurement and final admission as separate steps, each bounded by 20 minutes.
 independent measurements after a branch failure.
 Race checks use fresh results and an explicit 30-minute per-package deadline.
 The Core package includes many isolated SQL fixtures whose instrumented runtime
-can exceed Go's default 10-minute deadline. CI reserves 60 minutes for the unit
-job's sequential harness, race and remaining checks. Coverage thresholds and
-the harness's own step deadlines are unchanged.
+can exceed a single hosted runner's package budget. CI uses the complete race
+partitions described above; the local `make test-race` entry point remains an
+unpartitioned run. Coverage thresholds and harness deadlines are unchanged.
 
 `make generate` only rewrites checked-in protobuf output. `make verify-generated` generates into a temporary worktree copy and fails if output differs.
 

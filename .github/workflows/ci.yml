@@ -41,7 +41,7 @@ jobs:
           retention-days: 14
 
   unit:
-    name: Unit, race, and static checks
+    name: Unit and static checks
     timeout-minutes: 120
     runs-on: ubuntu-24.04
     steps:
@@ -110,11 +110,6 @@ jobs:
         run: |
           go mod tidy
           git diff --exit-code -- go.mod go.sum
-      - name: Race tests
-        id: race
-        # This is a cumulative package budget, not an individual operation deadline.
-        # Instrumented database fixtures exceed 30 minutes on hosted runners.
-        run: go test -race -count=1 -timeout=60m ./...
       - name: Bounded fuzz tests
         id: fuzz
         run: |
@@ -157,7 +152,7 @@ jobs:
       - name: Bind verification evidence to source
         if: always()
         env:
-          NSC_CHECK_RESULTS: '{"harness":"${{ steps.harness.outcome }}","modules":"${{ steps.modules.outcome }}","race":"${{ steps.race.outcome }}","fuzz":"${{ steps.fuzz.outcome }}","benchmarks":"${{ steps.benchmarks.outcome }}","vulnerability":"${{ steps.vulnerability.outcome }}","frontend":"${{ steps.frontend.outcome }}"}'
+          NSC_CHECK_RESULTS: '{"harness":"${{ steps.harness.outcome }}","modules":"${{ steps.modules.outcome }}","fuzz":"${{ steps.fuzz.outcome }}","benchmarks":"${{ steps.benchmarks.outcome }}","vulnerability":"${{ steps.vulnerability.outcome }}","frontend":"${{ steps.frontend.outcome }}"}'
         run: node scripts/readiness/gate.mjs record unit coverage/readiness/unit.json
       - name: Retain source-bound verification envelope
         if: always()
@@ -165,6 +160,83 @@ jobs:
         with:
           name: readiness-unit-${{ github.run_id }}-${{ github.run_attempt }}
           path: coverage/readiness/unit.json
+          if-no-files-found: error
+          retention-days: 14
+
+  race:
+    name: Race (${{ matrix.shard }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, other]
+    steps:
+      - name: Check out source
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      - name: Set up Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+      - name: Set up Node for the embedded console and evidence
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: 24.20.0
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Build embedded console
+        run: |
+          make frontend-install
+          make frontend-build
+      - name: Prepare isolated unit test execution
+        run: |
+          # Permit only unshare to create the user namespaces required by tests.
+          # Keep Ubuntu's system-wide AppArmor restriction enabled.
+          cat > "$RUNNER_TEMP/nsc-ci-unshare" <<'PROFILE'
+          abi <abi/4.0>,
+          include <tunables/global>
+          profile nsc-ci-unshare /usr/bin/unshare flags=(unconfined) {
+            userns,
+          }
+          PROFILE
+          sudo apparmor_parser -r "$RUNNER_TEMP/nsc-ci-unshare"
+          unshare -Urn -- sh -ec 'ip link set lo up; test "$(ip -o link show | wc -l)" -eq 1'
+          # SQLite fsync on the runner disk dominates the instrumented suites.
+          # Go 1.27 testing.T.TempDir also consults GOTMPDIR.
+          test_tmp="$RUNNER_TEMP/nsc-test-data"
+          mkdir -m 700 "$test_tmp"
+          sudo mount -t tmpfs -o "size=2G,mode=0700,uid=$(id -u),gid=$(id -g),nosuid,nodev" tmpfs "$test_tmp"
+          echo "TMPDIR=$test_tmp" >> "$GITHUB_ENV"
+          echo "GOTMPDIR=$test_tmp" >> "$GITHUB_ENV"
+      - name: Run complete race partition
+        id: race
+        env:
+          NSC_RACE_SHARD: ${{ matrix.shard }}
+        run: |
+          python3 -m unittest discover -s scripts -p 'test_race_shard.py' -v
+          python3 scripts/race_shard.py "$NSC_RACE_SHARD"
+      - name: Clean isolated unit test data
+        if: always()
+        run: |
+          if mountpoint -q "$RUNNER_TEMP/nsc-test-data"; then
+            sudo umount "$RUNNER_TEMP/nsc-test-data"
+          fi
+          if test -f "$RUNNER_TEMP/nsc-ci-unshare"; then
+            sudo apparmor_parser -R "$RUNNER_TEMP/nsc-ci-unshare"
+          fi
+      - name: Bind race evidence to source
+        if: always()
+        env:
+          NSC_CHECK_RESULTS: '{"race":"${{ steps.race.outcome }}"}'
+          NSC_RACE_SHARD: ${{ matrix.shard }}
+        run: node scripts/readiness/gate.mjs record "race-$NSC_RACE_SHARD" "coverage/readiness/race-$NSC_RACE_SHARD.json"
+      - name: Retain source-bound race envelope
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: readiness-race-${{ matrix.shard }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: coverage/readiness/race-${{ matrix.shard }}.json
           if-no-files-found: error
           retention-days: 14
 
@@ -569,7 +641,7 @@ jobs:
   readiness:
     name: Source-bound readiness gate
     if: always()
-    needs: [repository-privacy, unit, stores, images, compose, ha-e2e, docker-e2e, p0-acceptance]
+    needs: [repository-privacy, unit, race, stores, images, compose, ha-e2e, docker-e2e, p0-acceptance]
     runs-on: ubuntu-24.04
     steps:
       - name: Check out source
@@ -587,7 +659,7 @@ jobs:
       - name: Enforce every required result and identity
         if: always()
         env:
-          NSC_REQUIRED_JOBS: '{"repository-privacy":"${{ needs.repository-privacy.result }}","unit":"${{ needs.unit.result }}","stores":"${{ needs.stores.result }}","images":"${{ needs.images.result }}","compose":"${{ needs.compose.result }}","ha-e2e":"${{ needs.ha-e2e.result }}","docker-e2e":"${{ needs.docker-e2e.result }}","p0-acceptance":"${{ needs.p0-acceptance.result }}"}'
+          NSC_REQUIRED_JOBS: '{"repository-privacy":"${{ needs.repository-privacy.result }}","unit":"${{ needs.unit.result }}","race":"${{ needs.race.result }}","stores":"${{ needs.stores.result }}","images":"${{ needs.images.result }}","compose":"${{ needs.compose.result }}","ha-e2e":"${{ needs.ha-e2e.result }}","docker-e2e":"${{ needs.docker-e2e.result }}","p0-acceptance":"${{ needs.p0-acceptance.result }}"}'
         run: |
           mkdir -p coverage/readiness-input
           node scripts/readiness/gate.mjs gate coverage/readiness-input coverage/readiness-gate.json

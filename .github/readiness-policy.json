@@ -14,11 +14,45 @@
       "checks": [
         "harness",
         "modules",
-        "race",
         "fuzz",
         "benchmarks",
         "vulnerability",
         "frontend"
+      ]
+    },
+    {
+      "id": "race-0",
+      "workflowJob": "race",
+      "checks": [
+        "race"
+      ]
+    },
+    {
+      "id": "race-1",
+      "workflowJob": "race",
+      "checks": [
+        "race"
+      ]
+    },
+    {
+      "id": "race-2",
+      "workflowJob": "race",
+      "checks": [
+        "race"
+      ]
+    },
+    {
+      "id": "race-3",
+      "workflowJob": "race",
+      "checks": [
+        "race"
+      ]
+    },
+    {
+      "id": "race-other",
+      "workflowJob": "race",
+      "checks": [
+        "race"
       ]
     },
     {
