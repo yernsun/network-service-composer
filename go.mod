@@ -19,7 +19,7 @@ require (
 	github.com/pressly/goose/v3 v3.26.0
 	github.com/prometheus/client_golang v1.24.1
 	github.com/quic-go/quic-go v0.62.0
-	github.com/santhosh-tekuri/jsonschema/v6 v6.0.2
+	github.com/santhosh-tekuri/jsonschema/v6 v6.0.3
 	golang.org/x/crypto v0.58.0
 	golang.org/x/net v0.62.0
 	golang.org/x/sys v0.49.0
