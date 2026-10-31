@@ -577,22 +577,32 @@ func setReadinessMode(name string, target *model.ReadinessMode) {
 	}
 }
 
-func loadSecretFiles(c *Config) error {
+func loadSecretFiles(c *Config) error { return loadSecretFilesUsing(c, os.ReadFile) }
+
+func loadSecretFilesUsing(c *Config, read func(string) ([]byte, error)) error {
+	readValue := func(path string) (string, error) {
+		value, err := read(path)
+		if err != nil {
+			return "", err
+		}
+		defer clear(value)
+		return strings.TrimSpace(string(value)), nil
+	}
 	var err error
 	if c.Security.AdminTokenFile != "" {
-		c.Security.AdminToken, err = readSecret(c.Security.AdminTokenFile)
+		c.Security.AdminToken, err = readValue(c.Security.AdminTokenFile)
 		if err != nil {
 			return fmt.Errorf("read admin token: %w", err)
 		}
 	}
 	if c.Security.SessionKeyFile != "" {
-		c.Security.SessionKey, err = readSecret(c.Security.SessionKeyFile)
+		c.Security.SessionKey, err = readValue(c.Security.SessionKeyFile)
 		if err != nil {
 			return fmt.Errorf("read session key: %w", err)
 		}
 	}
 	if c.Security.EncryptionKeysFile != "" {
-		data, readErr := os.ReadFile(c.Security.EncryptionKeysFile)
+		data, readErr := read(c.Security.EncryptionKeysFile)
 		if readErr != nil {
 			return fmt.Errorf("read encryption keyring: %w", readErr)
 		}
@@ -604,7 +614,7 @@ func loadSecretFiles(c *Config) error {
 		if strings.TrimSpace(profile.CredentialsFile) == "" {
 			return fmt.Errorf("DNS provider %q credentials_file is required", reference)
 		}
-		data, readErr := os.ReadFile(profile.CredentialsFile)
+		data, readErr := read(profile.CredentialsFile)
 		if readErr != nil {
 			return fmt.Errorf("read DNS provider %q credentials: %w", reference, readErr)
 		}

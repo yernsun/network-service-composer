@@ -142,12 +142,57 @@ The foundation journal/executor stage has an independent local commit. The
 single-node adapter, HTTPS/IP certificate support and isolated SSH/Docker fixture
 have passed local bootstrap, login, loaded NGINX, certificate, browser and archive
 restore checks. Run `scripts/bootstrap_acceptance.py --browser` with source-bound
-Controller and Gateway images to reproduce them. Multi-node adoption and web
-maintenance are later stages of this change; their command names are reserved,
-not a claim of completed acceptance. OVH DNS verification remains DISABLED.
+Controller and Gateway images to reproduce them. Multi-node adoption is under final coverage and failure/recovery acceptance.
+Web maintenance is a later stage; its command names remain reserved rather than
+a claim of completed acceptance. OVH DNS verification remains DISABLED.
 
 The disposable acceptance fixture never uses the host Swarm. It verifies actual
 PostgreSQL, SSH, Docker, NSC and NGINX in owned nested nodes. Nested nodes share a
 physical host, so their results do not establish host or zone resilience. See
 [Docker's Manager guidance](https://docs.docker.com/engine/swarm/admin_guide/)
 and [Secrets documentation](https://docs.docker.com/engine/swarm/secrets/).
+
+## Existing Swarm adoption
+
+`bootstrap adopt` uses an explicit `adoption` section in the private installation
+configuration. Supply the existing Controller configuration file, Cluster ID,
+four actual Service IDs (`controller`, `postgresql`, `nginx`, `nginx-sandbox`),
+original PostgreSQL Node ID and volume. Planning reads the actual registration,
+Manager membership, Engine bindings, storage and mounted public identities; it
+does not provision or rename services. Explicit credential references are read
+through the authenticated original service mounts or its verified Swarm Secret
+task, without importing the executor shell's `NSC_*` environment.
+
+An existing installation marker additionally requires its exact installation ID
+and original maintenance directory. Copying a journal to another directory on
+the same machine cannot authorize another writer. Keep the original maintenance
+node and journal; adoption is not a takeover of an active or unisolated executor.
+Legacy deployments without an installation marker receive a new stable
+installation ID while retaining all existing Service, Runtime, Pool, certificate,
+administrator and application IDs.
+
+Adoption preserves existing voting membership, including two-Manager clusters;
+new multi-node installation still requires three Managers. Plans and status expose
+the actual majority and tolerable failures, including Managers outside the NSC
+inventory. A drained or unavailable data/maintenance node blocks ownership
+registration. An offline non-data node may retain its previously registered
+identity with explicit unverified drift; an SSH host-key or authentication error
+cannot use that fallback.
+
+Registration completion is independent of health. Adoption records `UNVERIFIED`
+until actual access, fresh authenticated reports and loaded configuration have
+been checked. Expired original identities remain explicit drift and are never
+silently replaced. Legacy installations lacking independent HTTPS or new system
+interfaces require CLI preparation before Web maintenance. No schema migration,
+password reset, database relocation or service update occurs during adoption.
+
+Swarm may advance a Service's object version for runtime status without changing
+its Spec. Read-only verification accepts that monotonic status change while
+still rejecting Spec drift. Every subsequent update retains an exact current
+object-version precondition; verification does not grant a stale update approval.
+
+Completed bootstrap Sandbox validation remains historical acceptance evidence.
+Later draft edits or validation expiry do not invalidate an installed cluster.
+Independent verification checks current ownership, node identities, fresh loaded
+Gateway evidence and actual access. An unfinished installation's resume still
+requires its original source-bound validation to be current before handoff.

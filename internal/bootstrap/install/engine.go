@@ -3,6 +3,7 @@ package install
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net"
 	"net/http"
@@ -36,11 +37,16 @@ type NodeInfo struct {
 }
 
 type Observation struct {
-	Nodes    map[string]NodeInfo  `json:"nodes"`
-	Services []bootstrap.Resource `json:"services"`
-	Names    []string             `json:"names"`
-	GIDs     map[string]string    `json:"gids"`
-	Ports    []uint32             `json:"ports"`
+	adoptedRecord *bootstrap.Record         `json:"-"`
+	Membership    map[string]swarm.Node     `json:"membership"`
+	Topology      bootstrap.ManagerTopology `json:"topology"`
+	Adoption      *adoptionEvidence         `json:"adoption,omitempty"`
+	Unavailable   []string                  `json:"unavailable,omitempty"`
+	Nodes         map[string]NodeInfo       `json:"nodes"`
+	Services      []bootstrap.Resource      `json:"services"`
+	Names         []string                  `json:"names"`
+	GIDs          map[string]string         `json:"gids"`
+	Ports         []uint32                  `json:"ports"`
 }
 
 type Installer struct {
@@ -62,7 +68,7 @@ func (i *Installer) nodeDir() string        { return i.Config.NodeDir + "/" + i.
 func (i *Installer) name(key string) string { return i.prefix() + "-" + key }
 
 func (i *Installer) Observe(ctx context.Context) (any, error) {
-	o := Observation{Nodes: map[string]NodeInfo{}, Services: []bootstrap.Resource{}, Names: []string{}, GIDs: map[string]string{}}
+	o := Observation{Membership: map[string]swarm.Node{}, Nodes: map[string]NodeInfo{}, Services: []bootstrap.Resource{}, Names: []string{}, GIDs: map[string]string{}}
 	for _, n := range i.Config.Nodes {
 		h := i.Hosts[n.Name]
 		if h == nil {
@@ -70,7 +76,16 @@ func (i *Installer) Observe(ctx context.Context) (any, error) {
 		}
 		var info NodeInfo
 		if err := h.Engine(ctx, "GET", "/info", nil, &info); err != nil {
-			return nil, err
+			if i.Config.Adoption == nil || n.Name == i.Config.MaintenanceNode || n.Name == i.Config.DataNode || !errors.Is(err, bootstrap.ErrNodeUnavailable) {
+				return nil, err
+			}
+			registered, fallbackErr := i.offlineIdentity(ctx, n)
+			if fallbackErr != nil {
+				return nil, fallbackErr
+			}
+			o.Nodes[n.Name] = registered
+			o.Unavailable = append(o.Unavailable, n.Name)
+			continue
 		}
 		if info.ID == "" || info.OSType != "linux" || (info.Architecture != "x86_64" && info.Architecture != "aarch64" && info.Architecture != "amd64" && info.Architecture != "arm64") {
 			return nil, fmt.Errorf("node %s requires a supported Linux Docker Engine", n.Name)
@@ -95,6 +110,14 @@ func (i *Installer) Observe(ctx context.Context) (any, error) {
 	}
 	entry := o.Nodes[i.Config.MaintenanceNode]
 	if entry.Swarm.ControlAvailable {
+		var members []swarm.Node
+		if err := i.entry().Engine(ctx, "GET", "/nodes", nil, &members); err != nil {
+			return nil, err
+		}
+		for _, member := range members {
+			o.Membership[member.ID] = member
+		}
+		o.Topology = managerTopology(members)
 		var services []swarm.Service
 		if err := i.entry().Engine(ctx, "GET", "/services", nil, &services); err != nil {
 			return nil, err
@@ -124,11 +147,23 @@ func (i *Installer) Observe(ctx context.Context) (any, error) {
 	sort.Slice(o.Services, func(a, b int) bool { return o.Services[a].ID < o.Services[b].ID })
 	sort.Strings(o.Names)
 	sort.Slice(o.Ports, func(a, b int) bool { return o.Ports[a] < o.Ports[b] })
+	if i.Config.Adoption != nil {
+		view, evidence, err := i.adoptionView(ctx, o)
+		if err != nil {
+			return nil, err
+		}
+		o.Adoption = &evidence
+		o.adoptedRecord = view.Record
+	}
 	return o, nil
 }
 
 func serviceReceipt(s swarm.Service) bootstrap.Resource {
-	return bootstrap.Resource{Kind: "service", ID: s.ID, Version: s.Version.Index, SpecDigest: bootstrap.Digest(s.Spec)}
+	image := ""
+	if s.Spec.TaskTemplate.ContainerSpec != nil {
+		image = s.Spec.TaskTemplate.ContainerSpec.Image
+	}
+	return bootstrap.Resource{Kind: "service", ID: s.ID, Version: s.Version.Index, SpecDigest: bootstrap.Digest(s.Spec), Image: image}
 }
 func (i *Installer) inspectService(ctx context.Context, id string) (swarm.Service, error) {
 	var service swarm.Service
@@ -185,6 +220,9 @@ func (i *Installer) latest(id string) bootstrap.Resource {
 }
 
 func (i *Installer) validateObservation(o Observation) error {
+	if err := requirePlacement(o, i.Config); err != nil {
+		return err
+	}
 	entry := o.Nodes[i.Config.MaintenanceNode]
 	cluster := ""
 	if entry.Swarm.Cluster != nil {
@@ -287,7 +325,7 @@ func (i *Installer) Plan(ctx context.Context, action bootstrap.Action) (bootstra
 }
 
 func (i *Installer) scopePlan(p bootstrap.Plan, o Observation) bootstrap.Plan {
-	scope := bootstrap.PlanScope{Mode: i.Config.Mode, ClusterID: i.Record.ClusterID, Targets: []bootstrap.PlanTarget{}, Images: i.Config.Images, DataNode: i.Config.DataNode, DataVolume: i.Record.Resources["volume:postgresql"].ID, DatabaseSinglePointOfFailure: true}
+	scope := bootstrap.PlanScope{Topology: o.Topology, Mode: i.Config.Mode, ClusterID: i.Record.ClusterID, Targets: []bootstrap.PlanTarget{}, Images: i.Config.Images, DataNode: i.Config.DataNode, DataVolume: i.Record.Resources["volume:postgresql"].ID, DatabaseSinglePointOfFailure: true}
 	if scope.ClusterID == "" {
 		if cluster := o.Nodes[i.Config.MaintenanceNode].Swarm.Cluster; cluster != nil {
 			scope.ClusterID = cluster.ID

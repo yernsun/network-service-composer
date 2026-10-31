@@ -29,9 +29,31 @@ import (
 )
 
 func (i *Installer) Verify(ctx context.Context, output io.Writer) error {
+	if i.Config.Adoption != nil {
+		if err := i.checkAdoption(ctx, bootstrap.Step{Key: "adopt", State: bootstrap.Succeeded}); err != nil {
+			return err
+		}
+		return json.NewEncoder(output).Encode(map[string]any{"installation_id": i.Record.ID, "registration": "VERIFIED", "health": "UNVERIFIED", "database_single_point_of_failure": true})
+	}
+	if err := i.checkNodeBindings(ctx, "verify"); err != nil {
+		return err
+	}
+	completed := false
+	for _, operation := range i.Record.Operations {
+		if operation.Plan.Action == bootstrap.Init && operation.State == bootstrap.Succeeded {
+			completed = true
+			break
+		}
+	}
 	for key, receipt := range i.Record.Resources {
-		if err := i.Check(ctx, bootstrap.Step{Key: key, State: bootstrap.Succeeded, Receipt: &receipt}); err != nil {
-			return fmt.Errorf("installation resource %s has drift: %w", key, err)
+		// The initial validation is historical source-bound acceptance evidence.
+		// Later legitimate drafts and expiry do not invalidate an installed cluster.
+		// Resume still revalidates every required initial proof before handoff.
+		if completed && (key == "validation-ready" || key == "validation:bootstrap") {
+			continue
+		}
+		if err := i.checkReceipt(ctx, bootstrap.Step{Key: key, State: bootstrap.Succeeded, Receipt: &receipt}); err != nil {
+			return fmt.Errorf("installation resource %s could not be verified: %w", key, err)
 		}
 	}
 	if err := i.verifyHandoff(ctx); err != nil {
@@ -277,6 +299,9 @@ func (i *Installer) verifyLogin(ctx context.Context) error {
 }
 
 func (i *Installer) Handoff(output io.Writer) error {
+	if i.Config.Adoption != nil {
+		return json.NewEncoder(output).Encode(map[string]any{"installation_id": i.Record.ID, "registration": "SUCCEEDED", "health": "UNVERIFIED", "next_action": "verify actual access and loaded evidence before system maintenance", "database_single_point_of_failure": true})
+	}
 	data, err := os.ReadFile(i.material("console.crt"))
 	if err != nil {
 		return err

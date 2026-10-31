@@ -6,6 +6,8 @@ business services are never initialized, joined, updated or inspected.
 """
 import argparse
 import hashlib
+import http.client
+import io
 import json
 import os
 from pathlib import Path
@@ -13,6 +15,9 @@ import secrets
 import shutil
 import subprocess
 import tempfile
+import ssl
+import urllib.request
+import urllib.error
 import time
 
 
@@ -30,10 +35,16 @@ class BootstrapFixture:
                         'limitations': ['Nested nodes share one physical host; host and zone isolation are not established.',
                                         'OVH DNS verification is DISABLED.'], 'images': {}}
 
+    def private_log(self, name, data):
+        try:
+            (self.work / name).write_bytes(data)
+        except OSError:
+            self.summary['diagnostics_unavailable'] = True
+
     def command(self, *args, timeout=180):
         result = subprocess.run(args, capture_output=True, timeout=timeout)
         if result.returncode:
-            (self.work / 'private-command-error.log').write_bytes(result.stderr)
+            self.private_log('private-command-error.log', result.stderr)
             raise AssertionError('fixture command failed; inspect private diagnostics')
         return result.stdout.decode().strip()
 
@@ -166,13 +177,147 @@ class BootstrapFixture:
             _, load_error = load.communicate(timeout=180)
             _, export_error = export.communicate(timeout=30)
             if load.returncode or export.returncode:
-                (self.work / 'private-image-transfer.log').write_bytes(export_error + load_error)
+                self.private_log('private-image-transfer.log', export_error + load_error)
                 raise AssertionError('fixture image transfer failed; inspect private diagnostics')
         finally:
             for process in (load, export):
                 if process is not None and process.poll() is None:
                     process.kill()
                     process.wait(timeout=15)
+
+    def raw_engine(self, index, path):
+        request = ('GET /v1.47' + path + ' HTTP/1.1\r\nHost: docker\r\nConnection: close\r\n\r\n').encode()
+        result = subprocess.run(['docker', 'exec', '-i', self.nodes[index], 'docker', 'system', 'dial-stdio'],
+                                input=request, capture_output=True, timeout=30)
+        class ResponseSocket:
+            def makefile(self, *_args):
+                return io.BytesIO(result.stdout)
+        response = http.client.HTTPResponse(ResponseSocket())
+        response.begin()
+        assert response.status == 200, 'owned Docker evidence is unavailable'
+        return json.load(response)
+
+    def api(self, index, path):
+        certificate = self.docker('exec', self.nodes[0], 'cat', '/fixture/state/materials/console.crt')
+        password = self.docker('exec', self.nodes[0], 'cat', '/fixture/state/materials/admin-password')
+        request = urllib.request.Request('https://' + self.address(self.nodes[index]) + ':8443/api/v1' + path,
+                                         headers={'Authorization': 'Bearer ' + password, 'Cache-Control': 'no-cache'})
+        context = ssl.create_default_context(cadata=certificate)
+        with urllib.request.urlopen(request, context=context, timeout=8) as response:
+            return json.load(response)['data']
+
+    def sql(self, statement):
+        database = self.record['resources']['service:postgresql']['id']
+        containers = self.inner(0, 'ps', '-q', '--filter', 'label=com.docker.swarm.service.id=' + database).splitlines()
+        assert len(containers) == 1, 'fixed database container identity is unavailable'
+        return self.inner(0, 'exec', containers[0], 'psql', '-U', 'nsc', '-d', 'nsc', '-At', '-v', 'ON_ERROR_STOP=1', '-c', statement)
+
+    def recovery(self):
+        assert len(self.nodes) == 3
+        self.summary['stage'] = 'multi_node_failure_and_recovery'
+        known = [self.record['resources'][key]['id'] for key in ('start:controller', 'service:postgresql', 'start:nginx', 'start:nginx-sandbox')]
+        self.private_log('private-before-recovery-specifications-1.47.json', json.dumps([self.raw_engine(0, '/services/' + identifier) for identifier in known]).encode())
+        managers = json.loads(self.inner(0, 'node', 'inspect', *[value['node_id'] for value in self.record['nodes'].values()]))
+        assert len(managers) == 3 and all(item['Spec']['Role'] == 'manager' for item in managers)
+        leader = next(item['ID'] for item in managers if item.get('ManagerStatus', {}).get('Leader'))
+        self.summary['checks']['three_authenticated_managers_and_controllers'] = 'PASS'
+        failed = next((index for index in (1, 2) if self.record['nodes']['node-' + str(index + 1)]['node_id'] == leader), 2)
+        survivor = 1 if failed != 1 else 2
+        def degraded_but_operational():
+            try:
+                layers = {item['name']: item for item in self.api(survivor, '/system/ha')['layers']}
+                return layers['controller']['state'] != 'READY' and layers['execution']['state'] == 'READY' and layers['swarm_quorum']['state'] == 'READY'
+            except (OSError, urllib.error.URLError):
+                return False
+        self.docker('pause', self.nodes[failed])
+        try:
+            self.wait(degraded_but_operational, timeout=120)
+            with urllib.request.urlopen('http://' + self.address(self.nodes[survivor]) + '/', timeout=8) as response:
+                assert response.status == 404
+        except urllib.error.HTTPError as response:
+            assert response.code == 404 and 'nginx' in response.headers.get('Server', '').lower()
+        finally:
+            self.docker('unpause', self.nodes[failed])
+        self.summary['checks']['non_database_node_loss_keeps_verified_execution_and_ingress'] = 'PASS'
+        self.wait(lambda: self.verify_complete(), timeout=150)
+        original = self.record['resources']['volume:postgresql']['id']
+        identities = hashlib.sha256(self.sql("SELECT payload FROM control_documents WHERE id='community:identities'").encode()).hexdigest()
+        certificate = self.docker('exec', self.nodes[0], 'cat', '/fixture/state/materials/console.crt')
+        password = self.docker('exec', self.nodes[0], 'cat', '/fixture/state/materials/admin-password')
+        tls_context = ssl.create_default_context(cadata=certificate)
+        self.docker('pause', self.nodes[0])
+        try:
+            def new_manager_leader():
+                nodes = json.loads(self.inner(1, 'node', 'inspect', *[value['node_id'] for value in self.record['nodes'].values()]))
+                return any(item['ID'] != leader and item.get('ManagerStatus', {}).get('Leader') and item.get('ManagerStatus', {}).get('Reachability') == 'reachable' for item in nodes)
+            self.wait(new_manager_leader, timeout=90)
+            # The fixed database cannot be recreated using an empty local volume
+            # on a surviving node. Controller redundancy is not database HA.
+            for index in (1, 2):
+                result = subprocess.run(['docker', 'exec', self.nodes[index], 'docker', 'volume', 'inspect', original], capture_output=True, timeout=15)
+                assert result.returncode != 0, 'a database volume was relocated to a different node'
+            request = urllib.request.Request('https://' + self.address(self.nodes[1]) + ':8443/api/v1/system/ha', headers={'Authorization': 'Bearer ' + password})
+            try:
+                with urllib.request.urlopen(request, context=tls_context, timeout=12) as response:
+                    assert response.status != 200, 'database outage was reported as healthy'
+            except (OSError, urllib.error.URLError):
+                pass
+            self.summary['checks']['manager_leader_switch_and_database_single_point_failure'] = 'PASS'
+        finally:
+            self.docker('unpause', self.nodes[0])
+        self.wait(lambda: self.verify_complete(), timeout=180)
+        assert hashlib.sha256(self.sql("SELECT payload FROM control_documents WHERE id='community:identities'").encode()).hexdigest() == identities
+        assert self.record['resources']['volume:postgresql']['id'] == original
+        self.summary['checks']['original_database_identity_and_volume_recover_without_replacement'] = 'PASS'
+
+    def verify_complete(self):
+        try:
+            self.cli('verify', '--timeout', '30s', timeout=45)
+            return True
+        except AssertionError:
+            return False
+
+    def adopt_legacy(self):
+        self.summary['stage'] = 'verified_legacy_adoption'
+        service_ids = {key: self.record['resources']['service:postgresql' if key == 'postgresql' else 'start:' + key]['id']
+                       for key in ('controller', 'postgresql', 'nginx', 'nginx-sandbox')}
+        before = self.inner(0, 'service', 'inspect', *service_ids.values())
+        identities = self.sql("SELECT payload FROM control_documents WHERE id='community:identities'")
+        original_applications = self.sql('SELECT id FROM applications ORDER BY id')
+        configuration = json.loads(json.dumps(self.configuration))
+        configuration['adoption'] = {'installation_id': self.record['id'],
+            'controller_config_file': self.configuration['node_dir'] + '/' + self.record['id'] + '/controller.yaml',
+            'cluster_id': self.record['cluster_id'], 'service_ids': service_ids,
+            'data_node_id': self.record['nodes']['node-1']['node_id'], 'volume': self.record['resources']['volume:postgresql']['id']}
+        (self.work / 'adopt.json').write_text(json.dumps(configuration))
+        (self.work / 'adopt.json').chmod(0o600)
+        arguments = ('--config', '/fixture/adopt.json', '--state-dir', '/fixture/rejected-copy')
+        try:
+            self.cli('adopt', *arguments)
+            raise AssertionError('an existing installation acquired a second maintenance directory')
+        except AssertionError as error:
+            if str(error) != 'fixture command failed; inspect private diagnostics':
+                raise
+        # This fixture alone simulates a pre-bootstrap deployment by removing its
+        # installation metadata. Services, data, identities and registrations stay.
+        # Never run this SQL against an installation outside these owned nodes.
+        self.sql("DELETE FROM control_documents WHERE id='system:installation'")
+        configuration['adoption'].pop('installation_id')
+        (self.work / 'adopt.json').write_text(json.dumps(configuration))
+        arguments = ('--config', '/fixture/adopt.json', '--state-dir', '/fixture/legacy-adopt-state')
+        plan = json.loads(self.cli('adopt', *arguments).splitlines()[0])
+        assert before == self.inner(0, 'service', 'inspect', *service_ids.values()), 'adoption planning changed Docker objects'
+        self.cli('adopt', *arguments, '--plan', '/fixture/legacy-adopt-state/plan.json', '--approve', plan['hash'], '--idempotency-key', 'adopt-existing-fixture')
+        adopted = json.loads(self.cli('status', '--state-dir', '/fixture/legacy-adopt-state'))
+        assert adopted['operations'][-1]['state'] == 'SUCCEEDED'
+        assert identities == self.sql("SELECT payload FROM control_documents WHERE id='community:identities'")
+        assert original_applications == self.sql('SELECT id FROM applications ORDER BY id')
+        assert before == self.inner(0, 'service', 'inspect', *service_ids.values()), 'adoption changed existing service specifications'
+        marker = json.loads(self.sql("SELECT payload FROM control_documents WHERE id='system:installation'"))
+        assert marker['health'] == 'UNVERIFIED' and marker['database']['single_point_of_failure']
+        assert marker['certificate_id'] == self.record['certificate_id']
+        self.summary['checks']['legacy_adoption_preserves_services_data_bindings_and_administrator'] = 'PASS'
+        self.summary['checks']['copied_maintenance_directory_cannot_take_over'] = 'PASS'
 
     def browser(self):
         password = self.docker('exec', self.nodes[0], 'cat', '/fixture/state/materials/admin-password')
@@ -181,7 +326,7 @@ class BootstrapFixture:
                    'certificate_id': self.record['certificate_id'], 'pool_id': self.record['pool_id']}
         result = subprocess.run(['node', 'scripts/bootstrap_browser.mjs'],
                                 input=json.dumps(payload).encode(), capture_output=True, timeout=120)
-        (self.work / 'private-browser.log').write_bytes(result.stderr)
+        self.private_log('private-browser.log', result.stderr)
         assert result.returncode == 0, 'browser regression failed; inspect private diagnostics'
         self.summary['checks'].update({name: 'PASS' for name in json.loads(result.stdout)['checks']})
 
@@ -208,7 +353,7 @@ class BootstrapFixture:
             result = subprocess.run(['docker', 'exec', '-i', self.nodes[0], 'docker', 'exec', '-i', restore,
                                      'pg_restore', '--exit-on-error', '--no-owner', '-U', 'nsc', '-d', 'nsc'],
                                     input=dump, capture_output=True, timeout=120)
-            (self.work / 'private-restore.log').write_bytes(result.stderr)
+            self.private_log('private-restore.log', result.stderr)
             assert result.returncode == 0, 'isolated archive restoration failed'
             def sql(statement):
                 return self.inner(0, 'exec', restore, 'psql', '-U', 'nsc', '-d', 'nsc', '-At', '-v', 'ON_ERROR_STOP=1', '-c', statement)
@@ -255,6 +400,7 @@ def main():
     parser.add_argument('--nodes', type=int, choices=(1, 3), default=1)
     parser.add_argument('--output', type=Path, default=Path('coverage/bootstrap/current/summary.json'))
     parser.add_argument('--keep', action='store_true')
+    parser.add_argument('--recovery', action='store_true', help='test three-node failure, recovery and legacy adoption')
     parser.add_argument('--browser', action='store_true', help='run fresh, isolated browser checks')
     args = parser.parse_args()
     fixture = BootstrapFixture(args)
@@ -264,18 +410,29 @@ def main():
         if args.browser:
             fixture.browser()
         fixture.restore_archive()
+        if args.recovery:
+            fixture.recovery()
+            fixture.adopt_legacy()
         assert fixture.summary['source_fingerprint'] == fixture.command('node', 'scripts/readiness/gate.mjs', 'fingerprint'), 'source changed during acceptance'
-        fixture.summary['status'] = 'PASS'
+        fixture.summary['status'] = 'FAIL' if fixture.summary.get('diagnostics_unavailable') else 'PASS'
     except Exception as error:
         fixture.summary['status'] = 'FAIL'
         fixture.summary['reason'] = type(error).__name__
         # Raw commands, private addresses, host paths and credentials stay private.
-        (fixture.work / 'private-error.log').write_text(str(error))
+        fixture.private_log('private-error.log', str(error).encode())
         for index, node in enumerate(fixture.nodes):
             result = subprocess.run(['docker', 'exec', node, 'sh', '-c', 'cat /fixture/state/diagnostics/docker-response-*.json 2>/dev/null || true'], capture_output=True, timeout=30)
-            (fixture.work / ('private-api-' + str(index) + '.log')).write_bytes(result.stdout + result.stderr)
+            fixture.private_log('private-api-' + str(index) + '.log', result.stdout + result.stderr)
             result = subprocess.run(['docker', 'exec', node, 'sh', '-c', 'for nsc_service in $(docker service ls -q); do docker service logs --raw --tail 100 "$nsc_service"; done'], capture_output=True, timeout=30)
-            (fixture.work / ('private-services-' + str(index) + '.log')).write_bytes(result.stdout + result.stderr)
+            fixture.private_log('private-services-' + str(index) + '.log', result.stdout + result.stderr)
+            if getattr(fixture, 'record', None):
+                service_ids = [fixture.record['resources'][key]['id'] for key in ('start:controller', 'service:postgresql', 'start:nginx', 'start:nginx-sandbox') if key in fixture.record['resources']]
+                result = subprocess.run(['docker', 'exec', node, 'docker', 'service', 'inspect', *service_ids], capture_output=True, timeout=30)
+                fixture.private_log('private-specifications-' + str(index) + '.json', result.stdout)
+                try:
+                    fixture.private_log('private-specifications-1.47-' + str(index) + '.json', json.dumps([fixture.raw_engine(index, '/services/' + identifier) for identifier in service_ids]).encode())
+                except (AssertionError, OSError, ValueError, subprocess.TimeoutExpired):
+                    fixture.summary['diagnostics_unavailable'] = True
     finally:
         fixture.cleanup()
         args.output.parent.mkdir(parents=True, exist_ok=True)

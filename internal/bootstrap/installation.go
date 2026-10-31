@@ -8,6 +8,9 @@ const InstallationDocumentKind = "system-installation"
 // Installation is the non-secret, database/Swarm projection of the private
 // journal. Local recovery paths, SSH keys, DSNs and credentials are excluded.
 type Installation struct {
+	MaintenanceAnchor string              `json:"maintenance_anchor"`
+	Topology          ManagerTopology     `json:"topology"`
+	Health            string              `json:"health"`
 	ID                string              `json:"id"`
 	Revision          int64               `json:"revision"`
 	Mode              string              `json:"mode"`
@@ -34,4 +37,15 @@ type DatabasePin struct {
 	ServiceID            string `json:"service_id"`
 	Image                string `json:"image"`
 	SinglePointOfFailure bool   `json:"single_point_of_failure"`
+}
+
+// ManagerTopology describes the actual Swarm voting membership, including
+// Managers outside the Controller inventory. It does not describe database HA.
+type ManagerTopology struct {
+	Managers          int      `json:"managers"`
+	Reachable         int      `json:"reachable"`
+	Majority          int      `json:"majority"`
+	TolerableFailures int      `json:"tolerable_failures"`
+	QuorumAvailable   bool     `json:"quorum_available"`
+	NodeIDs           []string `json:"node_ids"`
 }

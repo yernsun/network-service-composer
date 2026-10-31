@@ -81,7 +81,7 @@ func TestPrivateOfflineConfigurationLossCannotResetRuntimeSecrets(t *testing.T) 
 			i, _ := installerFixture(t, 1)
 			infrastructure(t, i)
 			os.Remove(i.material(name))
-			if _, err := i.localConfig(); err == nil {
+			if _, err := i.localConfig(t.Context()); err == nil {
 				t.Fatal("incomplete offline credentials accepted")
 			}
 			if err := i.withStore(t.Context(), true, func(storage.Store, config.Config) error { return nil }); err == nil {
@@ -95,12 +95,12 @@ func TestPrivateOfflineConfigurationLossCannotResetRuntimeSecrets(t *testing.T) 
 	i, _ := installerFixture(t, 1)
 	infrastructure(t, i)
 	i.Config.Adoption = &bootstrap.Adoption{ControllerConfigFile: "/nonexistent-controller.yaml", ServiceIDs: map[string]string{"postgresql": i.Record.Resources["service:postgresql"].ID}}
-	if _, err := i.localConfig(); err == nil {
+	if _, err := i.localConfig(t.Context()); err == nil {
 		t.Fatal("missing adoption configuration accepted")
 	}
 	i.Config.Adoption = nil
 	delete(i.Record.Resources, "reserve:controller")
-	if _, err := i.localConfig(); err == nil {
+	if _, err := i.localConfig(t.Context()); err == nil {
 		t.Fatal("offline configuration omitted actual service identity")
 	}
 }

@@ -74,7 +74,7 @@ func (i *Installer) serviceSpec(key, gid string, reserved bool) swarm.ServiceSpe
 		} else {
 			// Sandbox readiness is authenticated heartbeat plus a real validation.
 			// Idle Sandbox processes deliberately have no production generation.
-			c.Healthcheck = nil
+			c.Healthcheck = &container.HealthConfig{Test: []string{"NONE"}}
 			s.Mode = swarm.ServiceMode{Replicated: &swarm.ReplicatedService{Replicas: &one}}
 			s.TaskTemplate.Networks = []swarm.NetworkAttachmentConfig{network(isolated)}
 			s.TaskTemplate.Placement.Constraints = []string{"node.id == " + i.Record.Nodes[i.Config.DataNode].NodeID}

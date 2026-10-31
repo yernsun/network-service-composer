@@ -16,7 +16,9 @@ type Record struct {
 	ID                  string              `json:"id"`
 	Revision            int64               `json:"revision"`
 	ConfigDigest        string              `json:"config_digest"`
+	MaintenanceAnchor   string              `json:"maintenance_anchor"`
 	MaintenanceIdentity string              `json:"maintenance_identity"`
+	Topology            ManagerTopology     `json:"topology"`
 	ClusterID           string              `json:"cluster_id,omitempty"`
 	PoolID              string              `json:"pool_id"`
 	RuntimeID           string              `json:"runtime_id"`
@@ -118,15 +120,22 @@ func (j *Journal) Initialize(c Config, maintenanceIdentity string) (Record, erro
 	}
 	r, err := j.Read()
 	if err == nil {
-		if r.ConfigDigest != Digest(c) || r.MaintenanceIdentity != maintenanceIdentity {
+		if r.ConfigDigest != Digest(c) || r.MaintenanceIdentity != maintenanceIdentity || (r.MaintenanceAnchor != "" && r.MaintenanceAnchor != Digest([]string{maintenanceIdentity, j.dir})) {
 			return r, fmt.Errorf("configuration or maintenance host differs from the durable installation identity")
+		}
+		if r.MaintenanceAnchor == "" {
+			r.MaintenanceAnchor = Digest([]string{maintenanceIdentity, j.dir})
+			return r, j.Save(&r)
 		}
 		return r, nil
 	}
 	if !errors.Is(err, os.ErrNotExist) {
 		return r, err
 	}
-	r = Record{ID: id.New("install"), Revision: 1, ConfigDigest: Digest(c), MaintenanceIdentity: maintenanceIdentity, PoolID: id.New(id.Pool), RuntimeID: id.New(id.Runtime), CertificateID: id.New(id.Certificate), Nodes: map[string]Identity{}, Resources: map[string]Resource{}, Operations: []Operation{}}
+	r = Record{ID: id.New("install"), Revision: 1, ConfigDigest: Digest(c), MaintenanceIdentity: maintenanceIdentity, MaintenanceAnchor: Digest([]string{maintenanceIdentity, j.dir}), PoolID: id.New(id.Pool), RuntimeID: id.New(id.Runtime), CertificateID: id.New(id.Certificate), Nodes: map[string]Identity{}, Resources: map[string]Resource{}, Operations: []Operation{}}
+	if c.Adoption != nil && c.Adoption.InstallationID != "" {
+		r.ID = c.Adoption.InstallationID
+	}
 	for _, n := range c.Nodes {
 		r.Nodes[n.Name] = Identity{InstanceID: id.New("ctrl"), GatewayID: id.New(id.Gateway), SandboxID: id.New(id.Gateway)}
 	}

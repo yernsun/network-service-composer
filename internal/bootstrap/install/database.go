@@ -23,10 +23,22 @@ type DatabaseConnector interface {
 
 type SSHDatabase struct{}
 
-func (i *Installer) localConfig() (config.Config, error) {
+func (i *Installer) localConfig(ctx context.Context) (config.Config, error) {
 	if i.Config.Adoption != nil {
-		return config.Load(i.Config.Adoption.ControllerConfigFile)
+		data, err := bootstrap.ReadPrivate(i.Config.Adoption.ControllerConfigFile)
+		if err != nil {
+			return config.Config{}, err
+		}
+		clear(data)
+		service, err := i.inspectService(ctx, i.Config.Adoption.ServiceIDs["controller"])
+		if err != nil {
+			return config.Config{}, err
+		}
+		return config.LoadOfflineWithReader(i.Config.Adoption.ControllerConfigFile, func(path string) ([]byte, error) {
+			return i.registeredFile(ctx, i.Config.MaintenanceNode, service, path, true)
+		})
 	}
+
 	var node bootstrap.Node
 	for _, n := range i.Config.Nodes {
 		if n.Name == i.Config.MaintenanceNode {
@@ -99,7 +111,7 @@ func (i *Installer) databaseContainer(ctx context.Context) (string, error) {
 // container. No database port is published and no password is passed to exec.
 // The PostgreSQL wire protocol is still authenticated with the existing DSN.
 func (i *Installer) withStore(ctx context.Context, readOnly bool, fn func(storage.Store, config.Config) error) error {
-	cfg, err := i.localConfig()
+	cfg, err := i.localConfig(ctx)
 	if err != nil {
 		return err
 	}
@@ -176,11 +188,12 @@ func (i *Installer) finalizeDatabase(ctx context.Context) error {
 		if err = json.Unmarshal(d.Payload, &previous); err != nil {
 			return err
 		}
-		if previous.ID != i.Record.ID || previous.ClusterID != i.Record.ClusterID || previous.ConfigDigest != i.Record.ConfigDigest {
+		if previous.ID != i.Record.ID || previous.MaintenanceAnchor != i.Record.MaintenanceAnchor || previous.ClusterID != i.Record.ClusterID || previous.ConfigDigest != i.Record.ConfigDigest {
 			return storage.ErrConflict
 		}
 		next := i.seedRecord()
 		next.State = bootstrap.Succeeded
+		next.Health = "VERIFIED"
 		next.Revision = i.Record.Revision + 1
 		if previous.State == bootstrap.Succeeded && previous.Revision == next.Revision {
 			return nil

@@ -33,6 +33,7 @@ type fakeCluster struct {
 	next        int
 	calls       []string
 	fail        string
+	taskNode    string
 	afterUpdate bool
 }
 type fakeHost struct {
@@ -69,6 +70,15 @@ func (h *fakeHost) Stream(ctx context.Context, command string) (net.Conn, error)
 func (h *fakeHost) Run(_ context.Context, command string, input []byte) ([]byte, error) {
 	if h.runErr != nil {
 		return nil, h.runErr
+	}
+	if strings.Contains(command, "cat -- ") {
+		name := strings.Trim(command[strings.LastIndex(command, "cat -- ")+len("cat -- "):], "'")
+		for path, data := range h.files {
+			if strings.HasSuffix(name, "/"+path) {
+				return bytes.Clone(data), nil
+			}
+		}
+		return nil, os.ErrNotExist
 	}
 	if strings.Contains(command, "image pull") {
 		return nil, nil
@@ -153,6 +163,12 @@ func (h *fakeHost) Engine(_ context.Context, method, path string, input, out any
 			cluster = map[string]string{"ID": h.clusterID}
 		}
 		return encode(map[string]any{"ID": h.engineID, "Architecture": h.architecture, "OSType": h.osType, "Swarm": map[string]any{"NodeID": h.nodeID, "LocalNodeState": state, "ControlAvailable": h.active && !h.worker, "Cluster": cluster}}, out)
+	case path == "/nodes" && method == "GET":
+		values := []swarm.Node{}
+		for _, v := range c.nodes {
+			values = append(values, v)
+		}
+		return encode(values, out)
 	case path == "/services" && method == "GET":
 		values := []swarm.Service{}
 		for _, v := range c.services {
@@ -176,7 +192,7 @@ func (h *fakeHost) Engine(_ context.Context, method, path string, input, out any
 		}
 		h.active = true
 		h.nodeID = "node-" + h.name
-		c.nodes[h.nodeID] = swarm.Node{ID: h.nodeID, Meta: swarm.Meta{Version: swarm.Version{Index: 1}}, Spec: swarm.NodeSpec{Role: swarm.NodeRoleManager}}
+		c.nodes[h.nodeID] = swarm.Node{ID: h.nodeID, Meta: swarm.Meta{Version: swarm.Version{Index: 1}}, Status: swarm.NodeStatus{State: swarm.NodeStateReady}, ManagerStatus: &swarm.ManagerStatus{Reachability: swarm.ReachabilityReachable}, Spec: swarm.NodeSpec{Role: swarm.NodeRoleManager, Availability: swarm.NodeAvailabilityActive}}
 		return encode(h.nodeID, out)
 	case path == "/swarm":
 		return encode(map[string]any{"ID": h.clusterID, "JoinTokens": map[string]string{"Manager": "isolated-join-token", "Worker": "isolated-worker-token"}}, out)
@@ -190,7 +206,7 @@ func (h *fakeHost) Engine(_ context.Context, method, path string, input, out any
 		if h.worker {
 			role = swarm.NodeRoleWorker
 		}
-		c.nodes[h.nodeID] = swarm.Node{ID: h.nodeID, Meta: swarm.Meta{Version: swarm.Version{Index: 1}}, Spec: swarm.NodeSpec{Role: role}}
+		c.nodes[h.nodeID] = swarm.Node{ID: h.nodeID, Meta: swarm.Meta{Version: swarm.Version{Index: 1}}, Status: swarm.NodeStatus{State: swarm.NodeStateReady}, ManagerStatus: &swarm.ManagerStatus{Reachability: swarm.ReachabilityReachable}, Spec: swarm.NodeSpec{Role: role, Availability: swarm.NodeAvailabilityActive}}
 		return nil
 	case strings.HasPrefix(path, "/nodes/"):
 		parts := strings.Split(strings.Trim(path, "/"), "/")
@@ -290,7 +306,11 @@ func (h *fakeHost) Engine(_ context.Context, method, path string, input, out any
 		values := []swarm.Task{}
 		for _, service := range c.services {
 			if service.Spec.Labels["io.nsc.component"] == "postgresql" {
-				values = append(values, swarm.Task{ID: "database-task", ServiceID: service.ID, NodeID: h.nodeID, Status: swarm.TaskStatus{State: swarm.TaskStateRunning, ContainerStatus: &swarm.ContainerStatus{ContainerID: "pinned-data-container"}}})
+				nodeID := h.nodeID
+				if c.taskNode != "" {
+					nodeID = c.taskNode
+				}
+				values = append(values, swarm.Task{ID: "database-task", ServiceID: service.ID, NodeID: nodeID, Status: swarm.TaskStatus{State: swarm.TaskStateRunning, ContainerStatus: &swarm.ContainerStatus{ContainerID: "pinned-data-container"}}})
 			}
 		}
 		return encode(values, out)

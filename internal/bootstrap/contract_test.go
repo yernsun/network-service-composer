@@ -91,3 +91,39 @@ func TestRegistryAuthenticationUsesOnlyAbsolutePrivateFileReferences(t *testing.
 		t.Fatal("absolute registry reference rejected", err)
 	}
 }
+
+func TestAdoptionRequiresCompleteEvidenceAndRetainsExistingTopology(t *testing.T) {
+	valid := testConfig()
+	valid.Adoption = &Adoption{ControllerConfigFile: "/private/controller.yaml", ClusterID: "cluster", DataNodeID: "node", Volume: "volume", ServiceIDs: map[string]string{"controller": "c", "postgresql": "p", "nginx": "g", "nginx-sandbox": "s"}}
+	for _, change := range []func(*Config){
+		func(c *Config) { c.Adoption.InstallationID = "invalid/id" },
+		func(c *Config) { c.Adoption.ControllerConfigFile = "relative" },
+		func(c *Config) { c.Adoption.ClusterID = "" },
+		func(c *Config) { c.Adoption.DataNodeID = "" },
+		func(c *Config) { delete(c.Adoption.ServiceIDs, "nginx") },
+		func(c *Config) { c.Mode = "multi" },
+	} {
+		data, err := json.Marshal(valid)
+		if err != nil {
+			t.Fatal(err)
+		}
+		var candidate Config
+		if err = json.Unmarshal(data, &candidate); err != nil {
+			t.Fatal(err)
+		}
+		change(&candidate)
+		if err = candidate.Validate(); err == nil {
+			t.Fatal("incomplete or unsafe adoption configuration was accepted")
+		}
+	}
+	valid.Mode = "multi"
+	valid.Nodes = append(valid.Nodes, Node{Name: "two", Address: "192.0.2.2", SSHUser: "operator", SSHPort: 22, Manager: true})
+	if err := valid.Validate(); err != nil {
+		t.Fatal("existing two-Manager cluster was rejected", err)
+	}
+	valid.Nodes[0].Manager = false
+	valid.Nodes[1].Manager = false
+	if err := valid.Validate(); err == nil {
+		t.Fatal("adoption without any Manager was accepted")
+	}
+}

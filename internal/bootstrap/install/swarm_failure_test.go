@@ -187,3 +187,24 @@ func TestLostInspectionAfterCreationRetainsReceiptForReadOnlyReconciliation(t *t
 		t.Fatal("bounded readiness retry failed", err)
 	}
 }
+
+func TestAcknowledgedJoinResumesWithoutTreatingItAsAnExternalJoin(t *testing.T) {
+	i, _ := installerFixture(t, 3)
+	infrastructure(t, i)
+	identity := i.Record.Nodes["three"]
+	receipt := i.Record.Resources["swarm:three"]
+	identity.NodeID = ""
+	i.Record.Nodes["three"] = identity
+	_, err := i.Reconcile(t.Context(), bootstrap.Step{Key: "swarm:three", State: bootstrap.Unknown, Receipt: &receipt})
+	var retry *bootstrap.RetrySafe
+	if !errors.As(err, &retry) {
+		t.Fatal("acknowledged node identity did not permit read-only continuation", err)
+	}
+	if i.Record.Nodes["three"].NodeID != receipt.ID {
+		t.Fatal("acknowledged Node ID was not preserved")
+	}
+	result, err := i.Apply(t.Context(), bootstrap.Step{Key: "swarm:three"})
+	if err != nil || result.ID != receipt.ID {
+		t.Fatal("resumed preparation treated its own acknowledged join as foreign", err)
+	}
+}

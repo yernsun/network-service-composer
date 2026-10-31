@@ -2,6 +2,7 @@ package install
 
 import (
 	"context"
+	"io"
 	"net"
 	"net/http"
 	"net/http/httptest"
@@ -200,5 +201,50 @@ func TestCorruptAndMissingSandboxIdentityEvidenceCannotBeHealthy(t *testing.T) {
 		if err == nil {
 			t.Fatal("invalid Sandbox ownership evidence accepted", scenario)
 		}
+	}
+}
+
+func TestInstalledVerificationRetainsHistoricalValidationWhileCheckingCurrentHealth(t *testing.T) {
+	i, mode := consoleFixture(t)
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) { w.Header().Set("Server", "nginx"); w.WriteHeader(404) }))
+	defer server.Close()
+	i.GatewayClient = &http.Client{Transport: &http.Transport{DialContext: func(ctx context.Context, network, _ string) (net.Conn, error) {
+		return (&net.Dialer{}).DialContext(ctx, network, server.Listener.Addr().String())
+	}}}
+	for _, key := range []string{"validation:bootstrap", "validation-ready"} {
+		receipt, err := i.Apply(t.Context(), bootstrap.Step{Key: key})
+		if err != nil {
+			t.Fatal(err)
+		}
+		i.Record.Resources[key] = receipt
+	}
+	mode.Store("validation-outdated")
+	if err := i.Verify(t.Context(), io.Discard); err == nil {
+		t.Fatal("unfinished bootstrap accepted expired initial validation")
+	}
+	i.Record.Operations = []bootstrap.Operation{{State: bootstrap.Succeeded, Plan: bootstrap.Plan{Action: bootstrap.Verify}}, {State: bootstrap.Pending, Plan: bootstrap.Plan{Action: bootstrap.Init}}}
+	if err := i.Verify(t.Context(), io.Discard); err == nil {
+		t.Fatal("pending installation skipped required initial evidence")
+	}
+	i.Record.Operations = append(i.Record.Operations, bootstrap.Operation{State: bootstrap.Succeeded, Plan: bootstrap.Plan{Action: bootstrap.Init}})
+	if err := i.Verify(t.Context(), io.Discard); err != nil {
+		t.Fatal("historical draft validation expiry invalidated a healthy installed cluster", err)
+	}
+	receipt := i.Record.Resources["validation-ready"]
+	if err := i.Check(t.Context(), bootstrap.Step{Key: "validation-ready", Receipt: &receipt, State: bootstrap.Succeeded}); err == nil {
+		t.Fatal("resume stopped validating its original acceptance proof")
+	}
+	host := i.Hosts["one"].(*fakeHost)
+	engine := host.engineID
+	host.engineID = "different-engine"
+	if err := i.Verify(t.Context(), io.Discard); err == nil {
+		t.Fatal("completed bootstrap accepted a replacement Engine")
+	}
+	host.engineID = engine
+	mode.Store("ha")
+	ctx, cancel := context.WithTimeout(t.Context(), 30*time.Millisecond)
+	defer cancel()
+	if err := i.Verify(ctx, io.Discard); err == nil {
+		t.Fatal("historical acceptance bypassed current Controller health")
 	}
 }

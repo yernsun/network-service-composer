@@ -19,6 +19,16 @@ import (
 )
 
 func (i *Installer) Check(ctx context.Context, s bootstrap.Step) error {
+	if s.Key == "adopt" {
+		return i.checkAdoption(ctx, s)
+	}
+	if err := i.checkReceipt(ctx, s); err != nil {
+		return err
+	}
+	return i.checkNodeBindings(ctx, s.Key)
+}
+
+func (i *Installer) checkReceipt(ctx context.Context, s bootstrap.Step) error {
 	if s.Receipt != nil {
 		r := *s.Receipt
 		switch r.Kind {
@@ -43,7 +53,7 @@ func (i *Installer) Check(ctx context.Context, s bootstrap.Step) error {
 				return err
 			}
 			latest := i.latest(r.ID)
-			if service.ID != r.ID || bootstrap.Digest(service.Spec) != latest.SpecDigest || service.Version.Index != latest.Version {
+			if service.ID != r.ID || bootstrap.Digest(service.Spec) != latest.SpecDigest || service.Version.Index < latest.Version {
 				return fmt.Errorf("recorded service changed or disappeared")
 			}
 		case "backup":
@@ -103,6 +113,10 @@ func (i *Installer) Check(ctx context.Context, s bootstrap.Step) error {
 			}
 		}
 	}
+	return nil
+}
+
+func (i *Installer) checkNodeBindings(ctx context.Context, key string) error {
 	for _, node := range i.Config.Nodes {
 		identity := i.Record.Nodes[node.Name]
 		var actual NodeInfo
@@ -116,7 +130,7 @@ func (i *Installer) Check(ctx context.Context, s bootstrap.Step) error {
 			return fmt.Errorf("Swarm node changed after planning")
 		}
 	}
-	if i.Record.ClusterID != "" && s.Key != "materials" {
+	if i.Record.ClusterID != "" && key != "materials" {
 		var info NodeInfo
 		if err := i.entry().Engine(ctx, "GET", "/info", nil, &info); err != nil {
 			return err
@@ -338,6 +352,13 @@ func (i *Installer) prepareSwarm(ctx context.Context, key string) (bootstrap.Res
 	if (member.Spec.Role == swarm.NodeRoleManager) != node.Manager {
 		return bootstrap.Resource{}, &bootstrap.Rejected{Reason: "existing node role differs from the approved topology"}
 	}
+	if member.Status.State != swarm.NodeStateReady || member.Spec.Availability != swarm.NodeAvailabilityActive {
+		identity := i.Record.Nodes[key]
+		identity.NodeID = info.Swarm.NodeID
+		identity.EngineID = info.ID
+		i.Record.Nodes[key] = identity
+		return bootstrap.Resource{Kind: "swarm", ID: info.Swarm.NodeID, SpecDigest: bootstrap.Digest(identity)}, fmt.Errorf("Swarm node is not Ready/Active")
+	}
 	if node.Manager {
 		if member.Spec.Labels == nil {
 			member.Spec.Labels = map[string]string{}
@@ -350,6 +371,14 @@ func (i *Installer) prepareSwarm(ctx context.Context, key string) (bootstrap.Res
 			}
 		}
 	}
+	var members []swarm.Node
+	if err := i.entry().Engine(ctx, "GET", "/nodes", nil, &members); err != nil {
+		return bootstrap.Resource{}, err
+	}
+	i.Record.Topology = managerTopology(members)
+	if member.Status.State != swarm.NodeStateReady || member.Spec.Availability != swarm.NodeAvailabilityActive {
+		return bootstrap.Resource{}, &bootstrap.Rejected{Reason: "Swarm node is not Ready/Active"}
+	}
 	identity := i.Record.Nodes[key]
 	identity.NodeID = info.Swarm.NodeID
 	identity.EngineID = info.ID
@@ -358,6 +387,12 @@ func (i *Installer) prepareSwarm(ctx context.Context, key string) (bootstrap.Res
 }
 
 func (i *Installer) Reconcile(ctx context.Context, s bootstrap.Step) (*bootstrap.Resource, error) {
+	if s.Key == "adopt" {
+		if err := i.checkAdoption(ctx, s); err != nil {
+			return nil, err
+		}
+		return nil, &bootstrap.RetrySafe{Reason: "continue registration only for the same verified components, identities and original storage"}
+	}
 	// Receipt-less creation cannot be inferred from labels, names or RUNNING.
 	// Read-only seed/verification steps may be repeated, using recorded IDs.
 	if s.Receipt != nil && s.Receipt.Kind == "swarm" && s.Receipt.ID != "" {
@@ -377,6 +412,8 @@ func (i *Installer) Reconcile(ctx context.Context, s bootstrap.Step) (*bootstrap
 		if name == i.Config.MaintenanceNode {
 			i.Record.ClusterID = actual.Swarm.Cluster.ID
 		}
+		identity.NodeID = s.Receipt.ID
+		i.Record.Nodes[name] = identity
 		return nil, &bootstrap.RetrySafe{Reason: "continue node preparation using the acknowledged Swarm Node ID"}
 	}
 	if s.Receipt != nil && s.Receipt.Kind == "service" && s.Receipt.ID != "" {

@@ -24,7 +24,7 @@ import (
 )
 
 func (i *Installer) seedRecord() bootstrap.Installation {
-	r := bootstrap.Installation{ID: i.Record.ID, Revision: i.Record.Revision, Mode: i.Config.Mode, State: bootstrap.Running, ClusterID: i.Record.ClusterID, PoolID: i.Record.PoolID, RuntimeID: i.Record.RuntimeID, CertificateID: i.Record.CertificateID, Components: map[string]bootstrap.Resource{}, Nodes: i.Record.Nodes, ConfigDigest: i.Record.ConfigDigest, IngressNetwork: i.name("ingress"), UpdatedAt: timeNow(), AllowedOperations: []bootstrap.Action{}, Drift: []string{}, ConsoleURLs: []string{}}
+	r := bootstrap.Installation{MaintenanceAnchor: i.Record.MaintenanceAnchor, Topology: i.Record.Topology, Health: "UNVERIFIED", ID: i.Record.ID, Revision: i.Record.Revision, Mode: i.Config.Mode, State: bootstrap.Running, ClusterID: i.Record.ClusterID, PoolID: i.Record.PoolID, RuntimeID: i.Record.RuntimeID, CertificateID: i.Record.CertificateID, Components: map[string]bootstrap.Resource{}, Nodes: i.Record.Nodes, ConfigDigest: i.Record.ConfigDigest, IngressNetwork: i.name("ingress"), UpdatedAt: timeNow(), AllowedOperations: []bootstrap.Action{}, Drift: []string{}, ConsoleURLs: []string{}}
 	for _, key := range []string{"controller", "postgresql", "nginx", "nginx-sandbox"} {
 		receipt := i.Record.Resources["reserve:"+key]
 		if key == "postgresql" {
@@ -80,7 +80,7 @@ func SeedStore(ctx context.Context, store storage.Store, cfg config.Config, ring
 		if err = json.Unmarshal(old.Payload, &previous); err != nil {
 			return err
 		}
-		if old.Kind != bootstrap.InstallationDocumentKind || previous.ID != r.ID || previous.ClusterID != r.ClusterID || previous.ConfigDigest != r.ConfigDigest || previous.PoolID != r.PoolID || previous.RuntimeID != r.RuntimeID || previous.Database != r.Database {
+		if old.Kind != bootstrap.InstallationDocumentKind || previous.ID != r.ID || previous.MaintenanceAnchor != r.MaintenanceAnchor || previous.ClusterID != r.ClusterID || previous.ConfigDigest != r.ConfigDigest || previous.PoolID != r.PoolID || previous.RuntimeID != r.RuntimeID || previous.Database != r.Database {
 			return storage.ErrConflict
 		}
 	}

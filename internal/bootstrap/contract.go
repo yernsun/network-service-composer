@@ -75,6 +75,7 @@ type Node struct {
 // Adoption requires independent pre-existing registration and storage evidence;
 // a Docker resource name/label is never an ownership claim.
 type Adoption struct {
+	InstallationID       string            `json:"installation_id,omitempty" yaml:"installation_id,omitempty"`
 	ControllerConfigFile string            `json:"controller_config_file" yaml:"controller_config_file"`
 	ClusterID            string            `json:"cluster_id" yaml:"cluster_id"`
 	ServiceIDs           map[string]string `json:"service_ids" yaml:"service_ids"`
@@ -142,7 +143,7 @@ func (c Config) Validate() error {
 	if c.Mode == "single" && (len(c.Nodes) != 1 || managers != 1) {
 		return fmt.Errorf("single mode requires exactly one Manager")
 	}
-	if c.Mode == "multi" && (len(c.Nodes) < 3 || (c.Adoption == nil && managers != 3)) {
+	if c.Mode == "multi" && ((c.Adoption == nil && (len(c.Nodes) < 3 || managers != 3)) || (c.Adoption != nil && (len(c.Nodes) < 2 || managers < 1))) {
 		return fmt.Errorf("new multi mode requires three Managers and at least three nodes")
 	}
 	for _, n := range c.Nodes {
@@ -152,7 +153,7 @@ func (c Config) Validate() error {
 	}
 	if c.Adoption != nil {
 		a := c.Adoption
-		if !filepath.IsAbs(a.ControllerConfigFile) || a.ClusterID == "" || a.DataNodeID == "" || a.Volume == "" || len(a.ServiceIDs) != 4 {
+		if (a.InstallationID != "" && !safeName.MatchString(a.InstallationID)) || !filepath.IsAbs(a.ControllerConfigFile) || a.ClusterID == "" || a.DataNodeID == "" || a.Volume == "" || len(a.ServiceIDs) != 4 {
 			return fmt.Errorf("adoption requires configuration, cluster, storage and four service IDs")
 		}
 		seen := map[string]bool{}
@@ -174,6 +175,7 @@ func Digest(v any) string {
 }
 
 type Resource struct {
+	Image      string `json:"image,omitempty"`
 	Kind       string `json:"kind"`
 	ID         string `json:"id"`
 	Version    uint64 `json:"version"`
@@ -213,13 +215,14 @@ type PlanTarget struct {
 }
 
 type PlanScope struct {
-	Mode                         string       `json:"mode"`
-	ClusterID                    string       `json:"cluster_id,omitempty"`
-	Targets                      []PlanTarget `json:"targets"`
-	Images                       Images       `json:"images"`
-	DataNode                     string       `json:"data_node"`
-	DataVolume                   string       `json:"data_volume,omitempty"`
-	DatabaseSinglePointOfFailure bool         `json:"database_single_point_of_failure"`
+	Topology                     ManagerTopology `json:"topology"`
+	Mode                         string          `json:"mode"`
+	ClusterID                    string          `json:"cluster_id,omitempty"`
+	Targets                      []PlanTarget    `json:"targets"`
+	Images                       Images          `json:"images"`
+	DataNode                     string          `json:"data_node"`
+	DataVolume                   string          `json:"data_volume,omitempty"`
+	DatabaseSinglePointOfFailure bool            `json:"database_single_point_of_failure"`
 }
 
 func (p Plan) WithScope(scope PlanScope) Plan { p.Scope = scope; p.Hash = p.digest(); return p }

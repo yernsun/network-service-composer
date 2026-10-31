@@ -23,6 +23,8 @@ import (
 	"golang.org/x/sys/unix"
 )
 
+var ErrNodeUnavailable = errors.New("SSH node is unavailable")
+
 type Host struct {
 	Node           Node
 	KnownHostsFile string
@@ -75,7 +77,7 @@ func (h Host) dial(ctx context.Context, callback ssh.HostKeyCallback, auth []ssh
 	}
 	conn, err := (&net.Dialer{Timeout: 10 * time.Second}).DialContext(ctx, "tcp", address)
 	if err != nil {
-		return nil, fmt.Errorf("SSH node is unavailable")
+		return nil, ErrNodeUnavailable
 	}
 	deadline := time.Now().Add(15 * time.Second)
 	if d, ok := ctx.Deadline(); ok && d.Before(deadline) {

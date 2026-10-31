@@ -221,7 +221,7 @@ func TestMissingPrivateRuntimeMaterialsBlockWithoutGeneratingReplacements(t *tes
 			i, _ := installerFixture(t, 1)
 			infrastructure(t, i)
 			os.Remove(i.material(name))
-			if _, err := i.localConfig(); err == nil && (name == "postgres-password" || name == "admin-password" || name == "session-key" || name == "encryption-key") {
+			if _, err := i.localConfig(t.Context()); err == nil && (name == "postgres-password" || name == "admin-password" || name == "session-key" || name == "encryption-key") {
 				t.Fatal("missing offline credential accepted")
 			}
 			if _, err := i.nodeFiles(i.Config.Nodes[0]); err == nil {
@@ -383,3 +383,26 @@ func TestUnavailableProvisioningDependenciesNeverAdvanceOrReplaceOwnedResources(
 	}
 }
 func ptrResource(r bootstrap.Resource) *bootstrap.Resource { return &r }
+
+func TestRuntimeStatusVersionDoesNotReportConfigurationDriftOrAuthorizeStaleUpdate(t *testing.T) {
+	i, cluster := installerFixture(t, 1)
+	infrastructure(t, i)
+	before := i.Record.Resources["reserve:controller"]
+	current := cluster.services[before.ID]
+	current.Version.Index++
+	cluster.services[before.ID] = current
+	if err := i.Check(t.Context(), bootstrap.Step{Key: "reserve:controller", Receipt: &before, State: bootstrap.Succeeded}); err != nil {
+		t.Fatal("Swarm status version was mistaken for configuration drift", err)
+	}
+	if _, err := i.Apply(t.Context(), bootstrap.Step{Key: "start:controller"}); err == nil {
+		t.Fatal("stale version authorized a Docker write")
+	}
+	if cluster.services[before.ID].Version.Index != current.Version.Index {
+		t.Fatal("rejected stale update changed service")
+	}
+	current.Spec.TaskTemplate.ForceUpdate++
+	cluster.services[before.ID] = current
+	if err := i.Check(t.Context(), bootstrap.Step{Key: "reserve:controller", Receipt: &before, State: bootstrap.Succeeded}); err == nil {
+		t.Fatal("external task configuration change was ignored")
+	}
+}
