@@ -29,7 +29,7 @@ const scopedDomains = computed(() => state.value.domains.filter(domain =>
   (environment.value === 'all' || domain.env === environment.value || domain.environmentIds?.includes(environment.value)),
 ))
 function related(certificate: Certificate) { return scopedDomains.value.filter(domain => domain.tls?.certificate_id === certificate.id) }
-function names(certificate: Certificate) { return [...new Set([certificate.primary_domain, ...certificate.domains].filter(Boolean))] }
+function names(certificate: Certificate) { return [...new Set([certificate.primary_domain, ...(certificate.domains || []), ...(certificate.ip_addresses || [])].filter(Boolean))] }
 const scopedCertificates = computed(() => (data.value || []).filter(certificate =>
   project.value === 'all' && environment.value === 'all' || related(certificate).length > 0,
 ))

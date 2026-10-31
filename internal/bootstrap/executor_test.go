@@ -285,6 +285,26 @@ func TestUnknownNeverClaimsByName(t *testing.T) {
 	}
 }
 
+func TestVerifiedContinuationRetainsPartialReceiptAndHistory(t *testing.T) {
+	j, r, p, d, e := setup(t)
+	d.result = &Resource{Kind: "service", ID: "known-create-response-id", SpecDigest: "intended"}
+	d.fail = context.DeadlineExceeded
+	op, err := e.Execute(context.Background(), &r, p, p.Hash, "request-one")
+	if err == nil || op.State != Unknown || op.Plan.Steps[0].Receipt.ID != "known-create-response-id" {
+		t.Fatal("known creation response discarded")
+	}
+	saved, err := j.Read()
+	if err != nil || saved.Operations[0].Plan.Steps[0].Receipt.ID != "known-create-response-id" {
+		t.Fatal("partial receipt not durable", err)
+	}
+	d.fail = nil
+	d.reconciliationErr = &RetrySafe{Reason: "same owned, idempotent initialization checkpoint verified"}
+	op, err = e.Resume(context.Background(), &r, op.ID)
+	if err != nil || op.State != Succeeded || d.applied != 2 || op.ID != saved.Operations[0].ID {
+		t.Fatal("verified continuation lost operation identity", err)
+	}
+}
+
 func TestBlockedDriftAndDefiniteFailure(t *testing.T) {
 	_, r, p, d, e := setup(t)
 	d.checked = errors.New("foreign ClusterID")

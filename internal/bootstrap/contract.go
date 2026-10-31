@@ -52,6 +52,7 @@ type Config struct {
 	KnownHostsFile    string    `json:"known_hosts_file" yaml:"known_hosts_file"`
 	Nodes             []Node    `json:"nodes" yaml:"nodes"`
 	Images            Images    `json:"images" yaml:"images"`
+	RegistryAuthFile  string    `json:"registry_auth_file,omitempty" yaml:"registry_auth_file,omitempty"`
 	AdminPasswordFile string    `json:"admin_password_file" yaml:"admin_password_file"`
 	Adoption          *Adoption `json:"adoption,omitempty" yaml:"adoption,omitempty"`
 }
@@ -121,7 +122,7 @@ func (c Config) Validate() error {
 			return fmt.Errorf("all images require an immutable sha256 digest")
 		}
 	}
-	if !filepath.IsAbs(c.KnownHostsFile) || (c.AdminPasswordFile != "" && !filepath.IsAbs(c.AdminPasswordFile)) {
+	if !filepath.IsAbs(c.KnownHostsFile) || (c.AdminPasswordFile != "" && !filepath.IsAbs(c.AdminPasswordFile)) || (c.RegistryAuthFile != "" && !filepath.IsAbs(c.RegistryAuthFile)) {
 		return fmt.Errorf("credential and known-host references must be absolute files")
 	}
 	names, addresses := map[string]bool{}, map[string]bool{}
@@ -190,6 +191,7 @@ type Step struct {
 }
 
 type Plan struct {
+	Scope             PlanScope `json:"scope"`
 	InstallationID    string    `json:"installation_id"`
 	Revision          int64     `json:"revision"`
 	Action            Action    `json:"action"`
@@ -201,6 +203,26 @@ type Plan struct {
 	Impact            []string  `json:"impact"`
 	Hash              string    `json:"hash"`
 }
+
+type PlanTarget struct {
+	Name     string `json:"name"`
+	Address  string `json:"address"`
+	Manager  bool   `json:"manager"`
+	NodeID   string `json:"node_id,omitempty"`
+	EngineID string `json:"engine_id"`
+}
+
+type PlanScope struct {
+	Mode                         string       `json:"mode"`
+	ClusterID                    string       `json:"cluster_id,omitempty"`
+	Targets                      []PlanTarget `json:"targets"`
+	Images                       Images       `json:"images"`
+	DataNode                     string       `json:"data_node"`
+	DataVolume                   string       `json:"data_volume,omitempty"`
+	DatabaseSinglePointOfFailure bool         `json:"database_single_point_of_failure"`
+}
+
+func (p Plan) WithScope(scope PlanScope) Plan { p.Scope = scope; p.Hash = p.digest(); return p }
 
 func NewPlan(r Record, action Action, observation any, steps []Step, now time.Time) (Plan, error) {
 	if action != Init && action != Adopt && action != Repair && action != Upgrade && action != Rollback && action != Verify {

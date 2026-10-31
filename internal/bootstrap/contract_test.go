@@ -79,3 +79,15 @@ func TestStrictConfiguration(t *testing.T) {
 		t.Fatal("idempotency validation")
 	}
 }
+
+func TestRegistryAuthenticationUsesOnlyAbsolutePrivateFileReferences(t *testing.T) {
+	cfg := testConfig()
+	cfg.RegistryAuthFile = "relative-auth.json"
+	if err := cfg.Validate(); err == nil {
+		t.Fatal("relative registry credential reference accepted")
+	}
+	cfg.RegistryAuthFile = "/private/registry-auth.json"
+	if err := cfg.Validate(); err != nil {
+		t.Fatal("absolute registry reference rejected", err)
+	}
+}

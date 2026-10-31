@@ -629,6 +629,7 @@ type DNSTarget struct {
 }
 
 type Certificate struct {
+	IPAddresses          []string          `json:"ip_addresses,omitempty"`
 	ID                   string            `json:"id"`
 	PoolID               string            `json:"pool_id"`
 	Provider             string            `json:"provider"`

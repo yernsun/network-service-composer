@@ -3603,5 +3603,6 @@
   "selfSigned.domains": "網域名稱（以逗號或換行分隔）",
   "selfSigned.years": "有效期限（年，預設 20）",
   "selfSigned.binding": "簽發後建立憑證資產。請在自訂 TLS 中選擇此憑證，並儲存或發佈網域使其生效。不自動續期。",
-  "selfSigned.issue": "簽發憑證"
+  "selfSigned.issue": "簽發憑證",
+  "selfSigned.ips": "IP SAN（以逗號或換行分隔）"
 }

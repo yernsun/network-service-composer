@@ -3603,5 +3603,6 @@
   "selfSigned.domains": "DNS-Namen (durch Kommas oder Zeilenumbrüche getrennt)",
   "selfSigned.years": "Gültigkeit (Jahre, Standard 20)",
   "selfSigned.binding": "Erstellt ein Zertifikat. Wählen Sie es für benutzerdefiniertes TLS und speichern oder veröffentlichen Sie die Domain. Keine automatische Erneuerung.",
-  "selfSigned.issue": "Zertifikat ausstellen"
+  "selfSigned.issue": "Zertifikat ausstellen",
+  "selfSigned.ips": "IP-SANs (durch Kommas oder Zeilenumbrüche getrennt)"
 }

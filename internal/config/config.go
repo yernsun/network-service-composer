@@ -22,6 +22,8 @@ import (
 
 type Duration time.Duration
 
+func (d Duration) MarshalYAML() (any, error) { return time.Duration(d).String(), nil }
+
 func (d *Duration) UnmarshalYAML(node *yaml.Node) error {
 	value, err := time.ParseDuration(node.Value)
 	if err != nil {
@@ -66,18 +68,21 @@ type I18NConfig struct {
 }
 
 type ServerConfig struct {
-	HTTPListen       string   `yaml:"http_listen"`
-	HTTPTLSCertFile  string   `yaml:"http_tls_cert_file"`
-	HTTPTLSKeyFile   string   `yaml:"http_tls_key_file"`
-	GRPCListen       string   `yaml:"grpc_listen"`
-	GRPCTLSCertFile  string   `yaml:"grpc_tls_cert_file"`
-	GRPCTLSKeyFile   string   `yaml:"grpc_tls_key_file"`
-	GRPCClientCAFile string   `yaml:"grpc_client_ca_file"`
-	PublicURL        string   `yaml:"public_url"`
-	ReadTimeout      Duration `yaml:"read_timeout"`
-	WriteTimeout     Duration `yaml:"write_timeout"`
-	RateLimitRPS     float64  `yaml:"rate_limit_rps"`
-	RateLimitBurst   int      `yaml:"rate_limit_burst"`
+	ConsoleHTTPSListen   string   `yaml:"console_https_listen"`
+	ConsoleHTTPSCertFile string   `yaml:"console_https_cert_file"`
+	ConsoleHTTPSKeyFile  string   `yaml:"console_https_key_file"`
+	HTTPListen           string   `yaml:"http_listen"`
+	HTTPTLSCertFile      string   `yaml:"http_tls_cert_file"`
+	HTTPTLSKeyFile       string   `yaml:"http_tls_key_file"`
+	GRPCListen           string   `yaml:"grpc_listen"`
+	GRPCTLSCertFile      string   `yaml:"grpc_tls_cert_file"`
+	GRPCTLSKeyFile       string   `yaml:"grpc_tls_key_file"`
+	GRPCClientCAFile     string   `yaml:"grpc_client_ca_file"`
+	PublicURL            string   `yaml:"public_url"`
+	ReadTimeout          Duration `yaml:"read_timeout"`
+	WriteTimeout         Duration `yaml:"write_timeout"`
+	RateLimitRPS         float64  `yaml:"rate_limit_rps"`
+	RateLimitBurst       int      `yaml:"rate_limit_burst"`
 }
 
 type MetricsConfig struct {
@@ -389,6 +394,9 @@ func applyEnvironment(c *Config) error {
 		}
 	}
 	setString("NSC_SERVER__HTTP_LISTEN", &c.Server.HTTPListen)
+	setString("NSC_SERVER__CONSOLE_HTTPS_LISTEN", &c.Server.ConsoleHTTPSListen)
+	setString("NSC_SERVER__CONSOLE_HTTPS_CERT_FILE", &c.Server.ConsoleHTTPSCertFile)
+	setString("NSC_SERVER__CONSOLE_HTTPS_KEY_FILE", &c.Server.ConsoleHTTPSKeyFile)
 	setString("NSC_SERVER__PUBLIC_URL", &c.Server.PublicURL)
 	setString("NSC_SERVER__HTTP_TLS_CERT_FILE", &c.Server.HTTPTLSCertFile)
 	setString("NSC_SERVER__HTTP_TLS_KEY_FILE", &c.Server.HTTPTLSKeyFile)
@@ -718,6 +726,14 @@ func (c Config) Validate() error {
 	}
 	if (c.Server.HTTPTLSCertFile == "") != (c.Server.HTTPTLSKeyFile == "") {
 		problems = append(problems, "HTTP TLS requires both http_tls_cert_file and http_tls_key_file")
+	}
+	if c.Server.ConsoleHTTPSListen != "" {
+		_, port, err := net.SplitHostPort(c.Server.ConsoleHTTPSListen)
+		if err != nil || port == "" || c.Server.ConsoleHTTPSListen == c.Server.HTTPListen || c.Server.ConsoleHTTPSCertFile == "" || c.Server.ConsoleHTTPSKeyFile == "" {
+			problems = append(problems, "independent console HTTPS requires a distinct listener and a certificate/key pair")
+		}
+	} else if c.Server.ConsoleHTTPSCertFile != "" || c.Server.ConsoleHTTPSKeyFile != "" {
+		problems = append(problems, "console HTTPS certificate files require console_https_listen")
 	}
 	if !c.Controller.RecoveryMode && c.Server.GRPCListen != "" && (c.Server.GRPCTLSCertFile == "" || c.Server.GRPCTLSKeyFile == "" || c.Server.GRPCClientCAFile == "") {
 		problems = append(problems, "gRPC requires grpc_tls_cert_file, grpc_tls_key_file, and grpc_client_ca_file")

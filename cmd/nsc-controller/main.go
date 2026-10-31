@@ -37,6 +37,8 @@ func run() error {
 		return usage()
 	}
 	switch os.Args[1] {
+	case "bootstrap":
+		return bootstrapCommand(os.Args[2:], os.Stdin, os.Stdout)
 	case "serve":
 		return serve(os.Args[2:])
 	case "migrate":
@@ -64,7 +66,7 @@ func run() error {
 }
 
 func usage() error {
-	return fmt.Errorf("usage: nsc-controller <serve|migrate|recovery-check|recovery-prepare|recovery-release|recovery-reconcile|keys|pki|id|version>")
+	return fmt.Errorf("usage: nsc-controller <bootstrap|serve|migrate|recovery-check|recovery-prepare|recovery-release|recovery-reconcile|keys|pki|id|version>")
 }
 
 func generateID(args []string) error {

@@ -412,5 +412,5 @@
   "problem.system.project_protected": "このシステムプロジェクトとそのリソースは保護されています。NSC の更新や削除はクラスターの保守手順で行ってください。",
   "problem.service.logs_unavailable": "この Service またはマネージャーの Docker Swarm Service ログは利用できません。",
   "problem.volume.in_use": "参照されているか、アプリの復元用に保持されています。",
-  "problem.validation.self_signed_invalid": "完全な DNS 名を1～100個、有効期間を1～100年で指定してください。"
+  "problem.validation.self_signed_invalid": "正確な DNS 名または IP SAN を 1〜100 個、有効期間を 1〜100 年で指定してください。"
 }

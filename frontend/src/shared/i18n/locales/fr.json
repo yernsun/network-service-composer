@@ -3603,5 +3603,6 @@
   "selfSigned.domains": "Noms DNS (séparés par des virgules ou des sauts de ligne)",
   "selfSigned.years": "Validité (années, 20 par défaut)",
   "selfSigned.binding": "Crée un certificat. Sélectionnez-le pour le TLS personnalisé, puis enregistrez ou publiez le domaine pour l’appliquer. Aucun renouvellement automatique.",
-  "selfSigned.issue": "Émettre le certificat"
+  "selfSigned.issue": "Émettre le certificat",
+  "selfSigned.ips": "SAN IP (séparés par des virgules ou des sauts de ligne)"
 }

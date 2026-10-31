@@ -33,6 +33,7 @@ type Identity struct {
 	SandboxID  string `json:"sandbox_id"`
 	NodeID     string `json:"node_id,omitempty"`
 	EngineID   string `json:"engine_id,omitempty"`
+	SocketGID  string `json:"socket_gid,omitempty"`
 }
 
 type Operation struct {
@@ -79,8 +80,21 @@ func OpenJournal(dir string) (*Journal, error) {
 
 func (j *Journal) Close() error { return j.lock.Close() }
 func (j *Journal) Read() (Record, error) {
+	return ReadJournal(j.dir)
+}
+
+// ReadJournal observes atomic checkpoints without acquiring the writer lock.
+// It never creates a directory or changes execution ownership.
+func ReadJournal(dir string) (Record, error) {
 	var r Record
-	fd, err := unix.Open(filepath.Join(j.dir, "installation.json"), unix.O_RDONLY|unix.O_NOFOLLOW|unix.O_CLOEXEC, 0)
+	info, err := os.Lstat(dir)
+	if err != nil {
+		return r, err
+	}
+	if !filepath.IsAbs(dir) || !info.IsDir() || info.Mode().Perm()&0o077 != 0 {
+		return r, fmt.Errorf("journal must be an absolute private directory")
+	}
+	fd, err := unix.Open(filepath.Join(dir, "installation.json"), unix.O_RDONLY|unix.O_NOFOLLOW|unix.O_CLOEXEC, 0)
 	if err != nil {
 		return r, err
 	}
@@ -112,7 +126,7 @@ func (j *Journal) Initialize(c Config, maintenanceIdentity string) (Record, erro
 	if !errors.Is(err, os.ErrNotExist) {
 		return r, err
 	}
-	r = Record{ID: id.New("install"), Revision: 1, ConfigDigest: Digest(c), MaintenanceIdentity: maintenanceIdentity, PoolID: id.New(id.Pool), RuntimeID: id.New(id.Runtime), Nodes: map[string]Identity{}, Resources: map[string]Resource{}, Operations: []Operation{}}
+	r = Record{ID: id.New("install"), Revision: 1, ConfigDigest: Digest(c), MaintenanceIdentity: maintenanceIdentity, PoolID: id.New(id.Pool), RuntimeID: id.New(id.Runtime), CertificateID: id.New(id.Certificate), Nodes: map[string]Identity{}, Resources: map[string]Resource{}, Operations: []Operation{}}
 	for _, n := range c.Nodes {
 		r.Nodes[n.Name] = Identity{InstanceID: id.New("ctrl"), GatewayID: id.New(id.Gateway), SandboxID: id.New(id.Gateway)}
 	}

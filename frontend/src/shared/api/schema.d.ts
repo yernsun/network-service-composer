@@ -3261,8 +3261,10 @@ export interface components {
         };
         SelfSignedCertificateInput: {
             pool_id: string;
-            /** @description Exact DNS SAN names; normalized and deduplicated. */
-            domains: string[];
+            /** @description Exact DNS SAN names; normalized and deduplicated. At most 100 DNS and IP SANs combined. */
+            domains?: string[];
+            /** @description Exact IPv4 or IPv6 SANs without a zone; canonicalized and deduplicated. Ordinary Domain and ACME models remain DNS-only. */
+            ip_addresses?: string[];
             /** @description Optional existing Domains to attach atomically in the same pool. Omit to create an independent asset. */
             domain_ids?: string[];
             /**
@@ -3270,6 +3272,10 @@ export interface components {
              * @default 20
              */
             validity_years: number;
+        } | {
+            domains: unknown;
+        } | {
+            ip_addresses: unknown;
         };
         CertificateUpload: {
             pool_id: string;
@@ -3288,6 +3294,7 @@ export interface components {
             status: string;
             primary_domain: string;
             domains: string[];
+            ip_addresses?: string[];
             encryption_key_id?: string;
             fingerprint?: string;
             serial_number?: string;

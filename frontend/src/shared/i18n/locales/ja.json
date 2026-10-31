@@ -3603,5 +3603,6 @@
   "selfSigned.domains": "DNS 名（カンマまたは改行で区切る）",
   "selfSigned.years": "有効期間（年、既定は20年）",
   "selfSigned.binding": "証明書を作成します。カスタム TLS で選択し、ドメインを保存または公開すると適用されます。自動更新は行いません。",
-  "selfSigned.issue": "証明書を発行"
+  "selfSigned.issue": "証明書を発行",
+  "selfSigned.ips": "IP SAN（カンマまたは改行で区切る）"
 }

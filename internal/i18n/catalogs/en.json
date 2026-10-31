@@ -412,5 +412,5 @@
   "problem.system.project_protected": "This system project and its resources are protected. Use cluster maintenance to upgrade or remove NSC.",
   "problem.service.logs_unavailable": "Docker Swarm Service logs are unavailable for this Service or manager.",
   "problem.volume.in_use": "Data is referenced or retained for application recovery.",
-  "problem.validation.self_signed_invalid": "Provide 1–100 exact DNS names and a validity of 1–100 years."
+  "problem.validation.self_signed_invalid": "Provide 1–100 exact DNS names or IP SANs and a validity of 1–100 years."
 }

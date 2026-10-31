@@ -34,5 +34,6 @@ ARG SOURCE_REVISION=unknown
 ARG SOURCE_FINGERPRINT=unknown
 LABEL org.opencontainers.image.revision=$SOURCE_REVISION
 LABEL org.nsc.source.fingerprint=$SOURCE_FINGERPRINT
+LABEL io.nsc.bootstrap.contract="1" io.nsc.bootstrap.protocol="2"
 ENTRYPOINT ["/usr/local/bin/nsc-agent"]
 CMD ["--config", "/etc/nsc/agent.yaml"]

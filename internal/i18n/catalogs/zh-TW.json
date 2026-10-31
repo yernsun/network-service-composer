@@ -412,5 +412,5 @@
   "problem.system.project_protected": "此系統專案及其資源受到保護。請透過叢集維運升級或移除 NSC。",
   "problem.service.logs_unavailable": "此服務或管理節點無法提供 Docker Swarm Service 日誌。",
   "problem.volume.in_use": "卷仍被參照或保留用於應用復原。",
-  "problem.validation.self_signed_invalid": "請提供 1–100 個精確網域名稱，有效期限為 1–100 年。"
+  "problem.validation.self_signed_invalid": "請提供 1–100 個精確 DNS 名稱或 IP SAN，以及 1–100 年的有效期。"
 }

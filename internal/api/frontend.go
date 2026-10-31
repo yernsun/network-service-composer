@@ -226,7 +226,7 @@ func (s *Server) loginJSON(w http.ResponseWriter, r *http.Request) {
 	writeData(w, 200, map[string]any{"authenticated": true, "locale": requestedLocale(r), "supported_languages": i18n.SupportedCodes(), "csrf_token": sess.CSRF, "expires_at": sess.Expires, "username": user.Username, "role": user.Role, "user_id": user.ID})
 }
 func (s *Server) logoutJSON(w http.ResponseWriter, r *http.Request) {
-	http.SetCookie(w, &http.Cookie{Name: "nsc_session", Value: "", Path: "/", HttpOnly: true, Secure: strings.HasPrefix(strings.ToLower(s.config.Server.PublicURL), "https://"), MaxAge: -1, SameSite: http.SameSiteStrictMode})
+	http.SetCookie(w, &http.Cookie{Name: "nsc_session", Value: "", Path: "/", HttpOnly: true, Secure: s.secureSession(), MaxAge: -1, SameSite: http.SameSiteStrictMode})
 	w.WriteHeader(204)
 }
 func (s *Server) localeJSON(w http.ResponseWriter, r *http.Request) {

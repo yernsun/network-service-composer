@@ -20,6 +20,8 @@ import (
 	"time"
 	"unicode"
 
+	"github.com/yernsun/network-service-composer/internal/bootstrap"
+
 	"golang.org/x/net/idna"
 
 	"github.com/yernsun/network-service-composer/internal/cluster"
@@ -676,16 +678,24 @@ func (c *Core) installCertificate(ctx context.Context, input CustomCertificateIn
 			return model.Certificate{}, invalidParams("validation.certificate_domain_not_covered", "certificate_pem", fmt.Sprintf("certificate does not cover %s", domain.Host), map[string]any{"domain": domain.Host})
 		}
 	}
-	if len(leaf.DNSNames) == 0 {
-		return model.Certificate{}, invalid("validation.certificate_invalid", "certificate_pem", "certificate requires a DNS subject alternative name")
+	if len(leaf.DNSNames) == 0 && len(leaf.IPAddresses) == 0 {
+		return model.Certificate{}, invalid("validation.certificate_invalid", "certificate_pem", "certificate requires a DNS or IP subject alternative name")
 	}
 	fingerprint := sha256.Sum256(leaf.Raw)
 	now := c.now()
 	value := model.Certificate{ID: id.New(id.Certificate), PoolID: input.PoolID, Provider: provider,
-		Status: model.CertificateActive, PrimaryDomain: leaf.DNSNames[0], CertificatePEM: input.CertificatePEM,
+		Status: model.CertificateActive, CertificatePEM: input.CertificatePEM,
 		Fingerprint: hex.EncodeToString(fingerprint[:]), SerialNumber: leaf.SerialNumber.String(),
 		NotBefore: &leaf.NotBefore, NotAfter: &leaf.NotAfter, Revision: 1, CreatedAt: now, UpdatedAt: now}
-	value.Domains = append([]string(nil), leaf.DNSNames...)
+	value.Domains = append([]string{}, leaf.DNSNames...)
+	for _, address := range leaf.IPAddresses {
+		value.IPAddresses = append(value.IPAddresses, address.String())
+	}
+	if len(value.Domains) > 0 {
+		value.PrimaryDomain = value.Domains[0]
+	} else {
+		value.PrimaryDomain = value.IPAddresses[0]
+	}
 	encrypted, err := c.keyring.Encrypt([]byte(input.PrivateKeyPEM), []byte(value.ID))
 	if err != nil {
 		return value, err
@@ -718,6 +728,21 @@ func (c *Core) MarkCertificateForRenewal(ctx context.Context, certificateID stri
 }
 
 func (c *Core) RevokeCertificate(ctx context.Context, certificateID string) (model.Certificate, error) {
+	installation, err := c.store.GetControlDocument(ctx, bootstrap.InstallationDocumentID)
+	if err == nil {
+		var value bootstrap.Installation
+		if installation.Kind != bootstrap.InstallationDocumentKind {
+			return model.Certificate{}, storage.ErrConflict
+		}
+		if err = json.Unmarshal(installation.Payload, &value); err != nil {
+			return model.Certificate{}, err
+		}
+		if value.CertificateID == certificateID {
+			return model.Certificate{}, storage.ErrSystemProtected
+		}
+	} else if !errors.Is(err, storage.ErrNotFound) {
+		return model.Certificate{}, err
+	}
 	value, err := c.store.GetCertificate(ctx, certificateID)
 	if err != nil {
 		return value, err

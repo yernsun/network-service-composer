@@ -56,6 +56,17 @@ describe('managed certificate inventory', () => {
     expect(view.get('[data-certificate-id=unbound]').text()).toContain('certAssets.unbound')
     expect(send.mock.calls.map(call => call[0])).toEqual(['get', 'get'])
   })
+  it('shows and filters IP-only assets, including legacy null DNS metadata', async () => {
+    const legacy: unknown = { ...certificate('console'), provider: 'self-signed', primary_domain: '192.0.2.17', domains: null, ip_addresses: ['192.0.2.17', '2001:db8::17'] }
+    send.mockResolvedValue({ data: [legacy], pagination: { next_cursor: '' }, response: new Response(null) })
+    const { view } = await page()
+    expect(rows()).toEqual(['console'])
+    expect(view.text()).toContain('selfSigned.label')
+    await view.get('#certificate-domain-filter').setValue('2001:db8::17')
+    expect(rows()).toEqual(['console'])
+    await view.get('#certificate-domain-filter').setValue('192.0.2.99')
+    expect(rows()).toEqual([])
+  })
   it('keeps narrower scopes tied to explicit domain links, including a shared multi-environment domain', async () => {
     server = [certificate('shared'), certificate('other'), certificate('unbound')]
     snapshot.domains = [

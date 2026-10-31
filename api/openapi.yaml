@@ -2964,10 +2964,16 @@ components:
     SelfSignedCertificateInput:
       type: object
       additionalProperties: false
-      required: [pool_id, domains]
+      required: [pool_id]
+      anyOf:
+        - required: [domains]
+          properties: { domains: { minItems: 1 } }
+        - required: [ip_addresses]
+          properties: { ip_addresses: { minItems: 1 } }
       properties:
         pool_id: { type: string }
-        domains: { type: array, minItems: 1, maxItems: 100, items: { type: string }, description: Exact DNS SAN names; normalized and deduplicated. }
+        domains: { type: array, maxItems: 100, items: { type: string }, description: Exact DNS SAN names; normalized and deduplicated. At most 100 DNS and IP SANs combined. }
+        ip_addresses: { type: array, maxItems: 100, items: { type: string }, description: Exact IPv4 or IPv6 SANs without a zone; canonicalized and deduplicated. Ordinary Domain and ACME models remain DNS-only. }
         domain_ids: { type: array, items: { type: string }, description: Optional existing Domains to attach atomically in the same pool. Omit to create an independent asset. }
         validity_years: { type: integer, minimum: 1, maximum: 100, default: 20, description: Calendar years from issuance. No automatic renewal. }
     CertificateUpload:
@@ -2993,6 +2999,7 @@ components:
             status: { type: string }
             primary_domain: { type: string }
             domains: { type: array, items: { type: string } }
+            ip_addresses: { type: array, items: { type: string } }
             encryption_key_id: { type: string }
             fingerprint: { type: string }
             serial_number: { type: string }

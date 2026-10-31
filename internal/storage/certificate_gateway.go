@@ -18,7 +18,7 @@ encryption_key_id,fingerprint,serial_number,not_before,not_after,attempt_count,n
 distribution_revision,revision,created_at,updated_at`
 
 func scanCertificateValue(row scanner) (model.Certificate, error) {
-	var value model.Certificate
+	value := model.Certificate{Domains: []string{}}
 	var encrypted []byte
 	var notBefore, notAfter, next sql.NullTime
 	err := row.Scan(&value.ID, &value.PoolID, &value.Provider, &value.ACMEChallenge, &value.DNSProviderRef, &value.Status, &value.PrimaryDomain,
@@ -41,7 +41,10 @@ func scanCertificateValue(row scanner) (model.Certificate, error) {
 	if value.Provider == "custom" || value.Provider == "self-signed" {
 		if block, _ := pem.Decode([]byte(value.CertificatePEM)); block != nil {
 			if leaf, err := x509.ParseCertificate(block.Bytes); err == nil {
-				value.Domains = append([]string(nil), leaf.DNSNames...)
+				value.Domains = append([]string{}, leaf.DNSNames...)
+				for _, address := range leaf.IPAddresses {
+					value.IPAddresses = append(value.IPAddresses, address.String())
+				}
 			}
 		}
 	}

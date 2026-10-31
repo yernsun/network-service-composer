@@ -57,3 +57,11 @@ it('hides signing from viewers', () => {
   wrapper = mount(SelfSignedCertificateForm, { global: { plugins: [[VueQueryPlugin, { queryClient: query }]] } })
   expect(wrapper.find('button').exists()).toBe(false); expect(send).not.toHaveBeenCalled()
 })
+it('creates an IP-only management certificate without creating a Domain', async () => {
+  await open({ poolId: 'pool' })
+  await wrapper.get('[data-testid=self-signed-ips]').setValue('192.0.2.9, 2001:db8::9')
+  expect(wrapper.get('[data-testid=self-signed-submit]').attributes('disabled')).toBeUndefined()
+  await wrapper.get('[data-testid=self-signed-submit]').trigger('click'); await flushPromises()
+  expect(send).toHaveBeenLastCalledWith('post', '/certificates/self-signed', { body: { pool_id: 'pool', domains: [], ip_addresses: ['192.0.2.9', '2001:db8::9'], validity_years: 20 } })
+  expect(send.mock.calls.every(call => call[1] !== '/domains')).toBe(true)
+})

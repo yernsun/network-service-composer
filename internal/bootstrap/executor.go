@@ -24,6 +24,12 @@ type Rejected struct{ Reason string }
 
 func (e *Rejected) Error() string { return e.Reason }
 
+// RetrySafe is returned only after read-only reconciliation has established an
+// idempotent continuation on the same owned objects. Absence by name is not proof.
+type RetrySafe struct{ Reason string }
+
+func (e *RetrySafe) Error() string { return e.Reason }
+
 type Executor struct {
 	Journal interface{ Save(*Record) error }
 	Driver  Driver
@@ -91,17 +97,24 @@ func (e Executor) run(ctx context.Context, r *Record, index int) (Operation, err
 		s := &op.Plan.Steps[i]
 		if s.State == Running || s.State == Unknown {
 			receipt, err := e.Driver.Reconcile(ctx, *s)
-			if err != nil || !validReceipt(receipt) {
+			var retry *RetrySafe
+			if errors.As(err, &retry) {
+				s.State, s.Reason = Pending, "verified_idempotent_continuation"
+				if err = e.save(r, op); err != nil {
+					return *op, err
+				}
+			} else if err != nil || !validReceipt(receipt) {
 				s.State, op.State, s.Reason = Unknown, Unknown, "outcome_unconfirmed"
 				if saveErr := e.save(r, op); saveErr != nil {
 					return *op, saveErr
 				}
 				return *op, fmt.Errorf("step %s has an unknown outcome; preserve resources and reconcile its receipt", s.Key)
-			}
-			s.Receipt, s.State = receipt, Succeeded
-			r.Resources[s.Key] = *receipt
-			if err = e.save(r, op); err != nil {
-				return *op, err
+			} else {
+				s.Receipt, s.State = receipt, Succeeded
+				r.Resources[s.Key] = *receipt
+				if err = e.save(r, op); err != nil {
+					return *op, err
+				}
 			}
 		}
 		if err := e.Driver.Check(ctx, *s); err != nil {
@@ -123,6 +136,9 @@ func (e Executor) run(ctx context.Context, r *Record, index int) (Operation, err
 		}
 		receipt, err := e.Driver.Apply(ctx, *s)
 		if err != nil {
+			if receipt.ID != "" && receipt.Kind != "" {
+				s.Receipt = &receipt
+			}
 			var rejected *Rejected
 			if errors.As(err, &rejected) {
 				s.State, op.State, s.Reason = Failed, Failed, "change_rejected"

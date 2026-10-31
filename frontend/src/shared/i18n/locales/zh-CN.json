@@ -3603,5 +3603,6 @@
   "selfSigned.domains": "域名（以逗号或换行分隔）",
   "selfSigned.years": "有效期（年，默认 20）",
   "selfSigned.binding": "签发后创建证书资产。请在自定义 TLS 中选择该证书，并保存或发布域名使其生效。不自动续期。",
-  "selfSigned.issue": "签发证书"
+  "selfSigned.issue": "签发证书",
+  "selfSigned.ips": "IP SAN（以逗号或换行分隔）"
 }

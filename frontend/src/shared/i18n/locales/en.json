@@ -3603,5 +3603,6 @@
   "selfSigned.domains": "DNS names (separate with commas or new lines)",
   "selfSigned.years": "Validity (years, default 20)",
   "selfSigned.binding": "Creates a certificate asset. Select it for custom TLS and save or publish the domain to apply it. No automatic renewal.",
-  "selfSigned.issue": "Issue certificate"
+  "selfSigned.issue": "Issue certificate",
+  "selfSigned.ips": "IP SANs (separate with commas or new lines)"
 }

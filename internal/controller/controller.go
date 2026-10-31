@@ -233,7 +233,10 @@ func (c *Controller) AddBackground(values ...Background) {
 	c.background = append(c.background, values...)
 }
 
-func (c *Controller) Run(ctx context.Context) error {
+func (c *Controller) Run(ctx context.Context) (err error) {
+	// Ownership acquired by New must also be released when a listener fails
+	// before workers start. Preserve both startup and cleanup failures.
+	defer func() { err = errors.Join(err, c.store.Close(), c.processLock.Close()) }()
 	runCtx, runCancel := context.WithCancel(ctx)
 	defer runCancel()
 	apiServer, err := api.New(c.core, c.config, c.logger, c.isReady)
@@ -246,8 +249,15 @@ func (c *Controller) Run(ctx context.Context) error {
 		handler = forwarder.Public(handler)
 	}
 	httpServer := &http.Server{Addr: c.config.Server.HTTPListen, Handler: handler, ReadHeaderTimeout: 5 * time.Second, ReadTimeout: c.config.Server.ReadTimeout.Std(), WriteTimeout: c.config.Server.WriteTimeout.Std(), IdleTimeout: 60 * time.Second, TLSConfig: &tls.Config{MinVersion: tls.VersionTLS12}}
+	consoleServer, consoleListener, err := consoleHTTPS(c.config, handler)
+	if err != nil {
+		return err
+	}
+	if consoleListener != nil {
+		defer consoleListener.Close()
+	}
 	metricsServer := &http.Server{Addr: c.config.Metrics.Listen, Handler: promhttp.HandlerFor(c.metrics.Registry, promhttp.HandlerOpts{}), ReadHeaderTimeout: 3 * time.Second}
-	errorsCh := make(chan error, len(c.background)+4)
+	errorsCh := make(chan error, len(c.background)+5)
 	var internalServer *http.Server
 	var internalListener net.Listener
 	if c.internalTLS != nil {
@@ -333,6 +343,13 @@ func (c *Controller) Run(ctx context.Context) error {
 			errorsCh <- err
 		}
 	}()
+	if consoleServer != nil {
+		go func() {
+			if err := consoleServer.Serve(consoleListener); err != nil && !errors.Is(err, http.ErrServerClosed) {
+				errorsCh <- err
+			}
+		}()
+	}
 	if grpcServer != nil {
 		go func() {
 			c.logger.Info("gateway gRPC listening", "address", grpcListener.Addr().String())
@@ -358,6 +375,9 @@ func (c *Controller) Run(ctx context.Context) error {
 	defer cancel()
 	_ = metricsServer.Shutdown(shutdownCtx)
 	_ = httpServer.Shutdown(shutdownCtx)
+	if consoleServer != nil {
+		_ = consoleServer.Shutdown(shutdownCtx)
+	}
 	if internalServer != nil {
 		_ = internalServer.Shutdown(shutdownCtx)
 	}
@@ -388,15 +408,7 @@ func (c *Controller) Run(ctx context.Context) error {
 			err = fmt.Errorf("background workers did not stop before the shutdown deadline: %w", shutdownCtx.Err())
 		}
 	}
-	closeErr := c.store.Close()
-	lockErr := c.processLock.Close()
-	if err != nil {
-		return err
-	}
-	if closeErr != nil {
-		return closeErr
-	}
-	return lockErr
+	return err
 }
 
 func gatewayTLSConfig(cfg config.Config) (*tls.Config, error) {

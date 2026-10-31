@@ -429,7 +429,11 @@ func (s *Server) issueSession(w http.ResponseWriter, r *http.Request, user core.
 		s.writeProblem(w, r, http.StatusInternalServerError, "session.create_failed", nil, "")
 		return session{}, false
 	}
-	secure := strings.HasPrefix(strings.ToLower(s.config.Server.PublicURL), "https://")
+	secure := s.secureSession()
 	http.SetCookie(w, &http.Cookie{Name: "nsc_session", Value: cookie, Path: "/", HttpOnly: true, Secure: secure, SameSite: http.SameSiteStrictMode, MaxAge: 12 * 60 * 60})
 	return sess, true
+}
+
+func (s *Server) secureSession() bool {
+	return s.config.Server.ConsoleHTTPSListen != "" || s.config.Server.HTTPTLSCertFile != "" || strings.HasPrefix(strings.ToLower(s.config.Server.PublicURL), "https://")
 }
