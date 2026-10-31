@@ -655,12 +655,13 @@ jobs:
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
         with:
           node-version: 24.20.0
-      - name: Download this run's verification envelopes
+      - name: Download verification envelopes from all attempts of this run
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
-          pattern: readiness-*-${{ github.run_id }}-${{ github.run_attempt }}
+          pattern: readiness-*-${{ github.run_id }}-*
           path: coverage/readiness-input
-          merge-multiple: true
+          # Preserve each artifact directory so reruns cannot overwrite envelopes.
+          merge-multiple: false
       - name: Enforce every required result and identity
         if: always()
         env:
@@ -672,6 +673,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: readiness-decision-${{ github.run_id }}-${{ github.run_attempt }}
+          # Decisions are outputs, not verification envelopes for later reruns.
+          name: admission-decision-${{ github.run_id }}-${{ github.run_attempt }}
           path: coverage/readiness-gate.json
           if-no-files-found: error

@@ -16,6 +16,19 @@ readiness gate. Validate changes locally and batch related fixes before pushing
 to avoid repeated full CI runs. A passing local check does not substitute for
 required remote release evidence.
 
+When using GitHub's **Re-run failed jobs**, the readiness gate downloads envelopes
+from all attempts of the same workflow run and selects the latest attempt for
+each required job. Successful jobs retained by GitHub do not need to run again.
+The decision records each selected envelope's original run and attempt; it does
+not relabel earlier checks as newly executed. Different runs, future or invalid
+attempts, duplicate envelopes within an attempt, changed source/contracts and
+missing checks still fail admission. A newer failed envelope always supersedes
+an older success, and every prerequisite must still report success. Downloads
+keep separate artifact directories to prevent overwrites; admission decisions
+use a separate artifact prefix so they cannot be read as verification inputs.
+Failures list the actual admission errors in the job log as well as the decision
+artifact. Expired or missing evidence requires rerunning the affected checks.
+
 The Ubuntu 24.04 unit job grants user namespace access to `/usr/bin/unshare`
 through a dedicated AppArmor profile and verifies that the resulting network
 namespace contains only loopback. It does not disable the system-wide AppArmor

@@ -39,6 +39,15 @@ test('step outcomes and source identity are always retained without private fixt
   assert.equal(p0uploads.length,1)
   assert.equal(p0uploads[0].with['if-no-files-found'],'error')
 })
+test('partial reruns preserve envelopes from all attempts and exclude admission outputs', () => {
+  const download = ci.jobs.readiness.steps.find(s => s.uses?.startsWith('actions/download-artifact'))
+  assert.equal(download.with.pattern, 'readiness-*-${{ github.run_id }}-*')
+  assert.equal(download.with['merge-multiple'], false)
+  const decision = ci.jobs.readiness.steps.find(s => s.uses?.startsWith('actions/upload-artifact'))
+  assert.equal(decision.with.name, 'admission-decision-${{ github.run_id }}-${{ github.run_attempt }}')
+  assert.equal(decision.if, 'always()')
+  assert.equal(decision.with['if-no-files-found'], 'error')
+})
 test('release reuses complete admission and creates release after both artifact preparations', () => {
   assert.equal(release.jobs.verify.uses,'./.github/workflows/ci.yml')
   assert.deepEqual(release.jobs['create-release'].needs,['verify','binaries','images'])
@@ -50,7 +59,6 @@ test('release reuses complete admission and creates release after both artifact 
   assert.equal(release.jobs.images.steps.filter(s=>s.uses?.startsWith('docker/build-push-action')).length,1)
   assert.equal(release.jobs.images.steps.find(s=>s.id==='meta').with.flavor,'latest=false')
   for (const arch of ['amd64','arm64']) assert.ok(release.jobs.images.steps.find(s=>s.id==='scan_'+arch).with['image-ref'].includes('architectures.outputs.'+arch))
-  assert.ok(ci.jobs.readiness.steps.find(s=>s.with?.pattern).with.pattern.includes('github.run_attempt'))
   assert.ok(release.jobs['create-release'].steps.find(s=>s.with?.pattern).with.pattern.includes('github.run_attempt'))
   assert.equal(publish.with.provenance,'mode=max')
   assert.equal(publish.with.sbom,true)

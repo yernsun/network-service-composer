@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url'
 
 const digest = value => createHash('sha256').update(value).digest('hex')
 const hex = /^[a-f0-9]{64}$/
+const validAttempt = value => typeof value === 'string' && /^[1-9][0-9]*$/.test(value) && Number.isSafeInteger(Number(value))
 export function identity(root) {
   const git = args => execFileSync('git', args, { cwd: root, encoding: 'utf8' }).trim()
   const commit = git(['rev-parse', 'HEAD'])
@@ -62,18 +63,29 @@ export function record(root, job, outcomes, imageRefs = {}) {
 }
 
 export function evaluate(expected, policy, reports, jobResults) {
-  const errors = [], byJob = new Map()
+  const errors = [], byJob = new Map(), seen = new Set()
   if (policy.schema !== 1 || !Array.isArray(policy.jobs) || !policy.jobs.length || new Set(policy.jobs.map(job => job.id)).size !== policy.jobs.length || policy.jobs.some(job => !job.id || !job.workflowJob || !Array.isArray(job.checks) || !job.checks.length)) throw new Error('Invalid or empty readiness policy')
   if (!hex.test(expected.source.fingerprint)) errors.push('invalid expected fingerprint')
+  if (expected.run && (!expected.run.id || !validAttempt(expected.run.attempt))) errors.push('invalid expected workflow run')
   for (const report of reports) {
-    if (byJob.has(report.job)) errors.push(`duplicate evidence: ${report.job}`)
-    byJob.set(report.job, report)
+    if (!policy.jobs.some(job => job.id === report.job)) { errors.push('unexpected evidence identity'); continue }
+    if (expected.run && (report.run?.id !== expected.run.id || !validAttempt(report.run?.attempt) || Number(report.run.attempt) > Number(expected.run.attempt))) {
+      errors.push(`workflow run mismatch: ${report.job}`)
+      continue
+    }
+    const key = expected.run ? `${report.job}/${report.run.attempt}` : report.job
+    if (seen.has(key)) errors.push(`duplicate evidence: ${report.job}`)
+    seen.add(key)
+    const previous = byJob.get(report.job)
+    // GitHub's partial reruns retain successful jobs from previous attempts.
+    // Select by attempt before checking status: a newer failure must never fall
+    // back to an older PASS, and input/download order must not affect admission.
+    if (!previous || (expected.run && Number(report.run.attempt) > Number(previous.run.attempt))) byJob.set(report.job, report)
   }
   for (const job of policy.jobs) {
     const report = byJob.get(job.id)
     if (!report) { errors.push(`missing evidence: ${job.id}`); continue }
     if (jobResults[job.workflowJob] !== 'success') errors.push(`required job did not succeed: ${job.workflowJob}`)
-    if (expected.run && JSON.stringify(report.run) !== JSON.stringify(expected.run)) errors.push(`workflow run mismatch: ${job.id}`)
     if (report.schema !== 1 || report.status !== 'PASS') errors.push(`failed evidence: ${job.id}`)
     if (report.errors?.length) errors.push(`evidence retains failures: ${job.id}`)
     if (JSON.stringify(report.source) !== JSON.stringify(expected.source) || JSON.stringify(report.contracts) !== JSON.stringify(expected.contracts)) errors.push(`source/contract mismatch: ${job.id}`)
@@ -87,7 +99,8 @@ export function evaluate(expected, policy, reports, jobResults) {
     }
     if (report.exclusions?.ovh !== 'DISABLED') errors.push(`OVH policy changed: ${job.id}`)
   }
-  return { schema: 1, ...expected, status: errors.length ? 'FAIL' : 'PASS', errors, required_jobs: policy.jobs.map(job => job.id), exclusions: { ovh: 'DISABLED' } }
+  const evidence_runs = expected.run ? Object.fromEntries(policy.jobs.filter(job => byJob.has(job.id)).map(job => [job.id, byJob.get(job.id).run])) : undefined
+  return { schema: 1, ...expected, status: errors.length ? 'FAIL' : 'PASS', errors, ...(evidence_runs ? { evidence_runs } : {}), required_jobs: policy.jobs.map(job => job.id), exclusions: { ovh: 'DISABLED' } }
 }
 
 function save(path, value) {
@@ -112,7 +125,10 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
       const result = evaluate(identity(root), policy, reports, JSON.parse(process.env.NSC_REQUIRED_JOBS || '{}'))
       save(args[1], result)
       console.log(result.status)
-      if (result.status !== 'PASS') process.exitCode = 1
+      if (result.status !== 'PASS') {
+        console.error(result.errors.map(error => `- ${error}`).join('\n'))
+        process.exitCode = 1
+      }
     } else throw new Error('Usage: gate.mjs identity|fingerprint|github-output|record <job> <output>|gate <evidence-directory> <output>')
   } catch (error) { console.error(error.message); process.exitCode = 1 }
 }

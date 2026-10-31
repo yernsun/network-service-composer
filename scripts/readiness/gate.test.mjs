@@ -38,6 +38,59 @@ test('an empty or malformed policy cannot disable admission', () => {
   for (const jobs of [[], undefined, [{ id: 'fixture', workflowJob: 'fixture-job', checks: [] }], [...policy.jobs, ...policy.jobs]]) assert.throws(() => evaluate(expected, { schema: 1, jobs }, [evidence()], { 'fixture-job': 'success' }))
 })
 
+const runExpected = attempt => ({ ...structuredClone(expected), run: { id: '12345', attempt } })
+const runEvidence = attempt => ({ ...evidence(), run: { id: '12345', attempt } })
+test('partial reruns retain successful checks with their original attempt identities', () => {
+  const second = { ...runEvidence('2'), job: 'second' }
+  const twoJobs = { schema: 1, jobs: [...policy.jobs, { ...policy.jobs[0], id: 'second' }] }
+  const decision = evaluate(runExpected('3'), twoJobs, [second, runEvidence('1')], { 'fixture-job': 'success' })
+  assert.equal(decision.status, 'PASS')
+  assert.deepEqual(decision.run, { id: '12345', attempt: '3' })
+  assert.deepEqual(decision.evidence_runs, { fixture: { id: '12345', attempt: '1' }, second: { id: '12345', attempt: '2' } })
+  for (const result of ['failure', 'cancelled', 'skipped', undefined]) {
+    assert.equal(evaluate(runExpected('3'), twoJobs, [second, runEvidence('1')], { 'fixture-job': result }).status, 'FAIL')
+  }
+})
+test('the latest attempt wins regardless of status or artifact download order', () => {
+  const earlierFailure = { ...runEvidence('1'), status: 'FAIL' }, success = runEvidence('2')
+  for (const reports of [[earlierFailure, success], [success, earlierFailure]]) {
+    const decision = evaluate(runExpected('2'), policy, reports, { 'fixture-job': 'success' })
+    assert.equal(decision.status, 'PASS')
+    assert.equal(decision.evidence_runs.fixture.attempt, '2')
+  }
+  for (const change of [r => r.status = 'FAIL', r => r.checks.pop(), r => r.checks[1].status = 'SKIPPED', r => r.images = {}, r => r.source.fingerprint = '0'.repeat(64), r => r.contracts.renderer = 'obsolete', r => r.errors = [{ code: 'image_identity_mismatch' }]]) {
+    const latest = runEvidence('2'); change(latest)
+    for (const reports of [[runEvidence('1'), latest], [latest, runEvidence('1')]]) {
+      const decision = evaluate(runExpected('2'), policy, reports, { 'fixture-job': 'success' })
+      assert.equal(decision.status, 'FAIL')
+      assert.equal(decision.evidence_runs.fixture.attempt, '2')
+    }
+  }
+  const latest = runEvidence('10')
+  assert.equal(evaluate(runExpected('10'), policy, [latest, runEvidence('9')], { 'fixture-job': 'success' }).evidence_runs.fixture.attempt, '10')
+})
+test('different runs, future or invalid attempts, duplicates and unexpected evidence block reruns', () => {
+  const cases = [
+    r => r.run.id = 'previous-run', r => delete r.run, r => r.run.attempt = '3',
+    ...['0', '-1', '1.5', '01', '', 'invalid', '9007199254740992', undefined, 1].map(attempt => r => r.run.attempt = attempt),
+  ]
+  for (const change of cases) {
+    const report = runEvidence('1'); change(report)
+    const decision = evaluate(runExpected('2'), policy, [runEvidence('2'), report], { 'fixture-job': 'success' })
+    assert.equal(decision.status, 'FAIL')
+    assert.ok(decision.errors.includes('workflow run mismatch: fixture'))
+  }
+  for (const attempts of [['1', '1', '2'], ['2', '1', '1'], ['1', '2', '2']]) {
+    const duplicate = evaluate(runExpected('2'), policy, attempts.map(runEvidence), { 'fixture-job': 'success' })
+    assert.equal(duplicate.status, 'FAIL')
+    assert.ok(duplicate.errors.includes('duplicate evidence: fixture'))
+  }
+  assert.equal(evaluate(runExpected('2'), policy, [runEvidence('1'), { ...runEvidence('2'), job: 'unexpected' }], { 'fixture-job': 'success' }).status, 'FAIL')
+  for (const attempt of ['0', 'invalid', undefined]) {
+    assert.equal(evaluate(runExpected(attempt), policy, [runEvidence('1')], { 'fixture-job': 'success' }).status, 'FAIL')
+  }
+})
+
 const script = fileURLToPath(new URL('./gate.mjs', import.meta.url))
 const privateDiagnostic = 'PRIVATE_FIXTURE_DOCKER_DIAGNOSTIC'
 const imageRefs = { controller: 'nsc-controller:fixture', gateway: 'nsc-gateway:fixture' }
@@ -210,14 +263,18 @@ test('CLI missing and stale images retain safe FAIL envelopes and cannot satisfy
   }
 })
 
-test('CLI rejects previous run/attempt and changed source instead of reusing old reports', t => {
+test('CLI rejects different runs, future evidence and changed source', t => {
   const f = cliFixture(t)
-  assert.equal(f.record().result.status, 0)
-  for (const override of [{ GITHUB_RUN_ID: 'previous-run' }, { GITHUB_RUN_ATTEMPT: '2' }]) {
-    const blocked = f.gate(override)
-    assert.equal(blocked.result.status, 1)
-    assert.ok(blocked.report.errors.includes('workflow run mismatch: fixture'))
-  }
+  const original = f.record()
+  assert.equal(original.result.status, 0)
+  let blocked = f.gate({ GITHUB_RUN_ID: 'previous-run' })
+  assert.equal(blocked.result.status, 1)
+  assert.ok(blocked.report.errors.includes('workflow run mismatch: fixture'))
+  writeFileSync(f.reportPath, JSON.stringify({ ...original.report, run: { ...original.report.run, attempt: '2' } }))
+  blocked = f.gate()
+  assert.equal(blocked.result.status, 1)
+  assert.ok(blocked.report.errors.includes('workflow run mismatch: fixture'))
+  writeFileSync(f.reportPath, original.raw)
   appendFileSync(join(f.root, 'README.md'), 'Changed configuration source.\n')
   const stale = f.gate()
   assert.equal(stale.result.status, 1)
@@ -228,6 +285,30 @@ test('CLI rejects previous run/attempt and changed source instead of reusing old
   assert.deepEqual(report.images, {})
   assert.equal(report.errors.length, 2)
   assert.ok(report.errors.every(value => value.code === 'image_identity_mismatch'))
+})
+
+test('CLI reads separate artifact directories without overwriting earlier attempts', t => {
+  const f = cliFixture(t), first = f.record()
+  f.write('coverage/input/readiness-fixture-fixture-run-1/fixture.json', first.raw)
+  rmSync(f.reportPath)
+  let decision = f.gate({ GITHUB_RUN_ATTEMPT: '2' })
+  assert.equal(decision.result.status, 0, decision.result.stderr)
+  assert.deepEqual(decision.report.run, { id: 'fixture-run', attempt: '2' })
+  assert.deepEqual(decision.report.evidence_runs.fixture, { id: 'fixture-run', attempt: '1' })
+  const second = f.record({ GITHUB_RUN_ATTEMPT: '2' })
+  assert.equal(second.result.status, 0)
+  f.write('coverage/input/readiness-fixture-fixture-run-2/fixture.json', second.raw)
+  rmSync(f.reportPath)
+  decision = f.gate({ GITHUB_RUN_ATTEMPT: '2' })
+  assert.equal(decision.result.status, 0, decision.result.stderr)
+  assert.equal(decision.report.evidence_runs.fixture.attempt, '2')
+  const failed = { ...second.report, status: 'FAIL', checks: [{ id: 'build', status: 'FAIL' }] }
+  f.write('coverage/input/readiness-fixture-fixture-run-2/fixture.json', JSON.stringify(failed))
+  decision = f.gate({ GITHUB_RUN_ATTEMPT: '2' })
+  assert.equal(decision.result.status, 1)
+  assert.equal(decision.report.evidence_runs.fixture.attempt, '2')
+  assert.match(decision.result.stderr, /failed evidence: fixture/)
+  assert.match(decision.result.stderr, /required check not passed: fixture\/real-e2e/)
 })
 
 test('CLI checkout SHA mismatch keeps required outcomes and blocks admission', t => {
