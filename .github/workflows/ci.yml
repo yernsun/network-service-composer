@@ -25,7 +25,7 @@ jobs:
       - name: Check out source
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Set up Node
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24.20.0
       - name: Check committed snapshot
@@ -60,7 +60,7 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
           cache: true
       - name: Set up Node for the embedded console
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24.20.0
           cache: npm
@@ -185,7 +185,7 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
           cache: true
       - name: Set up Node for the embedded console and evidence
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
           node-version: 24.20.0
           cache: npm
@@ -289,7 +289,7 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
           cache: true
       - name: Set up Node for evidence contracts
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
           node-version: 24.20.0
       - name: PostgreSQL contract suite
@@ -338,7 +338,7 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
           cache: true
       - name: Set up Node for evidence contracts
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
           node-version: 24.20.0
       - name: Capture source identity
@@ -422,7 +422,7 @@ jobs:
       - name: Check out source
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - name: Set up Node for evidence contracts
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
           node-version: 24.20.0
       - name: Validate every profile
@@ -465,7 +465,7 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
           cache: true
       - name: Set up Node for the embedded console
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24.20.0
           cache: npm
@@ -509,7 +509,7 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
           cache: true
       - name: Set up Node for the embedded console
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24.20.0
           cache: npm
@@ -581,7 +581,7 @@ jobs:
         with:
           go-version: ${{ env.GO_VERSION }}
       - name: Set up Node for evidence contracts
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
           node-version: 24.20.0
       - name: Build current binaries and images
@@ -652,7 +652,7 @@ jobs:
       - name: Check out source
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       - name: Set up Node for evidence contracts
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
           node-version: 24.20.0
       - name: Download verification envelopes from all attempts of this run
