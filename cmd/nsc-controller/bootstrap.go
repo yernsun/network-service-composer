@@ -25,8 +25,16 @@ type bootstrapSession interface {
 	Verify(context.Context, io.Writer) error
 }
 
+type bootstrapInstaller interface {
+	Plan(context.Context, bootstrap.Action) (bootstrap.Plan, error)
+	ExecuteMaintenance(context.Context, bootstrap.Plan, string, string) (bootstrap.Operation, error)
+	ResumeMaintenance(context.Context, string) (bootstrap.Operation, error)
+	Verify(context.Context, io.Writer) error
+	Handoff(io.Writer) error
+}
+
 type installationSession struct {
-	driver   *install.Installer
+	driver   bootstrapInstaller
 	executor bootstrap.Executor
 	record   *bootstrap.Record
 }
@@ -35,16 +43,32 @@ func (s installationSession) Plan(ctx context.Context, action bootstrap.Action) 
 	return s.driver.Plan(ctx, action)
 }
 func (s installationSession) Execute(ctx context.Context, p bootstrap.Plan, approval, key string) (bootstrap.Operation, error) {
+	if p.Action == bootstrap.Repair || p.Action == bootstrap.Upgrade || p.Action == bootstrap.Rollback {
+		return s.driver.ExecuteMaintenance(ctx, p, approval, key)
+	}
 	return s.executor.Execute(ctx, s.record, p, approval, key)
 }
 func (s installationSession) Resume(ctx context.Context, id string) (bootstrap.Operation, error) {
+	for _, operation := range s.record.Operations {
+		if operation.ID == id && (operation.Plan.Action == bootstrap.Repair || operation.Plan.Action == bootstrap.Upgrade || operation.Plan.Action == bootstrap.Rollback) {
+			return s.driver.ResumeMaintenance(ctx, id)
+		}
+	}
 	return s.executor.Resume(ctx, s.record, id)
 }
 func (s installationSession) Verify(ctx context.Context, w io.Writer) error {
 	return s.driver.Verify(ctx, w)
 }
 
-type bootstrapSessionFactory func(context.Context, bootstrap.Config, *bootstrap.Record, *bootstrap.Journal, string) (bootstrapSession, error)
+type bootstrapSessionOptions struct {
+	PrepareWeb        bool
+	CACertificateFile string
+	CAPrivateKeyFile  string
+	CredentialFile    string
+	Release           *bootstrap.Release
+	Components        []string
+}
+type bootstrapSessionFactory func(context.Context, bootstrap.Config, *bootstrap.Record, *bootstrap.Journal, string, bootstrapSessionOptions) (bootstrapSession, error)
 
 func bootstrapCommand(args []string, input io.Reader, output io.Writer) error {
 	return bootstrapCommandWithSession(args, input, output, connectBootstrap)
@@ -69,6 +93,11 @@ func bootstrapCommandWithSession(args []string, input io.Reader, output io.Write
 	key := flags.String("idempotency-key", "", "unique operation key")
 	credential := flags.String("credential-file", "", "transient private current administrator credential for verification after password rotation")
 	operation := flags.String("operation", "", "recorded operation to resume")
+	releaseFile := flags.String("release", "", "private compatible release manifest for an upgrade plan")
+	components := flags.String("components", "", "explicit comma-separated repair components")
+	prepareWeb := flags.Bool("prepare-web", false, "prepare a verified legacy installation for independent Web maintenance")
+	caCertificate := flags.String("ca-cert-file", "", "original offline CA certificate for first preparation")
+	caKey := flags.String("ca-key-file", "", "original offline CA private key for first preparation")
 	interactive := flags.Bool("interactive", false, "guide configuration and confirm the generated plan")
 	timeout := flags.Duration("timeout", 15*time.Minute, "bounded installation or verification deadline")
 	if err := flags.Parse(args[1:]); err != nil {
@@ -76,6 +105,29 @@ func bootstrapCommandWithSession(args []string, input io.Reader, output io.Write
 	}
 	if flags.NArg() != 0 || *timeout <= 0 {
 		return fmt.Errorf("unexpected arguments or invalid timeout")
+	}
+	options := bootstrapSessionOptions{CredentialFile: *credential, PrepareWeb: *prepareWeb, CACertificateFile: *caCertificate, CAPrivateKeyFile: *caKey}
+	if *prepareWeb && command != "upgrade" || (*caCertificate != "" || *caKey != "") && !*prepareWeb {
+		return fmt.Errorf("original CA references require upgrade --prepare-web; resume uses its recorded references")
+	}
+	if *prepareWeb && (!filepath.IsAbs(*caCertificate) || !filepath.IsAbs(*caKey)) {
+		return fmt.Errorf("first preparation requires original absolute CA certificate/key references")
+	}
+	if *releaseFile != "" {
+		if command != "upgrade" || *planFile != "" {
+			return fmt.Errorf("--release is only accepted when generating an upgrade plan")
+		}
+		value, err := install.DecodeMaintenanceRelease(*releaseFile)
+		if err != nil {
+			return err
+		}
+		options.Release = value
+	}
+	if *components != "" {
+		if command != "repair" || *planFile != "" {
+			return fmt.Errorf("--components is only accepted for a new repair plan")
+		}
+		options.Components = strings.Split(*components, ",")
 	}
 	if command == "status" {
 		r, err := bootstrap.ReadJournal(*stateDir)
@@ -119,14 +171,11 @@ func bootstrapCommandWithSession(args []string, input io.Reader, output io.Write
 	defer stop()
 	ctx, cancel := context.WithTimeout(ctx, *timeout)
 	defer cancel()
-	session, err := connect(ctx, cfg, &r, j, *stateDir)
+	session, err := connect(ctx, cfg, &r, j, *stateDir, options)
 	if err != nil {
 		return err
 	}
 
-	if actual, ok := session.(installationSession); ok {
-		actual.driver.CredentialFile = *credential
-	}
 	if command == "verify" {
 		return session.Verify(ctx, output)
 	}
@@ -205,7 +254,7 @@ func bootstrapCommandWithSession(args []string, input io.Reader, output io.Write
 		err = writeErr
 	}
 	if err == nil && result.State == bootstrap.Succeeded {
-		if actual, ok := session.(installationSession); ok {
+		if actual, ok := session.(installationSession); ok && (plan.Action == bootstrap.Init || plan.Action == bootstrap.Adopt) {
 			err = actual.driver.Handoff(output)
 		}
 	}
@@ -271,10 +320,10 @@ func bootstrapGuide(input io.Reader, output io.Writer, dir string) (string, erro
 	return filepath.Join(dir, "install.yaml"), nil
 }
 
-func connectBootstrap(ctx context.Context, cfg bootstrap.Config, record *bootstrap.Record, j *bootstrap.Journal, directory string) (bootstrapSession, error) {
+func connectBootstrap(ctx context.Context, cfg bootstrap.Config, record *bootstrap.Record, j *bootstrap.Journal, directory string, options bootstrapSessionOptions) (bootstrapSession, error) {
 	hosts := map[string]install.Engine{}
 	for _, n := range cfg.Nodes {
-		hosts[n.Name] = bootstrap.Host{Node: n, KnownHostsFile: cfg.KnownHostsFile, DiagnosticsDir: filepath.Join(directory, "diagnostics")}
+		hosts[n.Name] = bootstrap.Host{Node: n, KnownHostsFile: cfg.KnownHostsFile, DiagnosticsDir: filepath.Join(directory+".offline", "diagnostics")}
 	}
 	remote, err := hosts[cfg.MaintenanceNode].Run(ctx, "cat /etc/machine-id", nil)
 	if err != nil {
@@ -283,7 +332,7 @@ func connectBootstrap(ctx context.Context, cfg bootstrap.Config, record *bootstr
 	if bootstrap.Digest(strings.TrimSpace(string(remote))) != record.MaintenanceIdentity {
 		return nil, fmt.Errorf("run the executor on its recorded maintenance node; a copied journal cannot authorize takeover")
 	}
-	driver := &install.Installer{Config: cfg, Record: record, Journal: j, Directory: directory, Hosts: hosts}
+	driver := &install.Installer{Config: cfg, Record: record, Journal: j, Directory: directory, Hosts: hosts, CredentialFile: options.CredentialFile, Target: options.Release, Components: options.Components, PrepareWeb: options.PrepareWeb, OriginalCACertificateFile: options.CACertificateFile, OriginalCAPrivateKeyFile: options.CAPrivateKeyFile}
 	executor := bootstrap.Executor{Journal: j, Driver: driver}
 	return installationSession{driver: driver, executor: executor, record: record}, nil
 }

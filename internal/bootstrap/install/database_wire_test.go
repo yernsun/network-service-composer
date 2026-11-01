@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5/pgproto3"
+	"github.com/yernsun/network-service-composer/internal/bootstrap"
 	"github.com/yernsun/network-service-composer/internal/config"
 	"github.com/yernsun/network-service-composer/internal/storage"
 )
@@ -117,7 +118,7 @@ func postgresWire(t *testing.T, password string) (string, func() []map[string]st
 func TestSSHDatabaseAuthenticatesEveryConnectionAndPinsReadOnly(t *testing.T) {
 	address, startups := postgresWire(t, "isolated-wire-password")
 	host := &fakeHost{stream: func(ctx context.Context, command string) (net.Conn, error) {
-		if command != "docker exec -i 'pinned-container' /bin/busybox nc 127.0.0.1 5432" {
+		if command != bootstrap.LocalDockerCLI+" exec -i 'pinned-container' /bin/busybox nc 127.0.0.1 5432" {
 			t.Error("unexpected database target")
 		}
 		return (&net.Dialer{}).DialContext(ctx, "tcp", address)

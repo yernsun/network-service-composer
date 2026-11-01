@@ -25,7 +25,11 @@ type SSHDatabase struct{}
 
 func (i *Installer) localConfig(ctx context.Context) (config.Config, error) {
 	if i.Config.Adoption != nil {
-		data, err := bootstrap.ReadPrivate(i.Config.Adoption.ControllerConfigFile)
+		filename := i.Config.Adoption.ControllerConfigFile
+		if i.Record.Preparation != nil && i.Record.Preparation.ConfigurationFile != "" {
+			filename = i.Record.Preparation.ConfigurationFile
+		}
+		data, err := bootstrap.ReadPrivate(filename)
 		if err != nil {
 			return config.Config{}, err
 		}
@@ -34,7 +38,7 @@ func (i *Installer) localConfig(ctx context.Context) (config.Config, error) {
 		if err != nil {
 			return config.Config{}, err
 		}
-		return config.LoadOfflineWithReader(i.Config.Adoption.ControllerConfigFile, func(path string) ([]byte, error) {
+		return config.LoadOfflineWithReader(filename, func(path string) ([]byte, error) {
 			return i.registeredFile(ctx, i.Config.MaintenanceNode, service, path, true)
 		})
 	}
@@ -147,7 +151,7 @@ func (SSHDatabase) Open(ctx context.Context, cfg config.Config, host Engine, con
 		connection.RuntimeParams["default_transaction_read_only"] = "on"
 	}
 	connection.DialFunc = func(ctx context.Context, _, _ string) (net.Conn, error) {
-		return host.Stream(ctx, host.Privileged("docker exec -i "+bootstrap.ShellQuote(container)+" /bin/busybox nc 127.0.0.1 5432"))
+		return host.Stream(ctx, host.Privileged(bootstrap.LocalDockerCLI+" exec -i "+bootstrap.ShellQuote(container)+" /bin/busybox nc 127.0.0.1 5432"))
 	}
 	store, err := storage.OpenOfflinePostgres(connection)
 	if err != nil {

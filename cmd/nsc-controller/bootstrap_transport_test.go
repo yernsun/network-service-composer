@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/yernsun/network-service-composer/internal/bootstrap"
+	"github.com/yernsun/network-service-composer/internal/bootstrap/install"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/knownhosts"
 )
@@ -127,12 +128,13 @@ func TestDefaultBootstrapTransportAnchorsTheMaintenanceWriter(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	session, err := connectBootstrap(t.Context(), cfg, &record, journal, dir)
+	session, err := connectBootstrap(t.Context(), cfg, &record, journal, dir, bootstrapSessionOptions{})
 	if err != nil {
 		t.Fatal(err)
 	}
 	actual, ok := session.(installationSession)
-	if !ok || actual.driver.Hosts[node.Name] == nil {
+	driver, hasDriver := actual.driver.(*install.Installer)
+	if !ok || !hasDriver || driver.Hosts[node.Name] == nil {
 		t.Fatal("independent session has no verified transport")
 	}
 	if _, err = session.Plan(t.Context(), bootstrap.Init); err == nil {
@@ -150,11 +152,11 @@ func TestDefaultBootstrapTransportAnchorsTheMaintenanceWriter(t *testing.T) {
 		t.Fatal("missing installed evidence verified")
 	}
 	record.MaintenanceIdentity = bootstrap.Digest("copied-checkpoint-from-another-machine")
-	if _, err = connectBootstrap(t.Context(), cfg, &record, journal, dir); err == nil || !strings.Contains(err.Error(), "recorded maintenance node") {
+	if _, err = connectBootstrap(t.Context(), cfg, &record, journal, dir, bootstrapSessionOptions{}); err == nil || !strings.Contains(err.Error(), "recorded maintenance node") {
 		t.Fatal("copied journal authorized a different writer", err)
 	}
 	cfg.KnownHostsFile = filepath.Join(t.TempDir(), "missing")
-	if _, err = connectBootstrap(context.Background(), cfg, &record, journal, dir); err == nil {
+	if _, err = connectBootstrap(context.Background(), cfg, &record, journal, dir, bootstrapSessionOptions{}); err == nil {
 		t.Fatal("untrusted SSH target accepted")
 	}
 }

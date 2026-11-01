@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
+import SystemInstallation from './SystemInstallation.vue'
 import HAOverview from './HAOverview.vue'
 import ActivityHub from './ActivityHub.vue'
 import IPAccessControl from '../components/IPAccessControl.vue'
@@ -61,7 +62,7 @@ const variablesPage = computed(() =>
 const content = computed(() => store.content('page'))
 </script>
 <template>
-  <ActivityHub v-if="route.path === '/operations/activity'" /><HAOverview v-else-if="route.path === '/infrastructure/ha'" /><DockerResources
+  <SystemInstallation v-if="route.path === '/infrastructure/installation'" /><ActivityHub v-else-if="route.path === '/operations/activity'" /><HAOverview v-else-if="route.path === '/infrastructure/ha'" /><DockerResources
     v-else-if="dockerResources"
     :key="String(route.params.runtime)"
     :runtime-id="String(route.params.runtime)"

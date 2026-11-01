@@ -412,5 +412,6 @@
   "problem.system.project_protected": "Dieses Systemprojekt und seine Ressourcen sind geschützt. Aktualisieren oder entfernen Sie NSC über die Clusterwartung.",
   "problem.service.logs_unavailable": "Docker-Swarm-Service-Protokolle sind für diesen Service oder Manager nicht verfügbar.",
   "problem.volume.in_use": "Daten werden referenziert oder zur Wiederherstellung aufbewahrt.",
-  "problem.validation.self_signed_invalid": "Geben Sie 1–100 exakte DNS-Namen oder IP-SANs und eine Gültigkeit von 1–100 Jahren an."
+  "problem.validation.self_signed_invalid": "Geben Sie 1–100 exakte DNS-Namen oder IP-SANs und eine Gültigkeit von 1–100 Jahren an.",
+  "problem.installation.blocked": "Die Systemwartung ist blockiert. Prüfen Sie die Nachweise oder verwenden Sie die CLI. Grund: {reason}."
 }

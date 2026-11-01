@@ -327,7 +327,7 @@ func safeSPAQuery(raw string) bool {
 	allowed := map[string]struct{}{
 		"application_id": {}, "catalog_version_id": {}, "detail": {}, "domain_id": {},
 		"environment_id": {}, "file": {}, "group_key": {}, "health": {}, "history": {},
-		"kind": {}, "label": {}, "layout": {}, "managed": {}, "node_id": {}, "page": {},
+		"job": {}, "kind": {}, "label": {}, "layout": {}, "managed": {}, "node_id": {}, "page": {},
 		"pool_id": {}, "previewEnv": {}, "project_id": {}, "q": {}, "release_id": {},
 		"resource_id": {}, "scope": {}, "search": {}, "selected": {}, "selected_node": {},
 		"service_id": {}, "state": {}, "status": {}, "tab": {}, "validation_id": {},

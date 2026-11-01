@@ -13,6 +13,8 @@ import (
 
 	"github.com/moby/moby/api/types/swarm"
 	"github.com/yernsun/network-service-composer/internal/bootstrap"
+	"github.com/yernsun/network-service-composer/internal/bootstrap/maintenance"
+	"github.com/yernsun/network-service-composer/internal/storage"
 )
 
 type Engine interface {
@@ -50,14 +52,20 @@ type Observation struct {
 }
 
 type Installer struct {
-	Config         bootstrap.Config
-	Record         *bootstrap.Record
-	Journal        *bootstrap.Journal
-	Directory      string
-	Hosts          map[string]Engine
-	Database       DatabaseConnector
-	GatewayClient  *http.Client
-	CredentialFile string
+	PrepareWeb                bool
+	OriginalCACertificateFile string
+	OriginalCAPrivateKeyFile  string
+	MaintenanceRuntime        func(*bootstrap.Record, storage.Store) maintenance.Runtime
+	Config                    bootstrap.Config
+	Record                    *bootstrap.Record
+	Journal                   *bootstrap.Journal
+	Directory                 string
+	Hosts                     map[string]Engine
+	Database                  DatabaseConnector
+	GatewayClient             *http.Client
+	Target                    *bootstrap.Release
+	Components                []string
+	CredentialFile            string
 	// The CLI executor is independent of Controller tasks. Web maintenance uses
 	// a separate one-shot runner and never borrows a Controller request lifetime.
 }
@@ -180,7 +188,9 @@ func (i *Installer) createService(ctx context.Context, spec swarm.ServiceSpec) (
 		return bootstrap.Resource{}, err
 	}
 	if err := i.entry().Engine(ctx, "POST", "/services/create", input, &response); err != nil {
-		return bootstrap.Resource{}, err
+		// A partially decoded successful response can retain its actual ID.
+		// Reconciliation still requires the exact intended specification.
+		return bootstrap.Resource{Kind: "service", ID: response.ID, SpecDigest: bootstrap.Digest(spec)}, err
 	}
 	service, err := i.inspectService(ctx, response.ID)
 	if err != nil {
@@ -211,7 +221,10 @@ func (i *Installer) updateService(ctx context.Context, before bootstrap.Resource
 
 func (i *Installer) latest(id string) bootstrap.Resource {
 	var result bootstrap.Resource
-	for _, r := range i.Record.Resources {
+	for key, r := range i.Record.Resources {
+		if strings.HasPrefix(key, "intent:") {
+			continue
+		}
 		if r.ID == id && r.Version >= result.Version {
 			result = r
 		}
@@ -265,12 +278,21 @@ func (i *Installer) Plan(ctx context.Context, action bootstrap.Action) (bootstra
 	if bootstrap.Digest(i.Config) != i.Record.ConfigDigest {
 		return bootstrap.Plan{}, fmt.Errorf("configuration differs from the durable installation record")
 	}
+	if action == bootstrap.Repair || action == bootstrap.Upgrade || action == bootstrap.Rollback {
+		if i.PrepareWeb {
+			return i.PlanWebPreparation(ctx, action)
+		}
+		return i.PlanMaintenance(ctx, action)
+	}
 	observation, err := i.Observe(ctx)
 	if err != nil {
 		return bootstrap.Plan{}, err
 	}
 	o := observation.(Observation)
 	if action == bootstrap.Init {
+		if err := i.metadataBoundary(); err != nil {
+			return bootstrap.Plan{}, err
+		}
 		if len(i.Record.Resources) > 0 {
 			return bootstrap.Plan{}, fmt.Errorf("installation already has resources; use resume or repair")
 		}
@@ -304,6 +326,9 @@ func (i *Installer) Plan(ctx context.Context, action bootstrap.Action) (bootstra
 		for _, key := range []string{"controller", "nginx", "nginx-sandbox"} {
 			add("reserve:"+key, "Reserve the actual Service ID without starting NSC")
 		}
+		add("secret:maintenance", "Retain a separate narrowly scoped maintenance credential in a protected Secret")
+		add("control", "Create the non-secret Swarm installation checkpoint")
+		add("reserve:executor", "Reserve the independent one-shot executor on the original maintenance node")
 		for _, n := range i.Config.Nodes {
 			add("configure:"+n.Name, "Distribute node-local configurations and private runtime identities")
 		}

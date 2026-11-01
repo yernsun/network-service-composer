@@ -22,6 +22,27 @@ Community release candidate: **v0.1.0**. See the [release preflight](docs/commun
 
 These capabilities do not establish that every Community acceptance gate is complete. See the [Community development record](docs/community-development.md) and [coverage limitations](docs/test-coverage.md).
 
+## Install NSC on Swarm
+
+On Linux with Docker Engine already installed, run the Controller CLI on the
+selected maintenance node:
+
+```sh
+nsc-controller bootstrap init --interactive --state-dir /var/lib/nsc-bootstrap
+```
+
+Supply trusted SSH host identities and verified image digests. The CLI shows the
+resource plan before confirmation, prepares Swarm, creates the Gateway project
+and registers the four system applications. The initial console uses node-IP
+HTTPS on port 8443 with a separate self-signed certificate, valid for 20 years by
+default. No domain is required.
+
+The three-Manager topology provides Controller/Gateway redundancy with one pinned
+PostgreSQL database and one Sandbox. PostgreSQL remains a single point of failure.
+Use the [bootstrap and recovery guide](docs/bootstrap.md) for configuration-file
+installation, existing-installation adoption and administrator-only system
+maintenance at `/infrastructure/installation`.
+
 ## Start from source with PostgreSQL
 
 Requirements: Go 1.27.x, Node.js 24.20.0/npm for frontend builds, Docker Engine, Compose v2, OpenSSL and access to the Go module registry. This is a source-build path, not proof of a build-free end-user installation.

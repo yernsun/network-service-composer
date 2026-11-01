@@ -21,12 +21,15 @@ type imageHost struct {
 	component              string
 	platform               string
 	schema                 string
+	maintenance            string
 	os, contract, protocol string
 	seen                   [][]byte
+	commands               []string
 }
 
 func (h *imageHost) Run(_ context.Context, command string, input []byte) ([]byte, error) {
 	h.seen = append(h.seen, append([]byte(nil), input...))
+	h.commands = append(h.commands, command)
 	if strings.Contains(command, "must-not-be-argument") {
 		panic("registry credential leaked to command")
 	}
@@ -63,7 +66,11 @@ func (h preparedHost) Engine(c context.Context, m, p string, in, out any) error 
 	if protocol == "" {
 		protocol = "2"
 	}
-	return encode(map[string]any{"Os": osType, "Architecture": h.state.platform, "Config": map[string]any{"Labels": map[string]string{"io.nsc.bootstrap.contract": contract, "io.nsc.bootstrap.protocol": protocol, "io.nsc.bootstrap.schema": h.state.schema}, "Env": []string{h.state.component}}}, out)
+	maintenance := h.state.maintenance
+	if maintenance == "" {
+		maintenance = "1"
+	}
+	return encode(map[string]any{"Os": osType, "Architecture": h.state.platform, "Config": map[string]any{"Labels": map[string]string{"io.nsc.bootstrap.contract": contract, "io.nsc.bootstrap.protocol": protocol, "io.nsc.bootstrap.maintenance": maintenance, "io.nsc.bootstrap.schema": h.state.schema}, "Env": []string{h.state.component}}}, out)
 }
 func TestImagePreparationChecksPinnedContractAndProtectsRegistryCredentials(t *testing.T) {
 	i, _ := installerFixture(t, 1)
@@ -165,11 +172,12 @@ func TestImageCompatibilityRejectsEveryUnsupportedBoundaryBeforeIdentityCreation
 	i, _ := installerFixture(t, 1)
 	state := &imageHost{Engine: i.Hosts["one"], platform: "amd64", schema: "18", component: "PG_MAJOR=18"}
 	i.Hosts["one"] = preparedHost{base: state.Engine, state: state}
-	for _, field := range []string{"os", "contract", "protocol", "architecture"} {
+	for _, field := range []string{"os", "contract", "protocol", "maintenance", "architecture"} {
 		state.os = "linux"
 		state.contract = "1"
 		state.protocol = "2"
 		state.platform = "amd64"
+		state.maintenance = "1"
 		switch field {
 		case "os":
 			state.os = "windows"
@@ -177,6 +185,8 @@ func TestImageCompatibilityRejectsEveryUnsupportedBoundaryBeforeIdentityCreation
 			state.contract = "2"
 		case "protocol":
 			state.protocol = "3"
+		case "maintenance":
+			state.maintenance = "0"
 		case "architecture":
 			state.platform = "arm64"
 		}
@@ -226,6 +236,23 @@ func TestImageTransportFailuresDoNotCreateInstallationIdentities(t *testing.T) {
 		}
 		if _, err := os.Stat(i.materialDir()); !os.IsNotExist(err) {
 			t.Fatal("image failure generated credentials")
+		}
+	}
+}
+
+func TestAnonymousPreparationCannotUseImplicitDockerContextsOrCredentials(t *testing.T) {
+	installer, _ := installerFixture(t, 1)
+	state := &imageHost{Engine: installer.Hosts["one"], platform: "amd64", schema: "18", component: "PG_MAJOR=18"}
+	installer.Hosts["one"] = preparedHost{base: state.Engine, state: state}
+	if _, err := installer.prepareImages(t.Context()); err != nil {
+		t.Fatal(err)
+	}
+	if len(state.seen) != 3 {
+		t.Fatal("not all pinned images were prepared")
+	}
+	for n, command := range state.commands {
+		if !strings.Contains(command, bootstrap.LocalDockerCLI) || !strings.Contains(command, `--config "$nsc_auth_dir"`) || string(state.seen[n]) != `{"auths":{}}` {
+			t.Fatal("anonymous preparation inherited a Docker context or credentials")
 		}
 	}
 }

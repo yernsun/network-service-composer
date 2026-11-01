@@ -70,7 +70,7 @@ func TestDatabaseRelayRejectsMissingForeignDuplicateAndUnreadyTasks(t *testing.T
 	if err := i.withStore(ctx, true, func(storage.Store, config.Config) error { return nil }); err == nil {
 		t.Fatal("missing authenticated SSH database relay accepted")
 	}
-	if len(c.services) != 4 || len(original.(*fakeHost).volumes) != 1 {
+	if len(c.services) != 5 || len(original.(*fakeHost).volumes) != 1 {
 		t.Fatal("database failure created replacement resources")
 	}
 }

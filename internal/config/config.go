@@ -130,7 +130,12 @@ type SystemServiceConfig struct {
 	Environment string `yaml:"environment"`
 }
 
+type InstallationConfig struct {
+	MetadataDirectory string `yaml:"metadata_directory"`
+}
+
 type ControllerConfig struct {
+	Installation  InstallationConfig       `yaml:"installation"`
 	RecoveryMode  bool                     `yaml:"recovery_mode"`
 	SystemProject SystemProjectConfig      `yaml:"system_project"`
 	InstanceID    string                   `yaml:"instance_id"`
@@ -643,6 +648,9 @@ func readSecret(path string) (string, error) {
 }
 
 func (c Config) Validate() error {
+	if directory := c.Controller.Installation.MetadataDirectory; directory != "" && (!filepath.IsAbs(directory) || filepath.Clean(directory) != directory || directory == "/") {
+		return fmt.Errorf("installation metadata_directory must be an absolute clean private directory")
+	}
 	var problems []string
 	if strings.TrimSpace(c.Server.HTTPListen) == "" || strings.TrimSpace(c.Metrics.Listen) == "" {
 		problems = append(problems, "server.http_listen and metrics.listen are required")

@@ -35,6 +35,7 @@ import (
 )
 
 type Core struct {
+	Installation   bootstrap.InstallationProvider
 	HAController   func(context.Context) HAEvidence
 	HAReports      *nodecontrol.Reports
 	catalogMu      sync.Mutex

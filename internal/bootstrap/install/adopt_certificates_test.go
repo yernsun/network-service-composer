@@ -44,7 +44,7 @@ func TestAdoptionCertificateTrustAndExpiryAreIndependentOfOwnership(t *testing.T
 	if _, err = verifyRegisteredCertificate(leaf, otherCA, uri.String()); err == nil {
 		t.Fatal("unrelated trust authority accepted")
 	}
-	material := filepath.Join(filepath.Dir(i.Config.Adoption.ControllerConfigFile), "materials")
+	material := filepath.Join(host.cluster.originalDirectory+".offline", "materials")
 	temporary := t.TempDir()
 	certFile := filepath.Join(temporary, "expired.crt")
 	keyFile := filepath.Join(temporary, "expired.key")
@@ -178,7 +178,7 @@ func TestAdoptionAgentScopeAndExistingExpiryRemainExplicit(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
-				material := filepath.Join(filepath.Dir(i.Config.Adoption.ControllerConfigFile), "materials")
+				material := filepath.Join(host.cluster.originalDirectory+".offline", "materials")
 				directory := t.TempDir()
 				cert := filepath.Join(directory, "agent.crt")
 				key := filepath.Join(directory, "agent.key")

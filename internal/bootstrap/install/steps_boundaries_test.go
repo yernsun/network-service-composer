@@ -378,7 +378,7 @@ func TestUnavailableProvisioningDependenciesNeverAdvanceOrReplaceOwnedResources(
 	if _, err := i.Apply(t.Context(), bootstrap.Step{Key: "secret:postgresql"}); err == nil {
 		t.Fatal("missing database password replaced")
 	}
-	if len(c.services) != 4 || len(host.volumes) != 1 || len(c.secrets) != 1 {
+	if len(c.services) != 5 || len(host.volumes) != 1 || len(c.secrets) != 2 {
 		t.Fatal("dependency failures created replacement resources")
 	}
 }

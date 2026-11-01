@@ -4,6 +4,74 @@
  */
 
 export interface paths {
+    "/system/installation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Administrator-only system maintenance. Exact installation ownership, plan revision, immutable release compatibility and idempotency are enforced. Never executes arbitrary commands. */
+        get: operations["getSystemInstallation"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/system/installation/plans": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Administrator-only system maintenance. Exact installation ownership, plan revision, immutable release compatibility and idempotency are enforced. Never executes arbitrary commands. */
+        post: operations["planSystemInstallation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/system/installation/operations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Administrator-only system maintenance. Exact installation ownership, plan revision, immutable release compatibility and idempotency are enforced. Never executes arbitrary commands. */
+        post: operations["startSystemInstallationOperation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/system/installation/operations/{operationID}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Administrator-only system maintenance. Exact installation ownership, plan revision, immutable release compatibility and idempotency are enforced. Never executes arbitrary commands. */
+        get: operations["getSystemInstallationOperation"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/services/{id}/logs": {
         parameters: {
             query?: never;
@@ -2515,6 +2583,189 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        InstallationResource: {
+            kind: string;
+            id: string;
+            version: number;
+            spec_digest: string;
+            image?: string;
+        };
+        InstallationImages: {
+            controller: string;
+            gateway: string;
+            postgresql: string;
+        };
+        InstallationRelease: {
+            version: string;
+            images: components["schemas"]["InstallationImages"];
+            protocol: number;
+            schema: number;
+            configuration: number;
+            postgresql_major: number;
+            architectures: string[];
+        };
+        InstallationTopology: {
+            managers: number;
+            reachable: number;
+            majority: number;
+            tolerable_failures: number;
+            quorum_available: boolean;
+            node_ids: string[];
+        };
+        InstallationDatabase: {
+            node_id: string;
+            engine_id: string;
+            volume: string;
+            service_id: string;
+            image: string;
+            single_point_of_failure: boolean;
+        };
+        InstallationStep: {
+            key: string;
+            description: string;
+            /** @enum {string} */
+            state: "PENDING" | "RUNNING" | "SUCCEEDED" | "BLOCKED" | "FAILED" | "UNKNOWN";
+            reason?: string;
+            before?: components["schemas"]["InstallationResource"];
+            receipt?: components["schemas"]["InstallationResource"];
+        };
+        InstallationPlan: {
+            installation_id: string;
+            revision: number;
+            /** @enum {string} */
+            action: "verify" | "repair" | "upgrade" | "rollback";
+            config_digest: string;
+            observation_digest: string;
+            /** Format: date-time */
+            created_at: string;
+            /** Format: date-time */
+            expires_at: string;
+            hash: string;
+            impact: string[];
+            steps: components["schemas"]["InstallationStep"][];
+            scope: {
+                mode: string;
+                cluster_id?: string;
+                images: components["schemas"]["InstallationImages"];
+                data_node: string;
+                data_volume?: string;
+                database_single_point_of_failure: boolean;
+                topology: components["schemas"]["InstallationTopology"];
+                release?: components["schemas"]["InstallationRelease"];
+                components?: string[];
+                targets?: {
+                    name: string;
+                    address: string;
+                    manager: boolean;
+                    node_id?: string;
+                    engine_id: string;
+                }[];
+                preparation?: {
+                    proof: string;
+                    trust_anchor_sha256: string;
+                };
+            };
+        };
+        InstallationOperation: {
+            id: string;
+            /** @enum {string} */
+            state: "PENDING" | "RUNNING" | "SUCCEEDED" | "BLOCKED" | "FAILED" | "UNKNOWN";
+            plan: components["schemas"]["InstallationPlan"];
+            /** Format: date-time */
+            started_at: string;
+            /** Format: date-time */
+            updated_at: string;
+        };
+        InstallationJob: {
+            /** @enum {string} */
+            execution_mode?: "cli" | "service";
+            id: string;
+            installation_id: string;
+            /** @enum {string} */
+            state: "PENDING" | "RUNNING" | "SUCCEEDED" | "BLOCKED" | "FAILED" | "UNKNOWN";
+            plan: components["schemas"]["InstallationPlan"];
+            operation?: components["schemas"]["InstallationOperation"];
+            actor: string;
+            reason?: string;
+            revision: number;
+            /** Format: date-time */
+            created_at: string;
+            /** Format: date-time */
+            updated_at: string;
+            runner?: components["schemas"]["InstallationResource"];
+            checkpoint?: components["schemas"]["InstallationResource"];
+            acknowledged: boolean;
+            task_id?: string;
+        };
+        SystemInstallation: {
+            id: string;
+            revision: number;
+            mode: string;
+            /** @enum {string} */
+            state: "PENDING" | "RUNNING" | "SUCCEEDED" | "BLOCKED" | "FAILED" | "UNKNOWN";
+            health: string;
+            cluster_id: string;
+            pool_id: string;
+            runtime_id: string;
+            certificate_id?: string;
+            components: {
+                [key: string]: components["schemas"]["InstallationResource"];
+            };
+            nodes: {
+                [key: string]: {
+                    node_id?: string;
+                    engine_id?: string;
+                    instance_id: string;
+                    gateway_id: string;
+                    sandbox_id: string;
+                    socket_gid?: string;
+                };
+            };
+            database: components["schemas"]["InstallationDatabase"];
+            console_urls: string[];
+            config_digest?: string;
+            ingress_network?: string;
+            /** Format: date-time */
+            updated_at: string;
+            allowed_operations: ("verify" | "repair" | "upgrade" | "rollback")[];
+            drift: string[];
+            topology: components["schemas"]["InstallationTopology"];
+            executor?: components["schemas"]["InstallationResource"];
+            control?: components["schemas"]["InstallationResource"];
+            credential_secret?: components["schemas"]["InstallationResource"];
+            maintenance_node_id?: string;
+            maintenance_uid?: number;
+            maintenance_id?: string;
+            maintenance_anchor?: string;
+            trust_anchor_sha256?: string;
+            /** Format: date-time */
+            maintenance_expires_at?: string;
+            metadata_layout?: number;
+            checkpoint_revision?: number;
+            release?: components["schemas"]["InstallationRelease"];
+            history: {
+                release: components["schemas"]["InstallationRelease"];
+                /** Format: date-time */
+                recorded_at: string;
+                revision?: number;
+            }[];
+            operation_id?: string;
+            /** Format: date-time */
+            console_certificate_expires_at?: string;
+            console_fingerprint?: string;
+        };
+        InstallationPlanInput: {
+            /** @enum {string} */
+            action: "verify" | "repair" | "upgrade" | "rollback";
+            revision: number;
+            components?: ("controller" | "nginx" | "nginx-sandbox" | "postgresql")[];
+            release?: components["schemas"]["InstallationRelease"];
+        };
+        InstallationExecuteInput: {
+            plan_hash: string;
+            revision: number;
+            operation_id?: string;
+        };
         Volume: {
             name: string;
             driver: string;
@@ -3126,6 +3377,9 @@ export interface components {
             environment?: components["schemas"]["EnvironmentReference"];
             /** @description Protected NSC system resource. Ordinary mutation and lifecycle operations are forbidden. */
             readonly system?: boolean;
+            /** @enum {string} */
+            readonly management_mode: "observed" | "application" | "system";
+            readonly installation_id?: string;
         };
         ServiceInstance: components["schemas"]["Metadata"] & {
             id?: string;
@@ -3486,6 +3740,9 @@ export interface components {
         Application: components["schemas"]["Metadata"] & {
             id: string;
             readonly system: boolean;
+            /** @enum {string} */
+            readonly management_mode: "observed" | "application" | "system";
+            readonly installation_id?: string;
             readonly system_key?: string;
             environment?: components["schemas"]["EnvironmentReference"];
             /** @description Empty for protected system applications. */
@@ -5112,6 +5369,111 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    getSystemInstallation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description System installation response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["SystemInstallation"];
+                    };
+                };
+            };
+            default: components["responses"]["Problem"];
+        };
+    };
+    planSystemInstallation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InstallationPlanInput"];
+            };
+        };
+        responses: {
+            /** @description System installation response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["InstallationPlan"];
+                    };
+                };
+            };
+            default: components["responses"]["Problem"];
+        };
+    };
+    startSystemInstallationOperation: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Reusing a key on the same Runtime returns the original persistent operation. */
+                "Idempotency-Key"?: components["parameters"]["IdempotencyKey"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InstallationExecuteInput"];
+            };
+        };
+        responses: {
+            /** @description System installation response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["InstallationJob"];
+                    };
+                };
+            };
+            default: components["responses"]["Problem"];
+        };
+    };
+    getSystemInstallationOperation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                operationID: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description System installation response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["InstallationJob"];
+                    };
+                };
+            };
+            default: components["responses"]["Problem"];
+        };
+    };
     followServiceLogs: {
         parameters: {
             query?: {

@@ -155,7 +155,8 @@
         "reconciliation",
         "access",
         "browser",
-        "installation"
+        "installation",
+        "bootstrap"
       ],
       "images": [
         "controller",

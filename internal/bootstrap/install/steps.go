@@ -91,6 +91,20 @@ func (i *Installer) checkReceipt(ctx context.Context, s bootstrap.Step) error {
 			if actual.Name != r.ID || actual.Labels["io.nsc.installation"] != i.Record.ID {
 				return fmt.Errorf("database volume receipt no longer matches")
 			}
+		case "config":
+			var actual struct {
+				ID   string
+				Spec struct {
+					Labels map[string]string
+					Data   []byte
+				}
+			}
+			if err := i.entry().Engine(ctx, "GET", "/configs/"+url.PathEscape(r.ID), nil, &actual); err != nil {
+				return err
+			}
+			if actual.ID != r.ID || actual.Spec.Labels["io.nsc.installation"] != i.Record.ID || bootstrap.Digest(actual.Spec.Data) != r.SpecDigest {
+				return fmt.Errorf("installation checkpoint changed")
+			}
 		case "network", "secret":
 			var actual struct {
 				ID     string `json:"Id"`
@@ -150,14 +164,14 @@ func (i *Installer) Apply(ctx context.Context, s bootstrap.Step) (bootstrap.Reso
 		key = parts[1]
 	}
 	if kind == "service" || kind == "reserve" || kind == "start" {
-		if key != "controller" && key != "nginx" && key != "nginx-sandbox" && key != "postgresql" {
+		if key != "controller" && key != "nginx" && key != "nginx-sandbox" && key != "postgresql" && key != "executor" {
 			return bootstrap.Resource{}, &bootstrap.Rejected{Reason: "component is outside the installation allowlist"}
 		}
 	}
 	if kind == "network" && key != "control" && key != "ingress" && key != "sandbox" {
 		return bootstrap.Resource{}, &bootstrap.Rejected{Reason: "network is outside the installation allowlist"}
 	}
-	if (kind == "secret" || kind == "volume") && key != "postgresql" {
+	if (kind == "volume" && key != "postgresql") || (kind == "secret" && key != "postgresql" && key != "maintenance") {
 		return bootstrap.Resource{}, &bootstrap.Rejected{Reason: "resource is outside the installation allowlist"}
 	}
 	resource := func(kind, id string, value any) bootstrap.Resource {
@@ -182,7 +196,12 @@ func (i *Installer) Apply(ctx context.Context, s bootstrap.Step) (bootstrap.Reso
 		}
 		err := i.entry().Engine(ctx, "POST", "/networks/create", map[string]any{"Name": i.name(key), "Driver": "overlay", "Attachable": true, "Options": map[string]string{"encrypted": ""}, "Labels": map[string]string{"io.nsc.installation": i.Record.ID}}, &reply)
 		return resource("network", reply.ID, key), err
+	case "control":
+		return i.createControl(ctx)
 	case "secret":
+		if key == "maintenance" {
+			return i.createMaintenanceCredential(ctx)
+		}
 		value, err := bootstrap.ReadPrivate(i.material("postgres-password"))
 		if err != nil {
 			return bootstrap.Resource{}, err

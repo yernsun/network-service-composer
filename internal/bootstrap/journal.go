@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
+	"syscall"
 	"time"
 
 	"github.com/yernsun/network-service-composer/internal/id"
@@ -13,6 +15,19 @@ import (
 )
 
 type Record struct {
+	Preparation                 *PreparationReferences `json:"preparation,omitempty"`
+	ConsoleCertificateExpiresAt *time.Time             `json:"console_certificate_expires_at,omitempty"`
+	ConsoleFingerprint          string                 `json:"console_fingerprint,omitempty"`
+	Database                    DatabasePin            `json:"database"`
+	MetadataLayout              int                    `json:"metadata_layout"`
+	MaintenanceUID              int                    `json:"maintenance_uid"`
+	MaintenanceID               string                 `json:"maintenance_id"`
+	TrustSHA256                 string                 `json:"trust_anchor_sha256,omitempty"`
+	MaintenanceExpiresAt        *time.Time             `json:"maintenance_expires_at,omitempty"`
+	CheckpointRevision          int64                  `json:"checkpoint_revision"`
+	Release                     *Release               `json:"release,omitempty"`
+	History                     []ReleaseReceipt       `json:"history"`
+
 	ID                  string              `json:"id"`
 	Revision            int64               `json:"revision"`
 	ConfigDigest        string              `json:"config_digest"`
@@ -68,6 +83,11 @@ func OpenJournal(dir string) (*Journal, error) {
 	if !info.IsDir() || info.Mode().Perm()&0o077 != 0 {
 		return nil, fmt.Errorf("journal must be a private directory, not a symlink")
 	}
+	if _, err := os.Lstat(filepath.Join(dir, "executor.lock")); os.IsNotExist(err) {
+		if _, recordErr := os.Lstat(filepath.Join(dir, "installation.json")); !os.IsNotExist(recordErr) {
+			return nil, fmt.Errorf("the installation lock is missing; fence previous writers before restoring it")
+		}
+	}
 	fd, err := unix.Open(filepath.Join(dir, "executor.lock"), unix.O_NOFOLLOW|unix.O_CREAT|unix.O_RDWR|unix.O_CLOEXEC, 0o600)
 	if err != nil {
 		return nil, err
@@ -105,6 +125,9 @@ func ReadJournal(dir string) (Record, error) {
 	decoder := json.NewDecoder(f)
 	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&r)
+	if err == nil && decoder.Decode(&struct{}{}) != io.EOF {
+		err = fmt.Errorf("installation journal contains trailing data")
+	}
 	if err == nil && (r.ID == "" || r.Revision < 1) {
 		err = fmt.Errorf("invalid installation journal")
 	}
@@ -132,7 +155,12 @@ func (j *Journal) Initialize(c Config, maintenanceIdentity string) (Record, erro
 	if !errors.Is(err, os.ErrNotExist) {
 		return r, err
 	}
-	r = Record{ID: id.New("install"), Revision: 1, ConfigDigest: Digest(c), MaintenanceIdentity: maintenanceIdentity, MaintenanceAnchor: Digest([]string{maintenanceIdentity, j.dir}), PoolID: id.New(id.Pool), RuntimeID: id.New(id.Runtime), CertificateID: id.New(id.Certificate), Nodes: map[string]Identity{}, Resources: map[string]Resource{}, Operations: []Operation{}}
+	owner, err := os.Stat(j.dir)
+	if err != nil {
+		return r, err
+	}
+	uid := int(owner.Sys().(*syscall.Stat_t).Uid)
+	r = Record{MetadataLayout: 1, MaintenanceUID: uid, MaintenanceID: id.New("maint"), History: []ReleaseReceipt{}, ID: id.New("install"), Revision: 1, ConfigDigest: Digest(c), MaintenanceIdentity: maintenanceIdentity, MaintenanceAnchor: Digest([]string{maintenanceIdentity, j.dir}), PoolID: id.New(id.Pool), RuntimeID: id.New(id.Runtime), CertificateID: id.New(id.Certificate), Nodes: map[string]Identity{}, Resources: map[string]Resource{}, Operations: []Operation{}}
 	if c.Adoption != nil && c.Adoption.InstallationID != "" {
 		r.ID = c.Adoption.InstallationID
 	}
@@ -160,6 +188,17 @@ func AtomicPrivateFile(dir, name string, data []byte) error {
 		return err
 	}
 	defer os.Remove(f.Name())
+	defer f.Close()
+	if os.Geteuid() == 0 {
+		info, ownerErr := os.Stat(dir)
+		if ownerErr != nil {
+			return ownerErr
+		}
+		owner := info.Sys().(*syscall.Stat_t)
+		if ownerErr = f.Chown(int(owner.Uid), int(owner.Gid)); ownerErr != nil {
+			return ownerErr
+		}
+	}
 	if _, err = f.Write(data); err == nil {
 		err = f.Sync()
 	}

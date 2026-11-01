@@ -324,6 +324,10 @@ func (s *Server) listApplications(w http.ResponseWriter, r *http.Request) {
 		s.handleError(w, r, err)
 		return
 	}
+	if err := s.core.ApplicationManagement(r.Context(), values); err != nil {
+		s.handleError(w, r, err)
+		return
+	}
 	for i := range values {
 		s.applicationCapabilities(r, &values[i])
 	}
@@ -352,6 +356,12 @@ func (s *Server) getApplication(w http.ResponseWriter, r *http.Request) {
 		s.handleError(w, r, err)
 		return
 	}
+	values := []model.Application{value}
+	if err = s.core.ApplicationManagement(r.Context(), values); err != nil {
+		s.handleError(w, r, err)
+		return
+	}
+	value = values[0]
 	s.applicationCapabilities(r, &value)
 	setETag(w, value.Revision)
 	writeData(w, http.StatusOK, value)

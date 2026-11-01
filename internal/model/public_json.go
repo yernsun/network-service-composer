@@ -153,3 +153,24 @@ func (r *Route) UnmarshalJSON(data []byte) error {
 	r.Enabled, r.Status, r.Source, r.LastError, r.Metadata = value.Enabled, value.Status, value.Source, value.LastError, value.Metadata
 	return nil
 }
+
+func (value Application) MarshalJSON() ([]byte, error) {
+	type public Application
+	if value.ManagementMode == "" {
+		value.ManagementMode = "observed"
+		if !value.System && value.Managed {
+			value.ManagementMode = "application"
+		}
+	}
+	return json.Marshal(public(value))
+}
+func (value Service) MarshalJSON() ([]byte, error) {
+	type public Service
+	if value.ManagementMode == "" {
+		value.ManagementMode = "observed"
+		if !value.System && value.Managed {
+			value.ManagementMode = "application"
+		}
+	}
+	return json.Marshal(public(value))
+}

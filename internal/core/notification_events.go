@@ -56,7 +56,7 @@ func (c *Core) imageNotifications(ctx context.Context, since time.Time, revision
 	}
 }
 func (c *Core) deploymentNotifications(ctx context.Context, since time.Time, revision int64) error {
-	return errors.Join(c.deploymentResultNotifications(ctx, since, revision), c.targetNotifications(ctx, since, revision))
+	return errors.Join(c.deploymentResultNotifications(ctx, since, revision), c.targetNotifications(ctx, since, revision), c.installationNotifications(ctx, since, revision))
 }
 
 func (c *Core) deploymentResultNotifications(ctx context.Context, since time.Time, revision int64) error {

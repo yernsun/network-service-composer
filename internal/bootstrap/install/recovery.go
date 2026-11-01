@@ -20,7 +20,7 @@ func (i *Installer) backupDatabase(ctx context.Context) (bootstrap.Resource, err
 	if err != nil {
 		return bootstrap.Resource{}, err
 	}
-	dir := filepath.Join(i.Directory, "backups")
+	dir := i.backupDir()
 	if err = os.MkdirAll(dir, 0700); err != nil {
 		return bootstrap.Resource{}, err
 	}
@@ -36,7 +36,7 @@ func (i *Installer) backupDatabase(ctx context.Context) (bootstrap.Resource, err
 		}
 	}()
 	host := i.Hosts[i.Config.DataNode]
-	stream, err := host.Stream(ctx, host.Privileged("docker exec -i "+bootstrap.ShellQuote(container)+" pg_dump --format=custom --no-password --username=nsc --dbname=nsc"))
+	stream, err := host.Stream(ctx, host.Privileged(bootstrap.LocalDockerCLI+" exec -i "+bootstrap.ShellQuote(container)+" pg_dump --format=custom --no-password --username=nsc --dbname=nsc"))
 	if err != nil {
 		return bootstrap.Resource{}, err
 	}
@@ -69,7 +69,7 @@ func (i *Installer) backupDatabase(ctx context.Context) (bootstrap.Resource, err
 		return bootstrap.Resource{}, err
 	}
 	defer archive.Close()
-	validation, err := host.Stream(ctx, host.Privileged("docker exec -i "+bootstrap.ShellQuote(container)+" pg_restore --list >/dev/null"))
+	validation, err := host.Stream(ctx, host.Privileged(bootstrap.LocalDockerCLI+" exec -i "+bootstrap.ShellQuote(container)+" pg_restore --list >/dev/null"))
 	if err != nil {
 		return bootstrap.Resource{}, err
 	}
@@ -109,7 +109,7 @@ func (i *Installer) checkBackup(r bootstrap.Resource) error {
 	if filepath.Base(r.ID) != r.ID || !strings.HasSuffix(r.ID, ".dump") {
 		return fmt.Errorf("invalid backup reference")
 	}
-	file, err := os.Open(filepath.Join(i.Directory, "backups", r.ID))
+	file, err := os.Open(filepath.Join(i.backupDir(), r.ID))
 	if err != nil {
 		return err
 	}

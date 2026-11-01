@@ -67,7 +67,7 @@ func TestDatabaseRecoveryArchiveIsPrivateVerifiedAndNeverMovesData(t *testing.T)
 	if err = i.Check(ctx, bootstrap.Step{Key: "backup", Receipt: &r}); err != nil {
 		t.Fatal(err)
 	}
-	info, err := os.Stat(filepath.Join(i.Directory, "backups", r.ID))
+	info, err := os.Stat(filepath.Join(i.backupDir(), r.ID))
 	if err != nil || info.Mode().Perm() != 0600 {
 		t.Fatal("archive is not private", err)
 	}
@@ -77,11 +77,11 @@ func TestDatabaseRecoveryArchiveIsPrivateVerifiedAndNeverMovesData(t *testing.T)
 			t.Fatal("invalid recovery archive accepted", failure)
 		}
 	}
-	files, _ := os.ReadDir(filepath.Join(i.Directory, "backups"))
+	files, _ := os.ReadDir(i.backupDir())
 	if len(files) != 1 {
 		t.Fatal("incomplete backup retained as a usable archive")
 	}
-	if err = os.WriteFile(filepath.Join(i.Directory, "backups", r.ID), []byte("modified"), 0600); err != nil {
+	if err = os.WriteFile(filepath.Join(i.backupDir(), r.ID), []byte("modified"), 0600); err != nil {
 		t.Fatal(err)
 	}
 	if err = i.checkBackup(r); err == nil {
@@ -215,7 +215,7 @@ func TestBackupReadWriteAndRemoteValidationFailuresNeverProduceUsableReceipts(t 
 			}
 		})
 	}
-	files, _ := os.ReadDir(filepath.Join(i.Directory, "backups"))
+	files, _ := os.ReadDir(i.backupDir())
 	if len(files) != 1 {
 		t.Fatal("failed archive was retained as a completed backup")
 	}
@@ -240,7 +240,7 @@ func TestBackupReadWriteAndRemoteValidationFailuresNeverProduceUsableReceipts(t 
 func TestBackupCannotReplaceAnExistingFilesystemObject(t *testing.T) {
 	i, _ := installerFixture(t, 1)
 	infrastructure(t, i)
-	path := filepath.Join(i.Directory, "backups")
+	path := i.backupDir()
 	original := []byte("isolated-existing-object")
 	os.WriteFile(path, original, 0600)
 	if _, err := i.backupDatabase(t.Context()); err == nil {

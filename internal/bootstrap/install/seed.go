@@ -33,10 +33,20 @@ func (i *Installer) seedRecord() bootstrap.Installation {
 		if started, ok := i.Record.Resources["start:"+key]; ok {
 			receipt = started
 		}
-		r.Components[key] = receipt
+		r.Components[key] = i.latest(receipt.ID)
 	}
+	r.ConsoleCertificateExpiresAt, r.ConsoleFingerprint = i.Record.ConsoleCertificateExpiresAt, i.Record.ConsoleFingerprint
+	r.Executor = i.latest(i.Record.Resources["reserve:executor"].ID)
+	r.Control = i.Record.Resources["control"]
+	r.CredentialSecret = i.Record.Resources["secret:maintenance"]
+	r.MaintenanceNodeID = i.Record.Nodes[i.Config.MaintenanceNode].NodeID
+	r.MaintenanceUID, r.MaintenanceID = i.Record.MaintenanceUID, i.Record.MaintenanceID
+	r.MetadataLayout, r.CheckpointRevision = i.Record.MetadataLayout, i.Record.CheckpointRevision
+	r.TrustSHA256, r.MaintenanceExpiresAt = i.Record.TrustSHA256, i.Record.MaintenanceExpiresAt
+	r.Release, r.History = i.Record.Release, i.Record.History
 	data := i.Record.Nodes[i.Config.DataNode]
 	r.Database = bootstrap.DatabasePin{NodeID: data.NodeID, EngineID: data.EngineID, Volume: i.Record.Resources["volume:postgresql"].ID, ServiceID: r.Components["postgresql"].ID, Image: i.Config.Images.PostgreSQL, SinglePointOfFailure: true}
+	i.Record.Database = r.Database
 	for _, n := range i.Config.Nodes {
 		if n.Manager {
 			r.ConsoleURLs = append(r.ConsoleURLs, "https://"+net.JoinHostPort(n.Address, strconv.Itoa(i.Config.ConsolePort)))

@@ -152,6 +152,8 @@ func TestSPAAssetsAndRouting(t *testing.T) {
 		"/projects/project-1/environments/environment-1/domains/domain-1/nginx",
 		"/infrastructure/runtimes/runtime-1/nodes/node-1",
 		"/infrastructure/runtimes/runtime-1/instances/instance-1",
+		"/infrastructure/installation",
+		"/infrastructure/installation?job=recorded-operation",
 		"/operations/operation-1",
 		"/market/catalog-1",
 	} {
@@ -258,6 +260,7 @@ func TestKnownSPAPathAllowlist(t *testing.T) {
 		"/infrastructure/nodes",
 		"/infrastructure/events",
 		"/infrastructure/ha",
+		"/infrastructure/installation",
 		"/infrastructure/gateway-pools",
 		"/infrastructure/gateway-pools/pool-1",
 		"/infrastructure/gateways/gateway-1",
@@ -302,6 +305,7 @@ func TestKnownSPAPathAllowlist(t *testing.T) {
 		"/services/routes/route-1/extra",
 		"/infrastructure/unknown",
 		"/infrastructure/ha/extra",
+		"/infrastructure/installation/extra",
 		"/infrastructure/gateway-pools/pool-1/extra",
 		"/infrastructure/runtimes/runtime-1/unknown",
 		"/infrastructure/runtimes/runtime-1/unknown/resource-1",
@@ -321,6 +325,7 @@ func TestKnownSPAPathAllowlist(t *testing.T) {
 func TestSafeSPAQueryBounds(t *testing.T) {
 	accepted := []string{
 		"",
+		"job=recorded-operation",
 		"q=web&layout=flat&page=2",
 		"selected=instance-1&selected_node=node-1&kind=container",
 	}

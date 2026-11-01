@@ -217,7 +217,7 @@ function open(app: Application) {
       </div>
       <p class="desc">
         {{ modeLabel(app.mode) }}<br />{{ runtimeName(app) }} ·
-        {{ t(app.managed ? 'archive.message_5409a6d1a936' : 'archive.message_028e66d9d4b9') }}
+        {{ app.system ? t(`installation.management.${app.management_mode === 'system' && app.installation_id ? 'system' : 'observed'}`) : t(app.managed ? 'archive.message_5409a6d1a936' : 'archive.message_028e66d9d4b9') }}
       </p>
       <div class="flex wrap">
         <span

@@ -6,9 +6,11 @@ import (
 	"context"
 	"crypto/rand"
 	"crypto/sha256"
+	"crypto/x509"
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
+	"encoding/pem"
 	"fmt"
 	"io/fs"
 	"net"
@@ -18,6 +20,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/yernsun/network-service-composer/internal/bootstrap"
@@ -27,8 +30,36 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func timeNow() time.Time                         { return time.Now().UTC() }
-func (i *Installer) materialDir() string         { return filepath.Join(i.Directory, "materials") }
+func timeNow() time.Time { return time.Now().UTC() }
+func (i *Installer) offlineDir() string {
+	if i.Record.MetadataLayout == 0 {
+		return i.Directory
+	}
+	return i.Directory + ".offline"
+}
+func (i *Installer) materialDir() string { return filepath.Join(i.offlineDir(), "materials") }
+func (i *Installer) backupDir() string   { return filepath.Join(i.offlineDir(), "backups") }
+func (i *Installer) ensureOfflineDirectory() error {
+	info, err := os.Lstat(i.Directory)
+	if err != nil {
+		return err
+	}
+	if !info.IsDir() || info.Mode().Perm()&0o077 != 0 {
+		return fmt.Errorf("installation metadata directory must already be private")
+	}
+	directory := i.offlineDir()
+	if err := os.Mkdir(directory, 0700); err != nil && !os.IsExist(err) {
+		return err
+	}
+	info, err = os.Lstat(directory)
+	if err != nil {
+		return err
+	}
+	if !info.IsDir() || info.Mode().Perm()&077 != 0 || int(info.Sys().(*syscall.Stat_t).Uid) != i.Record.MaintenanceUID {
+		return fmt.Errorf("offline recovery directory must retain its private original owner")
+	}
+	return nil
+}
 func (i *Installer) material(name string) string { return filepath.Join(i.materialDir(), name) }
 
 func exclusive(path string, data []byte) error {
@@ -56,6 +87,9 @@ func randomFile(path string, n int) error {
 }
 
 func (i *Installer) makeMaterials() error {
+	if err := i.ensureOfflineDirectory(); err != nil {
+		return err
+	}
 	// Existence after an interrupted key write is deliberately not a signal to
 	// regenerate it. Incomplete material requires private CLI recovery review.
 	if _, err := os.Stat(i.materialDir()); err == nil {
@@ -92,6 +126,36 @@ func (i *Installer) makeMaterials() error {
 			}
 		}
 	}
+	uri, err := controlplane.MaintenanceIdentityURI(i.Record.ID, i.Record.MaintenanceID)
+	if err != nil {
+		return err
+	}
+	if err = pki.Issue(i.material("ca.crt"), i.material("ca.key"), i.material("maintenance.crt"), i.material("maintenance.key"), pki.CertificateOptions{CommonName: i.Record.MaintenanceID, URIs: []*url.URL{uri}, Client: true}); err != nil {
+		return err
+	}
+	publicCA, err := os.ReadFile(i.material("ca.crt"))
+	if err != nil {
+		return err
+	}
+	block, _ := pem.Decode(publicCA)
+	if block == nil {
+		return fmt.Errorf("offline CA certificate is invalid")
+	}
+	trust := sha256.Sum256(block.Bytes)
+	i.Record.TrustSHA256 = hex.EncodeToString(trust[:])
+	certificatePEM, err := os.ReadFile(i.material("maintenance.crt"))
+	if err != nil {
+		return err
+	}
+	block, _ = pem.Decode(certificatePEM)
+	if block == nil {
+		return fmt.Errorf("maintenance certificate is invalid")
+	}
+	leaf, err := x509.ParseCertificate(block.Bytes)
+	if err != nil {
+		return err
+	}
+	i.Record.MaintenanceExpiresAt = &leaf.NotAfter
 	addresses := []net.IP{}
 	for _, n := range i.Config.Nodes {
 		addresses = append(addresses, net.ParseIP(n.Address))
@@ -101,6 +165,14 @@ func (i *Installer) makeMaterials() error {
 		return err
 	}
 	defer clear(key)
+	consoleBlock, _ := pem.Decode(certificate)
+	consoleLeaf, err := x509.ParseCertificate(consoleBlock.Bytes)
+	if err != nil {
+		return err
+	}
+	consoleSum := sha256.Sum256(consoleLeaf.Raw)
+	i.Record.ConsoleFingerprint = hex.EncodeToString(consoleSum[:])
+	i.Record.ConsoleCertificateExpiresAt = &consoleLeaf.NotAfter
 	if err = exclusive(i.material("console.crt"), certificate); err != nil {
 		return err
 	}
@@ -185,6 +257,7 @@ func (i *Installer) runtimeConfig(n bootstrap.Node) (config.Config, error) {
 	c.Security = config.SecurityConfig{AdminUsername: "admin", AdminTokenFile: "/run/nsc/admin-password", SessionKeyFile: "/run/nsc/session-key", PrimaryKeyID: "v1", EncryptionKeysFile: "/run/nsc/encryption-keys.json"}
 	c.Management.Enabled = true
 	c.Management.DefaultRuntimeID = i.Record.RuntimeID
+	c.Controller.Installation.MetadataDirectory = i.Directory
 	c.Controller.SystemProject = config.SystemProjectConfig{RuntimeID: i.Record.RuntimeID, ClusterID: i.Record.ClusterID}
 	for _, key := range []string{"controller", "postgresql", "nginx", "nginx-sandbox"} {
 		resource := i.Record.Resources["reserve:"+key]
@@ -200,6 +273,12 @@ func (i *Installer) runtimeConfig(n bootstrap.Node) (config.Config, error) {
 		}
 		c.Controller.SystemProject.Services = append(c.Controller.SystemProject.Services, config.SystemServiceConfig{ObjectID: resource.ID, Environment: environment})
 		c.Controller.SystemProject.Applications = append(c.Controller.SystemProject.Applications, config.SystemApplicationConfig{Key: key, Name: name, Environment: environment, RuntimeID: i.Record.RuntimeID, ObjectIDs: []string{resource.ID}})
+		if key == "controller" && i.Record.Resources["reserve:executor"].ID != "" {
+			executor := i.Record.Resources["reserve:executor"].ID
+			last := len(c.Controller.SystemProject.Applications) - 1
+			c.Controller.SystemProject.Applications[last].ObjectIDs = append(c.Controller.SystemProject.Applications[last].ObjectIDs, executor)
+			c.Controller.SystemProject.Services = append(c.Controller.SystemProject.Services, config.SystemServiceConfig{ObjectID: executor, Environment: "prod"})
+		}
 	}
 	for _, node := range i.Config.Nodes {
 		if !node.Manager {

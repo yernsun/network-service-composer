@@ -68,10 +68,13 @@ COPY --from=compose-build /out/docker-compose /usr/local/libexec/docker/cli-plug
 USER 65532:65532
 EXPOSE 8080 8443 9443 9444 9090 80 443 443/udp
 STOPSIGNAL SIGTERM
+ARG VERSION=dev
+LABEL org.opencontainers.image.version=$VERSION
 ARG SOURCE_REVISION=unknown
 ARG SOURCE_FINGERPRINT=unknown
 LABEL org.opencontainers.image.revision=$SOURCE_REVISION
 LABEL org.nsc.source.fingerprint=$SOURCE_FINGERPRINT
-LABEL io.nsc.bootstrap.contract="1" io.nsc.bootstrap.schema="18" io.nsc.bootstrap.protocol="2"
+LABEL io.nsc.bootstrap.maintenance="1" \
+      io.nsc.bootstrap.contract="1" io.nsc.bootstrap.schema="18" io.nsc.bootstrap.protocol="2"
 ENTRYPOINT ["/usr/local/bin/nsc-controller"]
 CMD ["serve", "--config", "/etc/nsc/controller.yaml"]

@@ -72,7 +72,7 @@ func cliConfig(t *testing.T) (string, string) {
 }
 
 func cliFactory(d *cliDriver) bootstrapSessionFactory {
-	return func(_ context.Context, _ bootstrap.Config, r *bootstrap.Record, j *bootstrap.Journal, _ string) (bootstrapSession, error) {
+	return func(_ context.Context, _ bootstrap.Config, r *bootstrap.Record, j *bootstrap.Journal, _ string, _ bootstrapSessionOptions) (bootstrapSession, error) {
 		return cliSession{record: r, executor: bootstrap.Executor{Journal: j, Driver: d}}, nil
 	}
 }
@@ -160,7 +160,7 @@ func TestBootstrapCLIRejectsInvalidOrUnapprovedCommands(t *testing.T) {
 	if d.writes != 0 {
 		t.Fatal("invalid command wrote external resources")
 	}
-	if err := bootstrapCommandWithSession(base, nil, io.Discard, func(context.Context, bootstrap.Config, *bootstrap.Record, *bootstrap.Journal, string) (bootstrapSession, error) {
+	if err := bootstrapCommandWithSession(base, nil, io.Discard, func(context.Context, bootstrap.Config, *bootstrap.Record, *bootstrap.Journal, string, bootstrapSessionOptions) (bootstrapSession, error) {
 		return nil, errors.New("unavailable verified node")
 	}); err == nil {
 		t.Fatal("connection failure hidden")
@@ -360,11 +360,11 @@ func TestCLIIndependentSessionReturnsHandoffOnlyAfterDurableCompletion(t *testin
 	if err != nil {
 		t.Fatal(err)
 	}
-	factory := func(_ context.Context, cfg bootstrap.Config, r *bootstrap.Record, j *bootstrap.Journal, directory string) (bootstrapSession, error) {
-		if err := os.MkdirAll(filepath.Join(directory, "materials"), 0700); err != nil {
+	factory := func(_ context.Context, cfg bootstrap.Config, r *bootstrap.Record, j *bootstrap.Journal, directory string, options bootstrapSessionOptions) (bootstrapSession, error) {
+		if err := os.MkdirAll(filepath.Join(directory+".offline", "materials"), 0700); err != nil {
 			return nil, err
 		}
-		if err := os.WriteFile(filepath.Join(directory, "materials", "console.crt"), certificate, 0600); err != nil {
+		if err := os.WriteFile(filepath.Join(directory+".offline", "materials", "console.crt"), certificate, 0600); err != nil {
 			return nil, err
 		}
 		actual := &install.Installer{Config: cfg, Record: r, Journal: j, Directory: directory}
@@ -378,12 +378,12 @@ func TestCLIIndependentSessionReturnsHandoffOnlyAfterDurableCompletion(t *testin
 	if !strings.Contains(output.String(), "certificate_sha256") || !strings.Contains(output.String(), "database_single_point_of_failure") {
 		t.Fatal("durable handoff metadata missing")
 	}
-	badFactory := func(ctx context.Context, c bootstrap.Config, r *bootstrap.Record, j *bootstrap.Journal, d string) (bootstrapSession, error) {
-		session, err := factory(ctx, c, r, j, d)
+	badFactory := func(ctx context.Context, c bootstrap.Config, r *bootstrap.Record, j *bootstrap.Journal, d string, options bootstrapSessionOptions) (bootstrapSession, error) {
+		session, err := factory(ctx, c, r, j, d, options)
 		if err != nil {
 			return nil, err
 		}
-		os.Remove(filepath.Join(d, "materials", "console.crt"))
+		os.Remove(filepath.Join(d+".offline", "materials", "console.crt"))
 		return session, nil
 	}
 	if err = bootstrapCommandWithSession(approved, nil, io.Discard, badFactory); err == nil {

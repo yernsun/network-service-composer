@@ -2,7 +2,7 @@ import { chromium } from '../frontend/node_modules/playwright/index.mjs';
 import assert from 'node:assert/strict';
 let raw='';for await(const chunk of process.stdin)raw+=chunk;
 const input=JSON.parse(raw);raw='';
-const browser=await chromium.launch({executablePath:process.env.CHROME_BIN || '/usr/bin/google-chrome',args:['--no-sandbox'],headless:true});
+const browser=await chromium.launch({executablePath:process.env.CHROME_BIN || undefined,args:['--no-sandbox'],headless:true});
 try{
  const context=await browser.newContext({ignoreHTTPSErrors:true,locale:'en-US',viewport:{width:1280,height:900}});
  const page=await context.newPage();

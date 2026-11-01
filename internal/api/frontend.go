@@ -93,7 +93,7 @@ func knownSPAPath(value string) bool {
 		}
 		return len(parts) == 3 && (parts[1] == "routes" || parts[1] == "domains")
 	case "infrastructure":
-		if len(parts) == 1 || (len(parts) == 2 && (parts[1] == "nodes" || parts[1] == "events" || parts[1] == "ha")) {
+		if len(parts) == 1 || (len(parts) == 2 && (parts[1] == "nodes" || parts[1] == "events" || parts[1] == "ha" || parts[1] == "installation")) {
 			return true
 		}
 		if parts[1] == "gateway-pools" || parts[1] == "gateways" || parts[1] == "certificates" {

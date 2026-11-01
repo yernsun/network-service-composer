@@ -1,4 +1,5 @@
 import { adaptActivityNavigation } from './activity-navigation.mjs'
+import { adaptInstallationNavigation } from './installation-navigation.mjs'
 import { adaptHANavigation } from './ha-navigation.mjs'
 import { adaptBrand } from './brand.mjs'
 import { adaptHistoryNavigation, adaptHistoryViews } from './service-history.mjs'
@@ -104,7 +105,7 @@ function adaptDockerResourceView(source, module) {
 for (const file of ['src/mock/service.js', 'src/runtime/real.js']) {
   const actual = functions(read(file))
   assert.equal(actual.length, original.length)
-  const expected = file === 'src/runtime/real.js' ? functions(adaptDockerResourceTabs(adaptServiceLogTabs(adaptActionableNavigation(adaptComposeWizard(adaptActivityNavigation(adaptHANavigation(originalSource))))))) : original
+  const expected = file === 'src/runtime/real.js' ? functions(adaptInstallationNavigation(adaptDockerResourceTabs(adaptServiceLogTabs(adaptActionableNavigation(adaptComposeWizard(adaptActivityNavigation(adaptHANavigation(originalSource)))))))) : original
   for (const [index, [name, code]] of expected.entries()) assert.equal(hash(actual[index][1]), hash(code), `${file}: ${name} interaction changed`)
 }
 function connect(source) {

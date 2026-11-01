@@ -67,7 +67,10 @@ func InternalTLS(caPath, certPath, keyPath, instance string) (*tls.Config, error
 		if len(state.VerifiedChains) == 0 || len(state.PeerCertificates) == 0 {
 			return errors.New("unverified controller connection")
 		}
-		_, err := CertificateIdentity(state.PeerCertificates[0])
+		if _, err := CertificateIdentity(state.PeerCertificates[0]); err == nil {
+			return nil
+		}
+		_, _, err := MaintenanceCertificateIdentity(state.PeerCertificates[0])
 		return err
 	}}, nil
 }

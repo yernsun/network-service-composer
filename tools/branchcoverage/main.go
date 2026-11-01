@@ -412,7 +412,7 @@ func run(arguments []string) error {
 			file.Decls = append([]ast.Decl{&ast.GenDecl{Tok: token.IMPORT, Specs: []ast.Spec{&ast.ImportSpec{Name: ast.NewIdent("nscBranchProbe"), Path: &ast.BasicLit{Kind: token.STRING, Value: strconv.Quote("github.com/yernsun/network-service-composer/internal/coverageprobe")}}}}}, file.Decls...)
 			var out bytes.Buffer
 			if e = format.Node(&out, fs, file); e != nil {
-				return e
+				return fmt.Errorf("format instrumented %s: %w", filepath.ToSlash(path), e)
 			}
 			return put(absolute, out.Bytes())
 		})

@@ -137,6 +137,9 @@ func TestAdditionalWorkerRetainsRoleAndMayUseItsOwnSocketGroup(t *testing.T) {
 	i.Hosts["worker"] = &fakeHost{cluster: c, name: "worker", engineID: "engine-worker", gid: "901", architecture: "aarch64", osType: "linux", clusterID: "cluster-id", volumes: map[string]map[string]any{}}
 	i.Record.Nodes["worker"] = bootstrap.Identity{InstanceID: "ctrl_worker", GatewayID: "gw_worker", SandboxID: "gw_sandbox"}
 	i.Record.ConfigDigest = bootstrap.Digest(i.Config)
+	if err := i.Journal.Save(i.Record); err != nil {
+		t.Fatal(err)
+	}
 	if _, err := i.Plan(t.Context(), bootstrap.Init); err != nil {
 		t.Fatal(err)
 	}

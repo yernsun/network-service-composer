@@ -26,15 +26,17 @@ import (
 )
 
 type fakeCluster struct {
-	services    map[string]swarm.Service
-	nodes       map[string]swarm.Node
-	networks    map[string]map[string]any
-	secrets     map[string]map[string]any
-	next        int
-	calls       []string
-	fail        string
-	taskNode    string
-	afterUpdate bool
+	originalDirectory string
+	services          map[string]swarm.Service
+	nodes             map[string]swarm.Node
+	networks          map[string]map[string]any
+	configs           map[string]map[string]any
+	secrets           map[string]map[string]any
+	next              int
+	calls             []string
+	fail              string
+	taskNode          string
+	afterUpdate       bool
 }
 type fakeHost struct {
 	cluster                                                       *fakeCluster
@@ -149,7 +151,7 @@ func (h *fakeHost) Engine(_ context.Context, method, path string, input, out any
 	path = parsed.Path
 	switch {
 	case strings.HasPrefix(path, "/images/"):
-		return encode(map[string]any{"Os": "linux", "Architecture": "amd64", "Config": map[string]any{"Labels": map[string]string{"io.nsc.bootstrap.contract": "1", "io.nsc.bootstrap.protocol": "2", "io.nsc.bootstrap.schema": "18"}, "Env": []string{"PG_MAJOR=18"}}}, out)
+		return encode(map[string]any{"Os": "linux", "Architecture": "amd64", "Config": map[string]any{"Labels": map[string]string{"io.nsc.bootstrap.contract": "1", "io.nsc.bootstrap.protocol": "2", "io.nsc.bootstrap.maintenance": "1", "io.nsc.bootstrap.schema": "18"}, "Env": []string{"PG_MAJOR=18"}}}, out)
 	case path == "/info":
 		state := h.state
 		if state == "" {
@@ -239,6 +241,26 @@ func (h *fakeHost) Engine(_ context.Context, method, path string, input, out any
 		value, ok := c.networks[strings.TrimPrefix(path, "/networks/")]
 		if !ok {
 			return os.ErrNotExist
+		}
+		return encode(value, out)
+	case path == "/configs/create":
+		c.next++
+		id := fmt.Sprintf("config-%d", c.next)
+		var spec map[string]any
+		encode(input, &spec)
+		c.configs[id] = map[string]any{"ID": id, "Version": map[string]any{"Index": 1}, "Spec": spec}
+		return encode(map[string]string{"ID": id}, out)
+	case strings.HasPrefix(path, "/configs/"):
+		parts := strings.Split(strings.TrimPrefix(path, "/configs/"), "/")
+		value, ok := c.configs[parts[0]]
+		if !ok {
+			return os.ErrNotExist
+		}
+		if method == "POST" {
+			var spec map[string]any
+			encode(input, &spec)
+			value["Spec"] = spec
+			return nil
 		}
 		return encode(value, out)
 	case path == "/secrets/create":
@@ -368,7 +390,7 @@ func installerFixture(t *testing.T, count int) (*Installer, *fakeCluster) {
 	t.Cleanup(func() { j.Close() })
 	image := "registry.example.test/nsc@sha256:" + strings.Repeat("a", 64)
 	cfg := bootstrap.Config{Name: "fixture", Mode: "single", DataNode: "one", MaintenanceNode: "one", NodeDir: "/srv/nsc", ConsolePort: 8443, KnownHostsFile: "/keys/known_hosts", Images: bootstrap.Images{Controller: image, Gateway: image, PostgreSQL: image}}
-	c := &fakeCluster{services: map[string]swarm.Service{}, nodes: map[string]swarm.Node{}, networks: map[string]map[string]any{}, secrets: map[string]map[string]any{}}
+	c := &fakeCluster{originalDirectory: directory, services: map[string]swarm.Service{}, nodes: map[string]swarm.Node{}, networks: map[string]map[string]any{}, secrets: map[string]map[string]any{}, configs: map[string]map[string]any{}}
 	hosts := map[string]Engine{}
 	for index, name := range []string{"one", "two", "three"}[:count] {
 		cfg.Nodes = append(cfg.Nodes, bootstrap.Node{Name: name, Address: fmt.Sprintf("192.0.2.%d", index+1), SSHUser: "root", SSHPort: 22, Manager: true})
@@ -381,7 +403,7 @@ func installerFixture(t *testing.T, count int) (*Installer, *fakeCluster) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	i := &Installer{Config: cfg, Record: &r, Journal: j, Directory: directory, Hosts: hosts, Database: sqliteConnector{dsn: filepath.Join(directory, "fixture.sqlite")}}
+	i := &Installer{Config: cfg, Record: &r, Journal: j, Directory: directory, Hosts: hosts, Database: sqliteConnector{dsn: filepath.Join(t.TempDir(), "fixture.sqlite")}}
 	return i, c
 }
 
@@ -415,7 +437,7 @@ func TestSingleAndMultiInfrastructureOwnershipAndIdentity(t *testing.T) {
 		t.Run(strconv.Itoa(count), func(t *testing.T) {
 			i, c := installerFixture(t, count)
 			infrastructure(t, i)
-			if len(c.services) != 4 || len(c.networks) != 3 || len(c.secrets) != 1 || len(i.Hosts["one"].(*fakeHost).volumes) != 1 {
+			if len(c.services) != 5 || len(c.networks) != 3 || len(c.secrets) != 2 || len(i.Hosts["one"].(*fakeHost).volumes) != 1 {
 				t.Fatal("infrastructure shape differs")
 			}
 			for _, key := range []string{"controller", "nginx", "nginx-sandbox"} {

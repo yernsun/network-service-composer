@@ -412,5 +412,6 @@
   "problem.system.project_protected": "Этот системный проект и его ресурсы защищены. Обновляйте или удаляйте NSC средствами обслуживания кластера.",
   "problem.service.logs_unavailable": "Журналы Docker Swarm Service недоступны для этого сервиса или управляющего узла.",
   "problem.volume.in_use": "Данные используются или сохранены для восстановления приложения.",
-  "problem.validation.self_signed_invalid": "Укажите от 1 до 100 точных DNS-имён или IP SAN и срок действия от 1 до 100 лет."
+  "problem.validation.self_signed_invalid": "Укажите от 1 до 100 точных DNS-имён или IP SAN и срок действия от 1 до 100 лет.",
+  "problem.installation.blocked": "Обслуживание системы заблокировано. Проверьте свидетельства или используйте CLI. Причина: {reason}."
 }

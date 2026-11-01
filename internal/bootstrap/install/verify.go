@@ -9,6 +9,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"encoding/pem"
+	"errors"
 	"fmt"
 	"io"
 	"net"
@@ -29,6 +30,9 @@ import (
 )
 
 func (i *Installer) Verify(ctx context.Context, output io.Writer) error {
+	if i.Config.Adoption != nil && i.Record.Resources["prepare:complete"].ID != "" {
+		return i.verifyPreparedInstallation(ctx, output)
+	}
 	if i.Config.Adoption != nil {
 		if err := i.checkAdoption(ctx, bootstrap.Step{Key: "adopt", State: bootstrap.Succeeded}); err != nil {
 			return err
@@ -63,7 +67,26 @@ func (i *Installer) Verify(ctx context.Context, output io.Writer) error {
 }
 
 func (i *Installer) apiClient() (*http.Client, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	return i.apiClientContext(ctx)
+}
+func (i *Installer) apiClientContext(ctx context.Context) (*http.Client, error) {
 	data, err := os.ReadFile(i.material("console.crt"))
+	if i.Config.Adoption != nil {
+		cfg, loadErr := i.localConfig(ctx)
+		if loadErr != nil {
+			return nil, loadErr
+		}
+		if cfg.Server.ConsoleHTTPSListen == "" || cfg.Server.ConsoleHTTPSCertFile == "" {
+			return nil, &bootstrap.MaintenanceError{Code: "legacy_console_requires_cli_preparation"}
+		}
+		service, inspectErr := i.inspectService(ctx, i.Config.Adoption.ServiceIDs["controller"])
+		if inspectErr != nil {
+			return nil, inspectErr
+		}
+		data, err = i.registeredFile(ctx, i.Config.MaintenanceNode, service, cfg.Server.ConsoleHTTPSCertFile)
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +108,7 @@ func (i *Installer) consoleURL() string {
 }
 
 func (i *Installer) api(ctx context.Context, method, path string, input, output any, revision *int64) error {
-	client, err := i.apiClient()
+	client, err := i.apiClientContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -214,7 +237,7 @@ func (i *Installer) verifyHandoff(ctx context.Context) error {
 		return err
 	}
 
-	client, err := i.apiClient()
+	client, err := i.apiClientContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -254,7 +277,7 @@ func (i *Installer) verifyHandoff(ctx context.Context) error {
 }
 
 func (i *Installer) verifyLogin(ctx context.Context) error {
-	client, err := i.apiClient()
+	client, err := i.apiClientContext(ctx)
 	if err != nil {
 		return err
 	}
@@ -264,7 +287,15 @@ func (i *Installer) verifyLogin(ctx context.Context) error {
 		return err
 	}
 	defer clear(password)
-	data, _ := json.Marshal(map[string]string{"username": "admin", "password": strings.TrimSpace(string(password))})
+	username := "admin"
+	if i.Config.Adoption != nil {
+		cfg, err := i.localConfig(ctx)
+		if err != nil {
+			return err
+		}
+		username = cfg.Security.AdminUsername
+	}
+	data, _ := json.Marshal(map[string]string{"username": username, "password": strings.TrimSpace(string(password))})
 	request, err := http.NewRequestWithContext(ctx, "POST", i.consoleURL()+"/api/v1/auth/login", bytes.NewReader(data))
 	if err != nil {
 		return err
@@ -276,7 +307,7 @@ func (i *Installer) verifyLogin(ctx context.Context) error {
 	}
 	defer response.Body.Close()
 	if response.StatusCode != 200 {
-		return fmt.Errorf("administrator login verification failed")
+		return fmt.Errorf("administrator login verification failed (HTTP %d)", response.StatusCode)
 	}
 	var result struct {
 		Data struct {
@@ -295,7 +326,7 @@ func (i *Installer) verifyLogin(ctx context.Context) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("console session cookie is not protected for HTTPS")
+	return errConsoleSessionUnprotected
 }
 
 func (i *Installer) Handoff(output io.Writer) error {
@@ -311,7 +342,7 @@ func (i *Installer) Handoff(output io.Writer) error {
 		return fmt.Errorf("console certificate is invalid")
 	}
 	fingerprint := sha256.Sum256(block.Bytes)
-	return json.NewEncoder(output).Encode(map[string]any{"installation_id": i.Record.ID, "console_urls": i.seedRecord().ConsoleURLs, "certificate_sha256": hex.EncodeToString(fingerprint[:]), "recovery_directory": i.Directory, "administrator_credential_file": filepath.Join(i.materialDir(), "admin-password"), "database_single_point_of_failure": true, "limits": []string{"Controller/Gateway redundancy does not provide PostgreSQL failover.", "Database backups and business volume recovery are separate."}})
+	return json.NewEncoder(output).Encode(map[string]any{"installation_id": i.Record.ID, "console_urls": i.seedRecord().ConsoleURLs, "certificate_sha256": hex.EncodeToString(fingerprint[:]), "recovery_directory": i.offlineDir(), "installation_directory": i.Directory, "administrator_credential_file": filepath.Join(i.materialDir(), "admin-password"), "database_single_point_of_failure": true, "limits": []string{"Controller/Gateway redundancy does not provide PostgreSQL failover.", "Database backups and business volume recovery are separate."}})
 }
 
 func (i *Installer) createValidation(ctx context.Context) (bootstrap.Resource, error) {
@@ -417,8 +448,39 @@ func (i *Installer) verifyGateways(ctx context.Context) error {
 // installation configuration or the original offline recovery material.
 func (i *Installer) apiCredential() ([]byte, error) {
 	path := i.CredentialFile
+	if path == "" && i.Config.Adoption != nil {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		cfg, err := i.localConfig(ctx)
+		if err != nil {
+			return nil, err
+		}
+		if cfg.Security.AdminToken == "" {
+			return nil, &bootstrap.MaintenanceError{Code: "operator_credential_required"}
+		}
+		return []byte(cfg.Security.AdminToken), nil
+	}
 	if path == "" {
 		path = i.material("admin-password")
 	}
 	return bootstrap.ReadPrivate(path)
+}
+
+var errConsoleSessionUnprotected = errors.New("console session cookie is not protected for HTTPS")
+
+// During rolling replacement a reachable endpoint may briefly forward login to
+// an old leader. Only retry that specific protection proof; credential rejection
+// and unrelated transport/configuration errors remain explicit failures.
+func (i *Installer) verifyPreparedLogin(ctx context.Context) error {
+	for {
+		err := i.verifyLogin(ctx)
+		if !errors.Is(err, errConsoleSessionUnprotected) {
+			return err
+		}
+		select {
+		case <-ctx.Done():
+			return fmt.Errorf("console session protection did not converge: %w", ctx.Err())
+		case <-time.After(time.Second):
+		}
+	}
 }

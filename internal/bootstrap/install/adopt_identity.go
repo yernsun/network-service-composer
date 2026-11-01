@@ -80,7 +80,7 @@ func (i *Installer) registeredFile(ctx context.Context, node string, service swa
 		}
 		// Swarm provides the isolated secret mount; values never leave the verified
 		// channel for a public log, Docker service specification or journal.
-		return host.Run(ctx, host.Privileged("docker exec -i "+bootstrap.ShellQuote(container)+" cat -- "+bootstrap.ShellQuote(filename)), nil)
+		return host.Run(ctx, host.Privileged(bootstrap.LocalDockerCLI+" exec -i "+bootstrap.ShellQuote(container)+" cat -- "+bootstrap.ShellQuote(filename)), nil)
 	}
 	return nil, fmt.Errorf("registered component file has no verified mount or Secret reference")
 }

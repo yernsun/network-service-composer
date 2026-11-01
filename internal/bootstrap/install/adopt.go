@@ -43,7 +43,8 @@ func (i *Installer) adoptionView(ctx context.Context, o Observation) (*Installer
 		return nil, adoptionEvidence{}, fmt.Errorf("adoption cluster and registered Runtime do not agree")
 	}
 	record := *i.Record
-	record.CertificateID = registration.ConsoleCertificateID
+	// Gateway domain TLS and the independent console listener are separate assets.
+	record.CertificateID = ""
 	record.ClusterID = a.ClusterID
 	record.RuntimeID = registration.RuntimeID
 	record.Topology = o.Topology
@@ -229,6 +230,9 @@ func (i *Installer) adoptionView(ctx context.Context, o Observation) (*Installer
 		evidence.Installation.IngressNetwork = pool.BackendNetwork
 		evidence.Installation.Database.Image = database.Spec.TaskTemplate.ContainerSpec.Image
 		evidence.Installation.Drift = append([]string{"adoption_health_not_verified"}, drift...)
+		if len(cfg.Controller.SystemProject.Services) > 4 {
+			evidence.Installation.Drift = append(evidence.Installation.Drift, "additional_system_objects_require_cli_preparation")
+		}
 		if cfg.Server.ConsoleHTTPSListen == "" {
 			evidence.Installation.Drift = append(evidence.Installation.Drift, "legacy_console_requires_cli_preparation")
 		}
@@ -270,7 +274,14 @@ func (i *Installer) applyAdoption(ctx context.Context) (bootstrap.Resource, erro
 			}
 			definitions = append(definitions, config.SystemApplicationConfig{Key: key, Name: map[string]string{"controller": "Controller", "postgresql": "PostgreSQL", "nginx": "NGINX", "nginx-sandbox": "NGINX Sandbox"}[key], Environment: environment, RuntimeID: i.Record.RuntimeID, ObjectIDs: []string{id}})
 		}
-		project, err := application.EnsureGatewayProject(ctx, cfg.Controller.SystemProject, i.Record.ClusterID, objects)
+		registration := cfg.Controller.SystemProject
+		registration.Services = nil
+		for _, service := range cfg.Controller.SystemProject.Services {
+			if objects[service.ObjectID] {
+				registration.Services = append(registration.Services, service)
+			}
+		}
+		project, err := application.EnsureGatewayProject(ctx, registration, i.Record.ClusterID, objects)
 		if err != nil {
 			return err
 		}

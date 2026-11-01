@@ -106,6 +106,10 @@ func (c *Core) alertScopes(ctx context.Context, kind, resource string) ([]AlertS
 func (c *Core) notificationScopes(ctx context.Context, event *NotificationEvent) error {
 	kind := ""
 	switch {
+	case strings.HasPrefix(event.Type, "deployment.system_"):
+		event.Scopes = []AlertScope{}
+		event.EnvironmentID = ""
+		return nil
 	case event.Type == "notification.test":
 		return nil
 	case strings.HasPrefix(event.Type, "image."):

@@ -18,6 +18,7 @@ import (
 
 	"github.com/yernsun/network-service-composer/internal/agent"
 	"github.com/yernsun/network-service-composer/internal/api"
+	"github.com/yernsun/network-service-composer/internal/bootstrap/maintenance"
 	certificatex "github.com/yernsun/network-service-composer/internal/certificate"
 	"github.com/yernsun/network-service-composer/internal/config"
 	"github.com/yernsun/network-service-composer/internal/controlplane"
@@ -148,6 +149,7 @@ func New(ctx context.Context, cfg config.Config, logger *slog.Logger) (*Controll
 	}
 	value := &Controller{config: cfg, store: store, core: application, metrics: metricsx.New(), logger: logger, processLock: processLock}
 	application.HAController = value.haController
+	value.configureInstallation()
 	broker := gateway.NewBroker()
 	value.gatewayRPC = gateway.NewServer(application, broker, gateway.ServerOptions{
 		OfflineTimeout: cfg.Controller.Gateway.OfflineTimeout.Std(), ReconcileDelay: cfg.Controller.Gateway.Reconcile.Debounce.Std(),
@@ -268,6 +270,7 @@ func (c *Controller) Run(ctx context.Context) (err error) {
 		defer internalListener.Close()
 		internalHandler := http.NewServeMux()
 		internalHandler.Handle("/", forwarder.Internal(handler))
+		internalHandler.Handle(maintenance.HealthPath, c.installationHealthHandler())
 		internalHandler.Handle(controlplane.ReadyPath, forwarder.ReadyHandler(func(term int64) bool { return c.ready.Load() && c.schedulerTerm.Load() == term }))
 		if c.nodeReports != nil {
 			internalHandler.Handle(execution.InternalPath, c.deploymentWorker.InternalExecutionHandler(runCtx))

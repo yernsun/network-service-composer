@@ -48,3 +48,26 @@ func TestOfflineConfigurationDoesNotImportExecutorEnvironment(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestAuthenticatedOfflineBytesRemainStrictAndIgnoreEnvironment(t *testing.T) {
+	cfg := validConfig()
+	data, err := yaml.Marshal(cfg)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Setenv("NSC_STORAGE__DRIVER", "mysql")
+	loaded, err := DecodeOffline(data, os.ReadFile)
+	if err != nil || loaded.Storage.Driver != "sqlite" {
+		t.Fatal("environment replaced authenticated node settings", err)
+	}
+	for _, input := range [][]byte{[]byte("unknown: true"), []byte("["), append(append([]byte{}, data...), []byte("\n---\nserver: {}")...)} {
+		if _, err := DecodeOffline(input, os.ReadFile); err == nil {
+			t.Fatal("unknown or multiple node configurations accepted")
+		}
+	}
+	cfg.Security.SessionKeyFile = "/private/missing"
+	data, _ = yaml.Marshal(cfg)
+	if _, err := DecodeOffline(data, func(string) ([]byte, error) { return nil, os.ErrNotExist }); err == nil {
+		t.Fatal("missing original credential accepted")
+	}
+}

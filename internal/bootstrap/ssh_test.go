@@ -114,7 +114,7 @@ func sshFixture(t *testing.T) (Host, ssh.Signer) {
 								io.WriteString(channel.Stderr(), "do-not-print-this-secret")
 								channel.SendRequest("exit-status", false, ssh.Marshal(struct{ Status uint32 }{17}))
 								return
-							case "docker system dial-stdio":
+							case LocalDockerCLI + " system dial-stdio":
 								request, err := http.ReadRequest(bufio.NewReader(channel))
 								if err != nil {
 									return

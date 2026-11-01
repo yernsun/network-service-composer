@@ -2,6 +2,7 @@ package install
 
 import (
 	"path/filepath"
+	"strconv"
 	"time"
 
 	"github.com/moby/moby/api/types/container"
@@ -35,6 +36,18 @@ func (i *Installer) serviceSpec(key, gid string, reserved bool) swarm.ServiceSpe
 	s.TaskTemplate.Networks = []swarm.NetworkAttachmentConfig{network(control)}
 	base := i.nodeDir()
 	switch key {
+	case "executor":
+		c.Image = i.Config.Images.Controller
+		c.User = strconv.Itoa(i.Record.MaintenanceUID) + ":" + gid
+		c.Command = []string{"/usr/local/bin/nsc-controller"}
+		c.Args = []string{"version"}
+		c.Healthcheck = &container.HealthConfig{Test: []string{"NONE"}}
+		c.Mounts = append(c.Mounts, bind(i.Directory, i.Directory, false), bind("/etc/machine-id", "/etc/machine-id", true), bind("/var/run/docker.sock", "/var/run/docker.sock", true))
+		c.Secrets = []*swarm.SecretReference{{SecretID: i.Record.Resources["secret:maintenance"].ID, SecretName: i.name("maintenance"), File: &swarm.SecretReferenceFileTarget{Name: "nsc-maintenance", UID: strconv.Itoa(i.Record.MaintenanceUID), GID: gid, Mode: 0o400}}}
+		s.Mode = swarm.ServiceMode{ReplicatedJob: &swarm.ReplicatedJob{MaxConcurrent: &one, TotalCompletions: &one}}
+		s.TaskTemplate.RestartPolicy = &swarm.RestartPolicy{Condition: swarm.RestartPolicyConditionNone}
+		s.EndpointSpec = nil
+		s.UpdateConfig, s.RollbackConfig = nil, nil
 	case "postgresql":
 		c.Image = i.Config.Images.PostgreSQL
 		c.ReadOnly = false

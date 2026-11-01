@@ -412,5 +412,6 @@
   "problem.system.project_protected": "此系统项目及其资源受到保护。请通过集群运维升级或移除 NSC。",
   "problem.service.logs_unavailable": "此服务或管理节点无法提供 Docker Swarm Service 日志。",
   "problem.volume.in_use": "卷仍被引用或保留用于应用恢复。",
-  "problem.validation.self_signed_invalid": "请提供 1–100 个精确 DNS 名称或 IP SAN，以及 1–100 年的有效期。"
+  "problem.validation.self_signed_invalid": "请提供 1–100 个精确 DNS 名称或 IP SAN，以及 1–100 年的有效期。",
+  "problem.installation.blocked": "系统维护已阻断。请检查证据或使用 CLI。原因：{reason}。"
 }

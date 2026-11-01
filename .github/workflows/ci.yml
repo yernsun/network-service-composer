@@ -616,6 +616,12 @@ jobs:
       - name: Verify readiness browser boundaries
         id: browser
         run: cd frontend && npm exec playwright install --with-deps chromium && npm run e2e:demo -- tests/workspace/readiness.e2e.ts
+      - name: Verify SSH bootstrap and independent system maintenance
+        timeout-minutes: 35
+        id: bootstrap
+        run: |
+          docker build -f scripts/bootstrap-fixture/Dockerfile -t nsc-bootstrap-ssh-fixture:ci .
+          python3 scripts/bootstrap_acceptance.py --controller-image "nsc-controller:v$(cat VERSION)" --gateway-image "nsc-gateway:v$(cat VERSION)" --fixture-image nsc-bootstrap-ssh-fixture:ci --nodes 3 --cli-user 1000 --maintenance --browser --recovery --output coverage/p0/bootstrap/summary.json
       - name: Verify actual client DNS TLS HTTP and credential boundaries
         id: access
         run: python3 scripts/test-verify-access.py
@@ -631,7 +637,7 @@ jobs:
       - name: Bind verification evidence to source
         if: always()
         env:
-          NSC_CHECK_RESULTS: '{"build":"${{ steps.build.outcome }}","gateway":"${{ steps.gateway.outcome }}","installation":"${{ steps.installation.outcome }}","retention":"${{ steps.retention.outcome }}","recovery":"${{ steps.recovery.outcome }}","reconciliation":"${{ steps.reconciliation.outcome }}","browser":"${{ steps.browser.outcome }}","access":"${{ steps.access.outcome }}","quorum":"${{ steps.quorum.outcome }}","alerts":"${{ steps.alerts.outcome }}","gate-tests":"${{ steps.gate_tests.outcome }}"}'
+          NSC_CHECK_RESULTS: '{"build":"${{ steps.build.outcome }}","gateway":"${{ steps.gateway.outcome }}","installation":"${{ steps.installation.outcome }}","bootstrap":"${{ steps.bootstrap.outcome }}","retention":"${{ steps.retention.outcome }}","recovery":"${{ steps.recovery.outcome }}","reconciliation":"${{ steps.reconciliation.outcome }}","browser":"${{ steps.browser.outcome }}","access":"${{ steps.access.outcome }}","quorum":"${{ steps.quorum.outcome }}","alerts":"${{ steps.alerts.outcome }}","gate-tests":"${{ steps.gate_tests.outcome }}"}'
           NSC_EVIDENCE_IMAGES: '{"controller":"nsc-controller:${{ env.NSC_TEST_IMAGE_TAG }}","gateway":"nsc-gateway:${{ env.NSC_TEST_IMAGE_TAG }}"}'
         run: node scripts/readiness/gate.mjs record p0-acceptance coverage/readiness/p0-acceptance.json
       - name: Retain source-bound verification envelope

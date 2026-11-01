@@ -109,7 +109,8 @@ const environmentItems = computed(() => [
 ])
 const infrastructureItems = computed(() => [
   { page: 'activity', label: t('activityHub.title'), icon: 'activity' },
-  ...(session.value.role === 'administrator' ? [{ page: 'ha', label: t('ha.title'), icon: 'activity' }] : []),
+  ...(session.value.role === 'administrator' ? [{ page: 'installation', label: t('installation.title'), icon: 'settings', count: '' },
+  { page: 'ha', label: t('ha.title'), icon: 'activity' }] : []),
   { page: 'market', label: t('archive.message_f2e7caa9f119'), icon: 'grid' },
   { page: 'runtimes', label: t('prototype.clusters_hosts'), icon: 'server' },
   { page: 'runtimeEvents', label: t('prototype.runtime_records'), icon: 'activity' },

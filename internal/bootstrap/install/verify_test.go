@@ -29,6 +29,9 @@ func consoleFixture(t *testing.T) (*Installer, *consoleMode) {
 	i, _ := installerFixture(t, 1)
 	i.Config.Nodes[0].Address = "127.0.0.1"
 	i.Record.ConfigDigest = bootstrap.Digest(i.Config)
+	if err := i.Journal.Save(i.Record); err != nil {
+		t.Fatal(err)
+	}
 	infrastructure(t, i)
 	if err := i.initializeDatabase(t.Context()); err != nil {
 		t.Fatal(err)
@@ -71,6 +74,17 @@ func consoleFixture(t *testing.T) (*Installer, *consoleMode) {
 		var value any
 		switch {
 		case r.URL.Path == "/api/v1/auth/login":
+			if mode == "session-cookie-converging" {
+				sharedMode.Store("")
+				mode = "session-cookie-insecure"
+			}
+			if mode == "custom-admin-login" {
+				var input struct{ Username string }
+				if json.NewDecoder(r.Body).Decode(&input) != nil || input.Username != "original-admin" {
+					w.WriteHeader(401)
+					return
+				}
+			}
 			if mode == "session-http-error" {
 				w.WriteHeader(401)
 				return
@@ -255,7 +269,13 @@ func consoleFixture(t *testing.T) (*Installer, *consoleMode) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	server.TLS = &tls.Config{Certificates: []tls.Certificate{pair}, MinVersion: tls.VersionTLS12}
+	server.TLS = &tls.Config{Certificates: []tls.Certificate{pair}, MinVersion: tls.VersionTLS12, GetConfigForClient: func(*tls.ClientHelloInfo) (*tls.Config, error) {
+		current, err := tls.LoadX509KeyPair(i.material("console.crt"), i.material("console.key"))
+		if err != nil {
+			return nil, err
+		}
+		return &tls.Config{MinVersion: tls.VersionTLS12, Certificates: []tls.Certificate{current}}, nil
+	}}
 	server.StartTLS()
 	t.Cleanup(server.Close)
 	_, port, _ := net.SplitHostPort(server.Listener.Addr().String())

@@ -10,6 +10,7 @@ import (
 
 	"github.com/moby/moby/api/types/mount"
 	"github.com/moby/moby/api/types/swarm"
+	"github.com/yernsun/network-service-composer/internal/bootstrap"
 )
 
 type secretReadEngine struct {
@@ -25,7 +26,7 @@ func (e *secretReadEngine) Engine(ctx context.Context, method, path string, inpu
 	return e.embeddedEngine.Engine(ctx, method, path, input, out)
 }
 func (e *secretReadEngine) Run(ctx context.Context, command string, input []byte) ([]byte, error) {
-	if strings.HasPrefix(command, "docker exec -i ") {
+	if strings.HasPrefix(command, bootstrap.LocalDockerCLI+" exec -i ") {
 		e.commands = append(e.commands, command)
 		return []byte("isolated-runtime-secret"), nil
 	}

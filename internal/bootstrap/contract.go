@@ -215,14 +215,17 @@ type PlanTarget struct {
 }
 
 type PlanScope struct {
-	Topology                     ManagerTopology `json:"topology"`
-	Mode                         string          `json:"mode"`
-	ClusterID                    string          `json:"cluster_id,omitempty"`
-	Targets                      []PlanTarget    `json:"targets"`
-	Images                       Images          `json:"images"`
-	DataNode                     string          `json:"data_node"`
-	DataVolume                   string          `json:"data_volume,omitempty"`
-	DatabaseSinglePointOfFailure bool            `json:"database_single_point_of_failure"`
+	Preparation                  *PreparationPlan `json:"preparation,omitempty"`
+	Release                      *Release         `json:"release,omitempty"`
+	Components                   []string         `json:"components,omitempty"`
+	Topology                     ManagerTopology  `json:"topology"`
+	Mode                         string           `json:"mode"`
+	ClusterID                    string           `json:"cluster_id,omitempty"`
+	Targets                      []PlanTarget     `json:"targets"`
+	Images                       Images           `json:"images"`
+	DataNode                     string           `json:"data_node"`
+	DataVolume                   string           `json:"data_volume,omitempty"`
+	DatabaseSinglePointOfFailure bool             `json:"database_single_point_of_failure"`
 }
 
 func (p Plan) WithScope(scope PlanScope) Plan { p.Scope = scope; p.Hash = p.digest(); return p }

@@ -412,5 +412,6 @@
   "problem.system.project_protected": "Ce projet système et ses ressources sont protégés. Utilisez la maintenance du cluster pour mettre à jour ou supprimer NSC.",
   "problem.service.logs_unavailable": "Les journaux Docker Swarm Service sont indisponibles pour ce Service ou ce manager.",
   "problem.volume.in_use": "Données référencées ou conservées pour restaurer l’application.",
-  "problem.validation.self_signed_invalid": "Indiquez 1 à 100 noms DNS exacts ou SAN IP et une validité de 1 à 100 ans."
+  "problem.validation.self_signed_invalid": "Indiquez 1 à 100 noms DNS exacts ou SAN IP et une validité de 1 à 100 ans.",
+  "problem.installation.blocked": "La maintenance système est bloquée. Vérifiez les preuves ou utilisez la CLI. Motif : {reason}."
 }

@@ -166,3 +166,15 @@ func TestLoadSecretFilesRejectsUnknownDNSCredentialField(t *testing.T) {
 		t.Fatalf("expected strict DNS credential error, got %v", err)
 	}
 }
+
+func TestInstallationMetadataCannotTargetRootOrAnAmbiguousDirectory(t *testing.T) {
+	for _, directory := range []string{"", "/var/lib/nsc-bootstrap", "/", "relative", "/var/lib/../nsc", "/var/lib/nsc/"} {
+		cfg := validConfig()
+		cfg.Controller.Installation.MetadataDirectory = directory
+		err := cfg.Validate()
+		valid := directory == "" || directory == "/var/lib/nsc-bootstrap"
+		if valid && err != nil || !valid && err == nil {
+			t.Fatalf("invalid metadata directory acceptance for %q: %v", directory, err)
+		}
+	}
+}

@@ -37,6 +37,8 @@ func run() error {
 		return usage()
 	}
 	switch os.Args[1] {
+	case "bootstrap-worker":
+		return bootstrapWorkerCommand(os.Args[2:])
 	case "bootstrap":
 		return bootstrapCommand(os.Args[2:], os.Stdin, os.Stdout)
 	case "serve":

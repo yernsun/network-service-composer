@@ -173,6 +173,10 @@ func (b *boundedOutput) Write(data []byte) (int, error) {
 	return b.Buffer.Write(data)
 }
 
+// Keep node files, socket permissions and Docker mutations on the same host.
+// An operator's login context or DOCKER_HOST must never redirect bootstrap.
+const LocalDockerCLI = "env -u DOCKER_HOST -u DOCKER_CONTEXT -u DOCKER_TLS_VERIFY -u DOCKER_CERT_PATH docker --host=unix:///var/run/docker.sock"
+
 func (h Host) Privileged(command string) string {
 	if h.Node.SSHUser == "root" {
 		return command
@@ -232,7 +236,7 @@ func (h Host) Engine(ctx context.Context, method, path string, input, output any
 	}
 	stop := context.AfterFunc(ctx, func() { client.Close() })
 	defer stop()
-	if err = session.Start(h.Privileged("docker system dial-stdio")); err != nil {
+	if err = session.Start(h.Privileged(LocalDockerCLI + " system dial-stdio")); err != nil {
 		return err
 	}
 	if err = request.Write(stdin); err != nil {

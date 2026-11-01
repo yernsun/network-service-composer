@@ -13,14 +13,14 @@ import (
 )
 
 func (i *Installer) prepareImages(ctx context.Context) (bootstrap.Resource, error) {
-	var credentials []byte
+	credentials := []byte(`{"auths":{}}`)
+	defer func() { clear(credentials) }()
 	if i.Config.RegistryAuthFile != "" {
 		var err error
 		credentials, err = bootstrap.ReadPrivate(i.Config.RegistryAuthFile)
 		if err != nil {
 			return bootstrap.Resource{}, err
 		}
-		defer clear(credentials)
 		var raw map[string]json.RawMessage
 		if json.Unmarshal(credentials, &raw) != nil || raw["credsStore"] != nil || raw["credHelpers"] != nil {
 			return bootstrap.Resource{}, &bootstrap.Rejected{Reason: "registry preparation accepts inline auth entries, not credential helpers"}
@@ -47,10 +47,7 @@ func (i *Installer) prepareImages(ctx context.Context) (bootstrap.Resource, erro
 			if component == "postgresql" {
 				image = i.Config.Images.PostgreSQL
 			}
-			command := "docker image pull " + bootstrap.ShellQuote(image) + " >/dev/null"
-			if len(credentials) > 0 {
-				command = `set -eu; umask 077; nsc_auth_dir=$(mktemp -d); trap 'rm -f "$nsc_auth_dir/config.json"; rmdir "$nsc_auth_dir"' EXIT; cat >"$nsc_auth_dir/config.json"; docker --config "$nsc_auth_dir" image pull ` + bootstrap.ShellQuote(image) + " >/dev/null"
-			}
+			command := `set -eu; umask 077; nsc_auth_dir=$(mktemp -d); trap 'rm -f "$nsc_auth_dir/config.json"; rmdir "$nsc_auth_dir"' EXIT; cat >"$nsc_auth_dir/config.json"; ` + bootstrap.LocalDockerCLI + ` --config "$nsc_auth_dir" image pull ` + bootstrap.ShellQuote(image) + " >/dev/null"
 			if _, err := host.Run(ctx, host.Privileged(command), credentials); err != nil {
 				return bootstrap.Resource{}, fmt.Errorf("node %s could not pull the approved %s image", node.Name, component)
 			}
@@ -63,6 +60,16 @@ func (i *Installer) prepareImages(ctx context.Context) (bootstrap.Resource, erro
 			}
 			if err := host.Engine(ctx, "GET", "/images/"+url.PathEscape(image)+"/json", nil, &actual); err != nil {
 				return bootstrap.Resource{}, err
+			}
+			if component == "controller" && actual.Config.Labels["io.nsc.bootstrap.maintenance"] != "1" {
+				return bootstrap.Resource{}, &bootstrap.Rejected{Reason: "Controller image does not implement the independent maintenance contract"}
+			}
+			if component == "controller" && i.Record.Release == nil {
+				version := actual.Config.Labels["org.opencontainers.image.version"]
+				if version == "" {
+					version = "unversioned"
+				}
+				i.Record.Release = &bootstrap.Release{Version: version, Images: i.Config.Images, Protocol: 2, Schema: 18, Configuration: 1, PostgreSQLMajor: 18, Architectures: []string{"amd64", "arm64"}}
 			}
 			if actual.Os != "linux" || actual.Architecture != architecture || architecture == "" {
 				return bootstrap.Resource{}, &bootstrap.Rejected{Reason: "image platform is unsupported"}

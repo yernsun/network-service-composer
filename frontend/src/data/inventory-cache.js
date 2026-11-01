@@ -35,6 +35,7 @@ export function invalidateWorkloadInventory() {
 // Workspace reads are scheduled by the refresh coordinator. Component queries
 // refresh their active observers; inactive projects retain their cache entries.
 export function invalidateInventoryWrite(method, path, params = {}) {
+  if (path === '/system/installation/plans') return false
   if (/\/(?:preflight|service-preflight|compose-merge|compose-preview|compose-validation|restore-preview|preview|previews|deletion-previews|restore-reviews|validations|diagnostics)$/.test(path)) return false
   if (/^\/(?:auth|locale|me|users|openapi-keys)(?:\/|$)/.test(path)) return false
   if (path.endsWith('/variables')) {

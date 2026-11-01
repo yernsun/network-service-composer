@@ -210,10 +210,12 @@ type ReadinessPolicy struct {
 }
 
 type Service struct {
-	System      bool                  `json:"system"`
-	Environment *EnvironmentReference `json:"environment,omitempty"`
-	ID          string                `json:"id"`
-	RuntimeID   string                `json:"runtime_id"`
+	ManagementMode string                `json:"management_mode"`
+	InstallationID string                `json:"installation_id,omitempty"`
+	System         bool                  `json:"system"`
+	Environment    *EnvironmentReference `json:"environment,omitempty"`
+	ID             string                `json:"id"`
+	RuntimeID      string                `json:"runtime_id"`
 	// ServiceKey is stable across container and Swarm service replacement. For
 	// Compose it is "project/service"; for Swarm it is the stable service name.
 	ServiceKey            string           `json:"service_key"`
@@ -448,6 +450,8 @@ const (
 )
 
 type Application struct {
+	ManagementMode        string                `json:"management_mode"`
+	InstallationID        string                `json:"installation_id,omitempty"`
 	System                bool                  `json:"system"`
 	SystemKey             string                `json:"system_key,omitempty"`
 	Environment           *EnvironmentReference `json:"environment,omitempty"`

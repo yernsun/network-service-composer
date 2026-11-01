@@ -27,13 +27,17 @@ func adoptionFixture(t *testing.T, count int) (*Installer, *fakeCluster) {
 	if err := original.initializeDatabase(t.Context()); err != nil {
 		t.Fatal(err)
 	}
+	return adoptionFromOriginal(t, original, cluster)
+}
+func adoptionFromOriginal(t *testing.T, original *Installer, cluster *fakeCluster) (*Installer, *fakeCluster) {
+	t.Helper()
 	cfg, err := original.localConfig(t.Context())
 	if err != nil {
 		t.Fatal(err)
 	}
 	cfg.Server.ConsoleHTTPSCertFile = "/run/nsc/console.crt"
 	cfg.Server.ConsoleHTTPSKeyFile = "/run/nsc/console.key"
-	controllerConfig := filepath.Join(original.Directory, "existing.yaml")
+	controllerConfig := filepath.Join(t.TempDir(), "existing.yaml")
 	data, err := yaml.Marshal(cfg)
 	if err != nil {
 		t.Fatal(err)
@@ -120,7 +124,7 @@ func TestAdoptionPlanIsReadOnlyAndRegistrationPreservesExistingResources(t *test
 	if err != nil || result.State != bootstrap.Succeeded {
 		t.Fatal(result.State, err)
 	}
-	if bootstrap.Digest(cluster.services) != before || len(cluster.services) != 4 {
+	if bootstrap.Digest(cluster.services) != before || len(cluster.services) != 5 {
 		t.Fatal("adoption changed or recreated service objects")
 	}
 	if err = i.withStore(t.Context(), true, func(store storage.Store, _ config.Config) error {

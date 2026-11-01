@@ -10,7 +10,7 @@ const paths = [
   '/services/:service', '/market', '/operations/activity', '/operations/:operation',
   '/infrastructure/runtimes', '/infrastructure/runtimes/:runtime',
   '/infrastructure/runtimes/:runtime/nodes/:node', '/infrastructure/runtimes/:runtime/instances/:instance',
-  '/infrastructure/ha', '/infrastructure/events', '/:pathMatch(.*)*',
+  '/infrastructure/installation', '/infrastructure/ha', '/infrastructure/events', '/:pathMatch(.*)*',
 ]
 const routes: RouteRecordRaw[] = [
   { path: '/login', component: () => import('../auth/LoginPage.vue'), meta: { public: true } },

@@ -3170,6 +3170,7 @@ export function createMockService(hooks) {
       application: () => _t("prototype.application_details"),
       service: () => _t("archive.message_46705301c2d5"),
       activity: () => _t("activityHub.title"),
+      installation: () => _t("installation.title"),
       ha: () => _t("ha.title"),
       runtimes: () => _t("prototype.clusters_hosts"),
       runtime: () => _t("archive.message_1dbf586017ba"),
@@ -5237,7 +5238,7 @@ export function createMockService(hooks) {
       };
     } else if (ui.page === 'operation') {
       path = __nscVueAdd('/operations/', enc(Y.operation));
-    } else if (ui.page === 'activity') { path = '/operations/activity'; q = Y.activityQuery || {}; } else if (ui.page === 'ha') path = '/infrastructure/ha';else if (ui.page === 'runtimes') path = '/infrastructure/runtimes';else if (ui.page === 'market') path = '/market';else if (ui.page === 'runtimeEvents') {
+    } else if (ui.page === 'activity') { path = '/operations/activity'; q = Y.activityQuery || {}; } else if (ui.page === 'installation') { path = '/infrastructure/installation'; q = Y.installationJob ? {job:Y.installationJob} : {}; } else if (ui.page === 'ha') path = '/infrastructure/ha';else if (ui.page === 'runtimes') path = '/infrastructure/runtimes';else if (ui.page === 'market') path = '/market';else if (ui.page === 'runtimeEvents') {
       path = '/infrastructure/events';
       q.filter = W.x.eventFilter;
     } else {
@@ -5395,6 +5396,7 @@ export function createMockService(hooks) {
       return;
     }
     if (a[0] === 'infrastructure') {
+      if (a[1] === 'installation' && a.length === 2) { ui.page = 'installation'; Y.installationJob = q.get('job') || ''; return; }
       if (a[1] === 'ha' && a.length === 2) { ui.page = 'ha'; return; }
       if (a[1] === 'events' && a.length === 2) {
         ui.page = 'runtimeEvents';
@@ -5511,6 +5513,7 @@ export function createMockService(hooks) {
       if (page === 'project') return __nscVueAdd('/projects/', enc(db.project));
       if (page === 'environments') return __nscVueAdd(__nscVueAdd('/projects/', enc(db.project)), '/environments');
       if (page === 'market') return '/market';
+      if (page === 'installation') return '/infrastructure/installation';
       if (page === 'runtimes') return '/infrastructure/runtimes';
       if (page === 'runtimeEvents') return '/infrastructure/events';
       if (page === 'variables') return __nscVueAdd(__nscVueAdd('/projects/', enc(db.project)), allEnvironmentView() ? '/variables' : __nscVueAdd(__nscVueAdd('/environments/', enc(db.env)), '/variables?layer=environment'));

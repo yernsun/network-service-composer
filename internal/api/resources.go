@@ -13,6 +13,7 @@ import (
 
 func (s *Server) registerAPI(router chi.Router) {
 	s.registerSystemHA(router)
+	s.registerInstallation(router)
 	s.registerCommunity(router)
 	s.registerCluster(router)
 	s.registerEnvironments(router)
@@ -312,6 +313,10 @@ func (s *Server) listServices(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
+	if err := s.core.ServiceManagement(r.Context(), values); err != nil {
+		s.handleError(w, r, err)
+		return
+	}
 	writeCollection(w, values, page, func(value model.Service) string { return value.ID })
 }
 func (s *Server) getService(w http.ResponseWriter, r *http.Request) {
@@ -332,6 +337,12 @@ func (s *Server) getService(w http.ResponseWriter, r *http.Request) {
 			value.LifecycleOperations = []string{}
 		}
 	}
+	values := []model.Service{value}
+	if err = s.core.ServiceManagement(r.Context(), values); err != nil {
+		s.handleError(w, r, err)
+		return
+	}
+	value = values[0]
 	setETag(w, value.Revision)
 	writeData(w, http.StatusOK, value)
 }
