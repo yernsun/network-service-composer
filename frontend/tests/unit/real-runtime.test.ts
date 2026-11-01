@@ -14,6 +14,7 @@ let store: ReturnType<typeof useWorkspaceStore>
 const command = vi.fn()
 const previewDomainConfig = vi.fn()
 const publishPoolDraft = vi.fn()
+const validatePoolDraft = vi.fn(), refreshDomainDependencies = vi.fn()
 let attached: { readonly work: unknown; ui: { validation: unknown } } | null = null
 async function click(action: string, extra = '') {
   const el = document.querySelector<HTMLElement>(`[data-action="${action}"]${extra}`)
@@ -43,7 +44,15 @@ beforeEach(async ({ task }) => {
       route.timeout = undefined
     }
   }
+  if (task.name.startsWith('validates routing ')) {
+    const domain = state.domains.find((d: { id: string }) => d.id === 'd1')
+    Object.assign(domain, { pool_id: 'pool', draft: { config: structuredClone(domain.active), base: domain.rev, revision: 7 } })
+    for (const gateway of state.gateways) gateway.available = true
+    for (const service of state.services) Object.assign(service, { poolId: 'pool', dns_status: 'READY', endpointObservation: { state: 'loaded', fetchedAt: Date.now() } })
+  }
   reference.dispose(); localStorage.clear(); command.mockReset(); previewDomainConfig.mockReset().mockResolvedValue({})
+  validatePoolDraft.mockReset().mockResolvedValue({ id: 'validation-1', status: 'SUCCEEDED', draft_revision: 7, results: {} })
+  refreshDomainDependencies.mockReset().mockResolvedValue(undefined)
   publishPoolDraft.mockReset().mockResolvedValue({ id: 'release-1', status: 'SUCCEEDED', targets: [
     { gateway_id: 'gw1', name: 'gateway-main', status: 'SUCCEEDED' },
     { gateway_id: 'gw2', name: 'gateway-pve', status: 'SUCCEEDED' },
@@ -52,6 +61,7 @@ beforeEach(async ({ task }) => {
   store.initialize(connectRouter(store), { state, templates: [], command, previewDomainConfig,
     composePage: () => '',
     unsupported(_action: string, show: (message: string) => void) { show('API capability unavailable; input retained.') },
+    ...(task.name.startsWith('validates routing ') ? { validatePoolDraft, refreshDomainDependencies, saveDomainDraft: async () => ({ revision: 7 }) } : {}),
     ...(task.name.startsWith('shows structured Gateway release') ? { publishPoolDraft, refresh: vi.fn() } : {}),
     attach(value: { readonly work: unknown; ui: { validation: unknown } }) { attached = value }, applicationSpec(app: { id: string }) { return { app: app.id, source_unavailable: true, services: [] } },
     template() { return { id: '', name: '', services: [], modes: [] } },
@@ -514,4 +524,60 @@ it('uses the same four owned tasks in the service list and detail while ignoring
   expect(document.querySelector('#main')?.textContent).toContain('Container 创建')
   expect(document.querySelector('#main')?.textContent).toContain('Task 状态变化')
   expect(new Set([...document.querySelectorAll('#main [data-action="x-instance"]')].map(el => el.getAttribute('data-id')))).toEqual(new Set(tasks.map(t => t.id)))
+})
+
+async function validationDomain() {
+  const state = store.state(), domain = state.domains.find(d => d.id === 'd1')!
+  await go(`/projects/${domain.project}/environments/${domain.env}/domains/${domain.id}?tab=routes`)
+  return { state, domain, route: domain.active.routes.find(r => r.kind === 'proxy')! }
+}
+it('validates routing existing cross-environment Service targets after refreshing dependencies without rebinding', async () => {
+  const { state, domain, route } = await validationDomain()
+  const service = state.services.find(s => s.id === route.service)!
+  service.env = 'sandbox-env'
+  await click('route-edit', `[data-id="${route.id}"]`)
+  expect(document.querySelector<HTMLSelectElement>('#rf-service')!.value).toBe(service.id)
+  await click('close'); await click('validate')
+  expect(refreshDomainDependencies).toHaveBeenCalledWith(domain.id, expect.arrayContaining([service.id]))
+  expect(validatePoolDraft).toHaveBeenCalledWith('pool', 7)
+  expect(document.querySelector('#overlay')?.textContent).toContain(i18n.global.t('domainPublication.validated'))
+  expect(domain.active.routes.find(r => r.id === route.id)?.service).toBe(service.id)
+})
+it.each(['not-loaded', 'error', 'stale'])('validates routing unknown Endpoint observations (%s) without inventing zero Ready', async observation => {
+  const { state, route } = await validationDomain()
+  const service = state.services.find(s => s.id === route.service)!
+  service.endpoints = []; Object.assign(service, { endpointObservation: { state: observation, fetchedAt: Date.now() } })
+  await click('validate')
+  expect(document.querySelector('#overlay')?.textContent).toContain(i18n.global.t('domainPublication.endpointsUnknown'))
+  expect(document.querySelector('#overlay')?.textContent).not.toContain(i18n.global.t('domainPublication.zeroReady'))
+  expect(validatePoolDraft).toHaveBeenCalledOnce()
+})
+it('validates routing confirmed empty Endpoint observations with a traffic-risk warning', async () => {
+  const { state, route } = await validationDomain()
+  state.services.find(s => s.id === route.service)!.endpoints = []
+  await click('validate')
+  expect(document.querySelector('#overlay')?.textContent).toContain(i18n.global.t('domainPublication.zeroReady'))
+  expect(validatePoolDraft).toHaveBeenCalledOnce()
+})
+it('validates routing a missing Service as an error and provides a route repair entry', async () => {
+  const { state, route } = await validationDomain()
+  state.services = state.services.filter(service => service.id !== route.service)
+  await click('validate')
+  expect(validatePoolDraft).not.toHaveBeenCalled()
+  expect(document.querySelector('#overlay .callout.red')?.textContent).toContain(route.path)
+  const repair = document.querySelector<HTMLButtonElement>(`#overlay [data-action=route-edit][data-id="${route.id}"]`)
+  expect(repair).not.toBeNull(); repair!.click(); await flushPromises()
+  expect(document.querySelector('#rf-service')).not.toBeNull()
+})
+it('validates routing only the newest unchanged editor after delayed dependency refreshes', async () => {
+  await validationDomain()
+  let finish!: () => void
+  refreshDomainDependencies.mockReturnValueOnce(new Promise<void>(resolve => { finish = resolve }))
+  await click('validate')
+  if (!attached) throw new Error('missing attached editor')
+  const work = attached.work as { body: string }
+  work.body = '2m'; finish(); await flushPromises()
+  expect(validatePoolDraft).not.toHaveBeenCalled()
+  await click('validate')
+  expect(validatePoolDraft).toHaveBeenCalledOnce()
 })

@@ -59,15 +59,29 @@ export async function loadInventory(includeRemoved = false, { path = '/projects'
     const value = await resource('/gateway-pools/{id}/nginx', id)
     return [id, value.data]
   })))
+  const domainIDs = new Set([...scope.domainIDs, ...domains.filter(domain => publishedDomainScopes.has(domain.id)).map(domain => domain.id)])
   const endpointServiceIDs = new Set(scope.endpointServices.filter(service => service.healthy_instances > 0 || routes.some(route => route.backend?.service_id === service.id)).map(service => service.id))
-  for (const config of poolConfigs.values()) {
-    for (const change of config?.draft?.routes || []) {
-      if (scope.endpointServices.some(service => service.id === change.route?.backend?.service_id)) endpointServiceIDs.add(change.route.backend.service_id)
-    }
+  const includeTarget = route => {
+    if (domainIDs.has(route.domain_id) && route.enabled && route.kind !== 'return' && route.kind !== 'redirect' && !route.external_url && services.some(service => service.id === route.backend?.service_id)) endpointServiceIDs.add(route.backend.service_id)
   }
-  const serviceEndpoints = new Map(await Promise.all([...endpointServiceIDs].map(async id =>
-    [id, await collection('/services/{id}/instances', { id })]
-  )))
+  for (const route of routes) includeTarget(route)
+  for (const config of poolConfigs.values()) {
+    for (const change of config?.draft?.routes || []) if (!change.delete) includeTarget(change.route)
+  }
+  for (const id of scopeOptions.endpointServiceIDs || []) if (services.some(service => service.id === id)) endpointServiceIDs.add(id)
+  const serviceEndpoints = new Map(await Promise.all([...endpointServiceIDs].map(async id => {
+    try {
+      const rows = await collection('/services/{id}/instances', { id })
+      const service = services.find(service => service.id === id)
+      const runtime = runtimes.find(runtime => runtime.id === service?.runtime_id)
+      // Reusing cached rows must not turn an old observation into a new one.
+      const fetchedAt = queryClient.getQueryState(inventoryKey('/services/{id}/instances', { id }, {}))?.dataUpdatedAt ?? Date.now()
+      return [id, { rows, state: runtime?.status === 'ONLINE' ? 'loaded' : 'stale', fetchedAt }]
+    } catch (error) {
+      if (signal?.aborted || error.name === 'AbortError') throw error
+      return [id, { rows: [], state: 'error', fetchedAt: Date.now() }]
+    }
+  })))
   const parameters13 = { scopes: {}, audit: [], documents: {} }
   const versions = new Map()
   for (const [id, etag] of wizardDraftETags) versions.set(`deployment-draft:${id}`, etag)
@@ -139,7 +153,7 @@ export async function loadInventory(includeRemoved = false, { path = '/projects'
       if (mode === 'global') workloadKind = 'global'
       else if (mode === 'replicated-job' || mode === 'global-job') workloadKind = 'job'
       else if (!definition && s.managed) workloadKind = 'unknown'
-      return { ...s, project: e?.project_id || '', env: e?.id || '', app: s.application_id || '', runtimeId: s.runtime_id, runtime: runtimesById.get(s.runtime_id)?.name || s.runtime_id, mode: runtimesById.get(s.runtime_id)?.runtime_type === 'swarm' ? 'stack' : 'compose', role: s.name, image: imagesByService.get(s.id) || '', port: s.target_port_override || s.discovered_port || 0, desired: s.desired_instances, health, specVersion: serviceVersions.desired, observedVersion: serviceVersions.applied, runtimeCreatedAt: s.runtime_created_at || '', runtimeUpdatedAt: s.runtime_updated_at || '', removedAt: s.removed_at || '', recordCreatedAt: s.created_at || '', recordUpdatedAt: s.updated_at || '', endpoints: (serviceEndpoints.get(s.id) || []).filter(ep => ep.runtime_state === 'RUNNING' && ep.ready_state !== 'REMOVED').map(ep => [ep.address, ep.ready_state === 'READY' && ep.health_state !== 'UNHEALTHY']), workloadKind, memory: null, cpu: null }
+      return { ...s, poolId: runtimesById.get(s.runtime_id)?.pool_id || '', endpointObservation: serviceEndpoints.has(s.id) ? { state: serviceEndpoints.get(s.id).state, fetchedAt: serviceEndpoints.get(s.id).fetchedAt } : { state: 'not-loaded', fetchedAt: 0 }, project: e?.project_id || '', env: e?.id || '', app: s.application_id || '', runtimeId: s.runtime_id, runtime: runtimesById.get(s.runtime_id)?.name || s.runtime_id, mode: runtimesById.get(s.runtime_id)?.runtime_type === 'swarm' ? 'stack' : 'compose', role: s.name, image: imagesByService.get(s.id) || '', port: s.target_port_override || s.discovered_port || 0, desired: s.desired_instances, health, specVersion: serviceVersions.desired, observedVersion: serviceVersions.applied, runtimeCreatedAt: s.runtime_created_at || '', runtimeUpdatedAt: s.runtime_updated_at || '', removedAt: s.removed_at || '', recordCreatedAt: s.created_at || '', recordUpdatedAt: s.updated_at || '', endpoints: (serviceEndpoints.get(s.id)?.rows || []).filter(ep => ep.runtime_state === 'RUNNING' && ep.ready_state !== 'REMOVED').map(ep => [ep.address, ep.ready_state === 'READY' && ep.health_state !== 'UNHEALTHY']), workloadKind, memory: null, cpu: null }
     }),
     runtimes: runtimes.map(r => { const c = clustersByRuntime.get(r.id) || { nodes: [], instances: [], error: 'unavailable' }; return { ...r, type: r.runtime_type, connection: !r.enabled || r.status === 'OFFLINE' ? 'offline' : r.status === 'ONLINE' ? 'online' : 'unknown', canWrite: r.management_enabled, allowedEnvs: environments.filter(e => e.runtime_id === r.id).map(e => e.id), ...runtimeObservation(c), gaps: c.error || c.observationError ? [{ start: r.last_seen_at, end: null, reason: c.error || c.observationError }] : [], protocol: '', lastSync: r.last_seen_at } }),
     instances: clusters.flatMap(c => instanceViews(c.instances, c.runtime, servicesById)),

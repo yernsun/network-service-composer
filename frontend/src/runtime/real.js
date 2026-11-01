@@ -1,3 +1,4 @@
+import { endpointState, existingRouteTarget, routeTargetIssue } from '../data/route-validation';
 import { serviceInstances as _serviceInstances, serviceInstanceSummary as _serviceInstanceSummary } from '../data/service-instances';
 import { translate as _t, labels as _labels, translatedAttribute as _a, localizeModal as _modal, observedVersion as _observedVersion } from '../i18n';
 import { serviceName as _serviceName, serviceSearch as _serviceSearch } from '../data/service-references';
@@ -868,7 +869,7 @@ export function createMockService(hooks) {
       size: 'drawer',
       title: work.routes.some((x) => x.id === r.id) ? _t("archive.message_1985fb7f06b9") : _t("archive.message_d3aef56cde5a"),
       sub: __nscVueAdd(esc(D().name), _t("archive.message_dcb686045234")),
-      body: __nscVueView(templates[142], [esc(r.path), __nscVueJoin(Object.entries(MATCH).map(([v, t]) => __nscVueView(templates[135], [v, v === r.match ? 'selected' : '', t, v === 'prefix' ? _t("archive.message_4b399ad51401") : ''])), ''), __nscVueJoin([['proxy', 'box'], ['return', 'checkcircle'], ['redirect', 'external']].map(([k, ic]) => __nscVueView(templates[136], [r.kind === k ? 'selected' : '', k, I(ic), KINDS[k]])), ''), r.kind === 'proxy' ? __nscVueView(templates[138], [__nscVueJoin(db.services.filter((s) => s.status !== 'REMOVED' && s.env === D().env && s.project === D().project).map((s) => __nscVueView(templates[137], [s.id, s.id === r.service ? 'selected' : '', esc(_serviceName(db.services, s.id)), s.port, ready(s.id).length])), ''), r.timeout, r.connect, r.strip ? 'on' : '', r.strip, r.websocket ? 'on' : '', r.websocket, esc(r.path), esc(upstreamPath)]) : __nscVueView(templates[140], [__nscVueJoin((r.kind === 'return' ? [200, 204, 403, 404, 503] : [301, 302, 307, 308]).map((n) => __nscVueView(templates[139], [n, Number(r.code) === n ? 'selected' : '', n])), ''), r.kind === 'redirect' ? _t("archive.message_6ee2b0cd4724") : _t("archive.message_e4c5dead4d24"), esc(r.value), r.kind === 'redirect' ? 'https://example.com/' : 'ok']), r.enabled ? 'on' : '', r.enabled, callout(_t("archive.message_aebb4cb52171"), 'neutral'), error ? __nscVueView(templates[141], [esc(error)]) : '']),
+      body: __nscVueView(templates[142], [esc(r.path), __nscVueJoin(Object.entries(MATCH).map(([v, t]) => __nscVueView(templates[135], [v, v === r.match ? 'selected' : '', t, v === 'prefix' ? _t("archive.message_4b399ad51401") : ''])), ''), __nscVueJoin([['proxy', 'box'], ['return', 'checkcircle'], ['redirect', 'external']].map(([k, ic]) => __nscVueView(templates[136], [r.kind === k ? 'selected' : '', k, I(ic), KINDS[k]])), ''), r.kind === 'proxy' ? __nscVueView(templates[138], [__nscVueJoin(db.services.filter((s) => s.status !== 'REMOVED' && (s.env === D().env && s.project === D().project || s.id === r.service && existingRouteTarget(r, D()))).map((s) => __nscVueView(templates[137], [s.id, s.id === r.service ? 'selected' : '', esc(_serviceName(db.services, s.id)), s.port, ready(s.id).length])), ''), r.timeout, r.connect, r.strip ? 'on' : '', r.strip, r.websocket ? 'on' : '', r.websocket, esc(r.path), esc(upstreamPath)]) : __nscVueView(templates[140], [__nscVueJoin((r.kind === 'return' ? [200, 204, 403, 404, 503] : [301, 302, 307, 308]).map((n) => __nscVueView(templates[139], [n, Number(r.code) === n ? 'selected' : '', n])), ''), r.kind === 'redirect' ? _t("archive.message_6ee2b0cd4724") : _t("archive.message_e4c5dead4d24"), esc(r.value), r.kind === 'redirect' ? 'https://example.com/' : 'ok']), r.enabled ? 'on' : '', r.enabled, callout(_t("archive.message_aebb4cb52171"), 'neutral'), error ? __nscVueView(templates[141], [esc(error)]) : '']),
       footer: __nscVueView(templates[3], [work.routes.some((x) => x.id === r.id) ? B(_t("archive.message_e3ee7318f5a0"), 'route-delete', 'trash', 'danger sm') : '', B(_t("console.cancel"), 'close', '', 'ghost'), B(_t("archive.message_2354c137ceb3"), 'route-apply', 'check', 'primary')])
     })));
   }
@@ -878,7 +879,8 @@ export function createMockService(hooks) {
     if (work.routes.some((x) => x.id !== exceptId && x.enabled && r.enabled && x.path === r.path && x.match === 'exact' === (r.match === 'exact'))) return _t("archive.message_a478564214fc");
     if (r.kind === 'proxy') {
       const s = S(r.service);
-      if (!s || s.env !== D().env) return _t("archive.message_179e609175eb");
+      const issue = routeTargetIssue(r, D(), s);
+      if (issue) return _t(`domainPublication.${issue}`, { target: _serviceName(db.services, r.service) });
       if (!Number.isInteger(r.timeout) || r.timeout < 1 || r.timeout > 3600) return _t("archive.message_dc7c4264fd14");
       if (!Number.isInteger(r.connect) || r.connect < 1 || r.connect > 300) return _t("archive.message_014648cb4fec");
       if (r.strip && !r.path.endsWith('/')) return _t("archive.message_47eada3bf42d");
@@ -2117,8 +2119,6 @@ export function createMockService(hooks) {
     }
     const err = V10.checkRoute(r, exceptId);
     if (err) return err;
-    const s = S(r.service);
-    if (r.kind === 'proxy' && !r.externalUrl && (!s || s.project !== D().project || s.env !== D().env)) return _t("archive.message_439d22716877");
     return '';
   };
   function domainConflict(name, targets, exclude = null) {
@@ -2135,9 +2135,12 @@ export function createMockService(hooks) {
         const routeError = checkRoute(route);
         if (routeError) v.errors.push(`${route.path}：${routeError}`);
       }
-      else if (!ready(route.service).length) {
+      else {
         v.errors = v.errors.filter(error => error !== readyError);
-        v.warnings.push(`${route.path}: ${_t('domainPublication.zeroReady')}`);
+        if (!routeTargetIssue(route, d, S(route.service))) {
+          if (endpointState(S(route.service)) !== 'loaded') v.warnings.push(`${route.path}: ${_t('domainPublication.endpointsUnknown')}`);
+          else if (!ready(route.service).length) v.warnings.push(`${route.path}: ${_t('domainPublication.zeroReady')}`);
+        }
       }
     }
     if (!hasDomain()) v.errors.push(_t("archive.message_bb66190a4405"));
@@ -2151,33 +2154,44 @@ export function createMockService(hooks) {
     v.errors = [...new Set(v.errors)];
     return v;
   };
+  let domainValidationGeneration = 0;
   validationModal = function () {
     if (typeof hooks.data.validatePoolDraft !== 'function') return V10.validationModal();
-    const local = validateConfig();
-    const domain = D();
-    let detail = local.errors.length ? local.errors.join('\n') : _t('domainPublication.validating');
+    const attempt = ++domainValidationGeneration;
+    const domain = D(), initialSignature = signature();
+    let local = { errors: [], warnings: [] }, detail = _t('domainPublication.validating');
+    const current = () => attempt === domainValidationGeneration && ui.domain === domain.id && signature() === initialSignature && modal?.kind === 'validation';
     const display = () => {
+      const targetErrors = work.routes.filter(route => routeTargetIssue(route, domain, S(route.service)));
       const next = _modal(() => ({ kind: 'validation', title: _t('archive.message_41b0af8c5c9f'), sub: scopeText(domain),
-        body: __nscVueAdd(callout(detail, local.errors.length ? 'red' : 'blue'), local.warnings.length ? callout(local.warnings.join('\n'), 'amber') : ''),
-        footer: B(_t('console.close'), 'close') }));
-      if (modal?.kind === 'validation') { modal.title = next.title; modal.body = next.body; renderModal(false); }
+        body: __nscVueAdd(__nscVueAdd(callout(detail, local.errors.length ? 'red' : 'blue'), local.warnings.length ? callout(local.warnings.join('\n'), 'amber') : ''), __nscVueJoin(targetErrors.map(route => B(`${route.path}: ${_serviceName(db.services, route.service)}`, 'route-edit', 'edit', 'sm', `data-id="${esc(route.id)}"`)), '')),
+        footer: __nscVueAdd(B(_t('domainPublication.retryValidation'), 'validate', 'refresh', 'sm'), B(_t('console.close'), 'close')) }));
+      if (modal?.kind === 'validation') { modal.title = next.title; modal.body = next.body; modal.footer = next.footer; renderModal(false); }
       else showModal(next);
     };
+    ui.validation = null;
     display();
-    if (local.errors.length) return;
     void (async () => {
+      if (typeof hooks.data.refreshDomainDependencies === 'function') await hooks.data.refreshDomainDependencies(domain.id, work.routes.filter(route => route.kind === 'proxy' && !route.externalUrl).map(route => route.service));
+      if (!current()) return;
+      local = validateConfig();
+      if (local.errors.length) { detail = local.errors.join('\n'); display(); return; }
       if (dirty() && !(await saveDraft(true))) return;
+      if (!current()) return;
       const saved = domain.draft;
       if (!saved?.revision) throw new Error(_t('domainPublication.saveFirst'));
       let validation = await hooks.data.validatePoolDraft(domain.pool_id, saved.revision);
+      if (!current()) return;
       for (let attempts = 0; attempts < 200 && !['SUCCEEDED', 'FAILED', 'EXPIRED', 'CANCELLED'].includes(validation.status); attempts++) {
         await new Promise(resolve => setTimeout(resolve, 1500));
-        if (ui.domain !== domain.id) return;
+        if (!current()) return;
         try { validation = await hooks.data.readValidation(domain.pool_id, validation.id); }
-        catch { detail = _t('domainPublication.readInterrupted'); if (modal?.kind === 'validation') display(); continue; }
+        catch { if (!current()) return; detail = _t('domainPublication.readInterrupted'); display(); continue; }
+        if (!current()) return;
         detail = `${_t('domainPublication.validating')} ${Object.entries(validation.results || {}).map(([id, result]) => `${G(id)?.name || id}: ${result.status}`).join(', ')}`;
-        if (modal?.kind === 'validation') display();
+        display();
       }
+      if (!current()) return;
       if (validation.status === 'SUCCEEDED') {
         ui.validation = { ...local, validation, hash: signature(), errors: [] };
         detail = _t('domainPublication.validated');
@@ -2186,9 +2200,8 @@ export function createMockService(hooks) {
         detail = `${validation.status}: ${Object.entries(validation.results || {}).map(([id, result]) => `${G(id)?.name || id}: ${result.error || result.status}`).join(', ')}`;
         local.errors.push(detail);
       }
-      if (modal?.kind === 'validation') display();
-      refreshHeader();
-    })().catch(error => { ui.validation = null; detail = error?.code || error?.message || String(error); local.errors.push(detail); if (modal?.kind === 'validation') display(); });
+      display(); refreshHeader();
+    })().catch(error => { if (!current()) return; ui.validation = null; detail = error?.code || error?.message || String(error); local.errors.push(detail); display(); });
   };
   impactModal = function (publish = false) {
     if (publish && typeof hooks.data.publishPoolDraft !== 'function') return hooks.data.unsupported('startRelease', formError);
@@ -2196,10 +2209,13 @@ export function createMockService(hooks) {
     if (modal?.kind === 'publish-confirm' || modal?.kind === 'impact') {
       modal.sub = __nscVueAdd(__nscVueAdd(scopeText(), _t("archive.message_f1c9b3bfd4a6")), D().draft?.base ?? D().rev);
       const poolTargets = db.gateways.filter(gateway => gateway.pool_id === D().pool_id);
-      const zeroReady = work.routes.filter(route => route.enabled && route.kind === 'proxy' && !route.externalUrl && !ready(route.service).length);
+      const targets = work.routes.filter(route => route.enabled && route.kind === 'proxy' && !route.externalUrl);
+      const unknown = targets.filter(route => endpointState(S(route.service)) !== 'loaded');
+      const zeroReady = targets.filter(route => endpointState(S(route.service)) === 'loaded' && !ready(route.service).length);
       modal.body = __nscVueAdd(callout(_t('domainPublication.poolImpact', { v0: poolTargets.length }), publish ? 'amber' : 'blue'), __nscVueView([{ tag: 'div', attrs: [['class', 'mt16']], children: [
         { tag: 'p', attrs: [['class', 'field-label']], children: [_t('domainPublication.targetGateways')] },
         ...poolTargets.map(gateway => ({ tag: 'p', attrs: [['class', 'hint']], children: [`${gateway.name}: ${gateway.status || (gateway.available ? 'READY' : 'UNKNOWN')}`] })),
+        ...(unknown.length ? [{ tag: 'p', attrs: [['class', 'hint']], children: [`${unknown.map(route => route.path).join(', ')}: ${_t('domainPublication.endpointsUnknown')}`] }] : []),
         ...(zeroReady.length ? [{ tag: 'p', attrs: [['class', 'hint']], children: [`${zeroReady.map(route => route.path).join(', ')}: ${_t('domainPublication.zeroReady')}`] }] : []),
         ...(work.routes.some(route => route.kind === 'proxy' && route.externalUrl) ? [{ tag: 'p', attrs: [['class', 'hint']], children: [_t('domainPublication.externalRisk')] }] : []),
         ...(publish ? [{ tag: 'label', attrs: [['class', 'mt16']], children: [{ tag: 'input', attrs: [['id', 'publish-ack'], ['type', 'checkbox']], children: [] }, _t('domainPublication.confirmPool')] }] : []),
@@ -5996,7 +6012,7 @@ export function createMockService(hooks) {
         domainName: D().name,
         matches: Object.entries(MATCH).map(([value, label]) => ({ value, label })),
         kinds: ['proxy', 'return', 'redirect'].map(value => ({ value, label: KINDS[value] })),
-        services: db.services.filter(item => item.status !== 'REMOVED' && item.env === D().env && item.project === D().project).map(item => ({ id: item.id, name: _serviceName(db.services, item.id), port: item.port, ready: ready(item.id).length }))
+        services: db.services.filter(item => item.status !== 'REMOVED' && (item.env === D().env && item.project === D().project || item.id === routeForm.service && existingRouteTarget(routeForm, D()))).map(item => ({ id: item.id, name: _serviceName(db.services, item.id), port: item.port, ready: endpointState(item) === 'loaded' ? ready(item.id).length : null }))
       };
     },
     updateRouteForm(patch) { if (routeForm) Object.assign(routeForm, patch); },

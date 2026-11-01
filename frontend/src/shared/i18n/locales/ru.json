@@ -3663,5 +3663,11 @@
   "dnsProfiles.reloadLatest": "Загрузить актуальные данные, сохранив ввод",
   "dnsProfiles.reviewLatest": "Состояние полей обновлено. Проверьте ввод перед сохранением: изменённые поля заменят текущие значения.",
   "dnsProfiles.sourceChanged": "Теперь этот профиль управляется другим источником конфигурации. Закройте редактор и обновите список.",
-  "dnsProfiles.noChanges": "Измените поле перед сохранением."
+  "dnsProfiles.noChanges": "Измените поле перед сохранением.",
+  "domainPublication.serviceMissing": "Целевой Service {target} отсутствует или удалён.",
+  "domainPublication.servicePool": "Целевой Service {target} относится к другому Gateway Pool либо его Pool не подтверждён.",
+  "domainPublication.serviceDNS": "Служебный DNS целевого Service {target} не находится в состоянии READY.",
+  "domainPublication.serviceScope": "Новый или перепривязанный Service {target} должен относиться к текущему проекту и окружению.",
+  "domainPublication.endpointsUnknown": "Состояние Ready Endpoint неизвестно: данные экземпляров отсутствуют, устарели или не прочитаны. Повторите проверку перед публикацией.",
+  "domainPublication.retryValidation": "Обновить и проверить снова"
 }

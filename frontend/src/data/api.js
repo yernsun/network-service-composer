@@ -628,6 +628,10 @@ export async function initializeData(path = window.location.href) {
     })
   }
   window.addEventListener('change', wizardTargetChanged)
+  async function refreshDomainDependencies(domainID, endpointServiceIDs) {
+    const applied = await refresh(includeRemoved, { domainID, endpointServiceIDs }, true)
+    if (!applied) throw new ApiRequestError(409, 'frontend_capability_unavailable', { action: 'domain-validation-refresh' })
+  }
   async function refreshThis() {
     try {
       const results = await Promise.allSettled([refresh(includeRemoved, undefined, true), refreshComponentQueries()])
@@ -653,7 +657,7 @@ export async function initializeData(path = window.location.href) {
   window.addEventListener('nsc:resources-changed', resourcesChanged)
   refreshActive = refreshThis
   retryResourceRefresh.value = refreshThis
-  return { ipAccessEditorState, updateIPAccess, updateClientIP, previewIPAccess, state, composePage, timelinePage, domainHistoryPage, serviceLogsPage, previewDomainConfig, saveDomainDraft, validatePoolDraft, readValidation, publishPoolDraft, readRelease, refresh: refreshThis, prepareRoute, get historyLoaded() { return includeRemoved }, async loadServiceHistory() { if (!includeRemoved) await refresh(true) }, templates, command, unsupported, applicationSpec, template, attach(value) { context = value; operations.resume(state.appDeployments); stopObservations?.(); stopObservations = watchRuntimeObservations({ state, context, signal: requests.signal }) }, dispose() {
+  return { ipAccessEditorState, updateIPAccess, updateClientIP, previewIPAccess, state, composePage, timelinePage, domainHistoryPage, serviceLogsPage, previewDomainConfig, saveDomainDraft, refreshDomainDependencies, validatePoolDraft, readValidation, publishPoolDraft, readRelease, refresh: refreshThis, prepareRoute, get historyLoaded() { return includeRemoved }, async loadServiceHistory() { if (!includeRemoved) await refresh(true) }, templates, command, unsupported, applicationSpec, template, attach(value) { context = value; operations.resume(state.appDeployments); stopObservations?.(); stopObservations = watchRuntimeObservations({ state, context, signal: requests.signal }) }, dispose() {
     disposed = true; readGeneration++; navigationController?.abort(); refreshController?.abort(); stopObservations?.(); if (refreshActive === refreshThis) { refreshActive = undefined; retryResourceRefresh.value = undefined; refreshFailure.value = undefined }; requests.abort(); queryClient.clear(); window.removeEventListener('click', beforeAction, true); window.removeEventListener('change', wizardTargetChanged); window.removeEventListener('nsc:resources-changed', resourcesChanged)
   } }
 }

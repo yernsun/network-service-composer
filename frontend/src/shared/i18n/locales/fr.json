@@ -3663,5 +3663,11 @@
   "dnsProfiles.reloadLatest": "Charger les métadonnées récentes ; conserver la saisie",
   "dnsProfiles.reviewLatest": "État des champs actualisé. Vérifiez votre saisie avant d’enregistrer ; les champs modifiés remplaceront leurs valeurs actuelles.",
   "dnsProfiles.sourceChanged": "Ce profil dépend désormais d’une autre source de configuration. Fermez l’éditeur et rechargez la liste.",
-  "dnsProfiles.noChanges": "Modifiez un champ avant d’enregistrer."
+  "dnsProfiles.noChanges": "Modifiez un champ avant d’enregistrer.",
+  "domainPublication.serviceMissing": "Le Service cible {target} est absent ou supprimé.",
+  "domainPublication.servicePool": "Le Service cible {target} appartient à un autre Gateway Pool ou son Pool ne peut pas être confirmé.",
+  "domainPublication.serviceDNS": "Le DNS du Service cible {target} n’est pas READY.",
+  "domainPublication.serviceScope": "Un Service nouveau ou réaffecté {target} doit appartenir à ce projet et à cet environnement.",
+  "domainPublication.endpointsUnknown": "État Ready Endpoint inconnu : les données des instances sont absentes, périmées ou illisibles. Relancez la validation avant de publier.",
+  "domainPublication.retryValidation": "Actualiser et valider à nouveau"
 }

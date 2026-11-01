@@ -242,3 +242,9 @@ Keep credentials in private environment files and retain the source fingerprint,
 actual test outcome and fixture cleanup separately from Docker failover evidence.
 
 Business admission, readiness, issue handling and recovery decisions are described in [operations workflow](operations-workflow.md). The environment overview and activity hub distinguish configuration, current observations and historical success; neither is end-to-end HA acceptance.
+
+## DNS credential and route validation acceptance
+
+Run `python3 scripts/dns_route_acceptance.py --controller-image <local-controller-image> --gateway-image <local-gateway-image> --fixture-image <local-bootstrap-ssh-fixture-image> --output coverage/dns-route/integration-<run-id>` after building the embedded UI and matching Controller/Agent binaries. Set `NSC_BROWSER_BINARY` to an installed Chromium executable. Both images must carry the current source fingerprint, as required by the shared bootstrap fixture. The fixture uses disposable SSH-enabled nested Docker nodes and its own database, identities, network and registry; it never changes the host Swarm. Prerequisites are the same as the bootstrap acceptance checks.
+
+The browser checks multiple HE.net token entries, partial rotation, stale-ETag recovery, explicit token removal, eight UI languages, cleared inputs and mobile layout. It then validates a real same-Pool cross-environment route, exercises an unavailable instance read as unknown rather than zero Ready, explicitly publishes and confirms actual HTTP access through NGINX. Provider tokens are generated unusable fixtures; no real DNS challenge is requested, and OVH verification remains **DISABLED**. Public summaries contain checks, source fingerprints and image IDs. Private failure diagnostics remain outside the report; do not publish the restricted diagnostics reference or raw logs.

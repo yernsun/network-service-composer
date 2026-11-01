@@ -3663,5 +3663,11 @@
   "dnsProfiles.reloadLatest": "读取最新配置，保留输入",
   "dnsProfiles.reviewLatest": "已读取最新字段状态。请核对输入后再保存；修改的字段将替换其当前值。",
   "dnsProfiles.sourceChanged": "此凭据已改由其他配置来源管理。请关闭编辑器并刷新列表。",
-  "dnsProfiles.noChanges": "请修改字段后再保存。"
+  "dnsProfiles.noChanges": "请修改字段后再保存。",
+  "domainPublication.serviceMissing": "目标 Service {target} 不存在或已移除。",
+  "domainPublication.servicePool": "目标 Service {target} 属于其他 Gateway Pool，或无法确认其 Pool。",
+  "domainPublication.serviceDNS": "目标 Service {target} 的服务 DNS 尚未 READY。",
+  "domainPublication.serviceScope": "新增或重新绑定的 Service {target} 必须属于当前项目和环境。",
+  "domainPublication.endpointsUnknown": "Ready Endpoint 状态未知：实例数据未加载、已过期或读取失败。请重新校验后再发布。",
+  "domainPublication.retryValidation": "刷新并重新校验"
 }

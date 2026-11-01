@@ -152,7 +152,7 @@ function toggle(field: 'strip' | 'websocket' | 'enabled') {
           @change.stop="input('service', $event)"
         >
           <option v-for="service in initial.services" :key="service.id" :value="service.id">
-            {{ service.name }} · {{ service.port }} · {{ service.ready }} Ready
+            {{ service.name }} · {{ service.port }} · {{ service.ready === null ? t('archive.message_93e474c68ed5') : `${service.ready} Ready` }}
           </option>
         </select>
         <p class="hint">{{ t('archive.message_5277b019c8a9') }}</p>

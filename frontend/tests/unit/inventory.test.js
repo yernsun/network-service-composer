@@ -456,3 +456,57 @@ it('reads installation parameters from the catalog list manifest without detail 
   expect(templates[0].catalogVariables).toEqual(variables)
   expect(templates[0].swarmRaw).toBe('services: {}')
 })
+
+describe('domain route dependency observations', () => {
+  function dependencies() {
+    tables['/runtimes'][0].pool_id = 'pool'
+    tables['/services'].push({ id: 'sandbox', runtime_id: 'rt', environment: { id: 'sandbox-env' }, name: 'Validation backend', dns_status: 'READY' })
+    tables['/services'].push({ id: 'unrelated', runtime_id: 'rt', environment: { id: 'sandbox-env' }, name: 'Unrelated backend' })
+    const original = allPages.getMockImplementation()
+    allPages.mockImplementation(async (path, params, ...rest) => path === '/projects/{id}/environments' && params.id === 'p' ? [
+      { id: 'e', project_id: 'p', name: 'prod', runtime_id: 'rt', application_id: 'a' },
+      { id: 'sandbox-env', project_id: 'p', name: 'sandbox', runtime_id: 'rt' },
+    ] : original(path, params, ...rest))
+  }
+  it('loads cross-environment active and draft targets without loading unrelated instances or sources', async () => {
+    dependencies()
+    tables['/routes'].push({ id: 'validation', domain_id: 'domain', kind: 'proxy', path: '/__nsc_validation/', enabled: true, backend: { service_id: 'sandbox' } })
+    request.mockResolvedValue({ data: { draft: { revision: 2, routes: [{ route: { id: 'draft', domain_id: 'domain', enabled: true, backend: { service_id: 'outside' } } }] } } })
+    const { state } = await loadInventory(false, { path: '/projects/p/environments/e/domains/domain?tab=routes' })
+    const requested = allPages.mock.calls.filter(([path]) => path === '/services/{id}/instances').map(([, params]) => params.id)
+    expect(requested).toEqual(expect.arrayContaining(['s', 'sandbox', 'outside']))
+    expect(requested).not.toContain('unrelated')
+    expect(state.services.find(s => s.id === 'sandbox')).toMatchObject({ poolId: 'pool', endpointObservation: { state: 'loaded' }, endpoints: [['10.0.2.113', true]] })
+    expect(request.mock.calls.some(([, path]) => path.startsWith('/applications/'))).toBe(false)
+  })
+  it('keeps failed and unrequested reads unknown while preserving successful empty observations', async () => {
+    dependencies()
+    tables['/routes'].push({ id: 'validation', domain_id: 'domain', kind: 'proxy', enabled: true, backend: { service_id: 'sandbox' } })
+    const original = allPages.getMockImplementation()
+    allPages.mockImplementation((path, params, ...rest) => {
+      if (path === '/services/{id}/instances') return params.id === 'sandbox' ? Promise.reject(new Error('unavailable')) : Promise.resolve([])
+      return original(path, params, ...rest)
+    })
+    const { state } = await loadInventory(false, { path: '/projects/p/environments/e/domains/domain' })
+    expect(state.services.find(s => s.id === 's')).toMatchObject({ endpointObservation: { state: 'loaded' }, endpoints: [] })
+    expect(state.services.find(s => s.id === 'sandbox')).toMatchObject({ endpointObservation: { state: 'error' }, endpoints: [] })
+    expect(state.services.find(s => s.id === 'unrelated').endpointObservation.state).toBe('not-loaded')
+  })
+  it('loads unsaved internal targets explicitly and marks offline observations stale', async () => {
+    dependencies(); tables['/runtimes'][0].status = 'OFFLINE'
+    const { state } = await loadInventory(false, { path: '/projects/p/environments/e/domains/domain', endpointServiceIDs: ['sandbox', 'missing'], fresh: true })
+    expect(state.services.find(s => s.id === 'sandbox').endpointObservation.state).toBe('stale')
+    expect(allPages.mock.calls.some(([path, params]) => path === '/services/{id}/instances' && params.id === 'missing')).toBe(false)
+  })
+})
+
+it('preserves the actual instance fetch time when reusing a cached observation', async () => {
+  const path = '/projects/p/environments/e/domains/domain'
+  const first = await loadInventory(false, { path, fresh: true })
+  const observed = first.state.services.find(service => service.id === 's').endpointObservation.fetchedAt
+  const clock = vi.spyOn(Date, 'now').mockReturnValue(observed + 60_000)
+  try {
+    const cached = await loadInventory(false, { path, reuseCached: true })
+    expect(cached.state.services.find(service => service.id === 's').endpointObservation.fetchedAt).toBe(observed)
+  } finally { clock.mockRestore() }
+})

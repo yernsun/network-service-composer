@@ -3663,5 +3663,11 @@
   "dnsProfiles.reloadLatest": "最新情報を読み込み、入力を保持",
   "dnsProfiles.reviewLatest": "最新の項目状態を読み込みました。保存前に入力を確認してください。変更した項目は現在の値を置き換えます。",
   "dnsProfiles.sourceChanged": "このプロファイルの管理元が変更されました。編集画面を閉じて一覧を更新してください。",
-  "dnsProfiles.noChanges": "保存する前に項目を変更してください。"
+  "dnsProfiles.noChanges": "保存する前に項目を変更してください。",
+  "domainPublication.serviceMissing": "対象 Service {target} は存在しないか削除されています。",
+  "domainPublication.servicePool": "対象 Service {target} は別の Gateway Pool に属しているか、Pool を確認できません。",
+  "domainPublication.serviceDNS": "対象 Service {target} のサービス DNS が READY ではありません。",
+  "domainPublication.serviceScope": "新規または再関連付けする Service {target} は現在のプロジェクトと環境に属する必要があります。",
+  "domainPublication.endpointsUnknown": "Ready Endpoint の状態は不明です。インスタンス情報が未取得、期限切れ、または取得に失敗しました。公開前に再検証してください。",
+  "domainPublication.retryValidation": "更新して再検証"
 }

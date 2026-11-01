@@ -3663,5 +3663,11 @@
   "dnsProfiles.reloadLatest": "Reload latest metadata; keep input",
   "dnsProfiles.reviewLatest": "Latest field status loaded. Review your input before saving; modified fields will replace their current values.",
   "dnsProfiles.sourceChanged": "This profile is now managed by a different configuration source. Close the editor and reload the list.",
-  "dnsProfiles.noChanges": "Change a field before saving."
+  "dnsProfiles.noChanges": "Change a field before saving.",
+  "domainPublication.serviceMissing": "Target Service {target} is missing or removed.",
+  "domainPublication.servicePool": "Target Service {target} belongs to a different Gateway Pool or its Pool cannot be confirmed.",
+  "domainPublication.serviceDNS": "Target Service {target} does not have READY service DNS.",
+  "domainPublication.serviceScope": "A new or rebound Service {target} must belong to this project and environment.",
+  "domainPublication.endpointsUnknown": "Ready Endpoint state is unknown: instance data is missing, outdated or could not be read. Retry validation before publishing.",
+  "domainPublication.retryValidation": "Refresh and validate again"
 }

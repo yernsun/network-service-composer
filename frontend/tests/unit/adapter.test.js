@@ -492,3 +492,22 @@ it('edits IP policy without changing active rules and previews raw ranges read o
   expect(context.work.ipAccess.clientIP).toBeUndefined()
   expect(context.work.ipAccess.access).toEqual([' 10.0.0.1-10.0.0.4 '])
 })
+
+ it('refreshes domain validation dependencies while retaining unsaved input and its original baseline', async () => {
+   const baseline = { routes: [{ id: 'route', service: 'service' }], serverSnippet: 'old' }
+   const domain = { id: 'domain', active: baseline, draft: null }
+   data.state.domains = [domain]; context.ui = { page: 'domain', domain: 'domain' }; context.modal = { kind: 'validation' }
+   context.work = { ...baseline, serverSnippet: 'unsaved' }
+   inventory.state.domains = [{ ...domain, active: { ...baseline, serverSnippet: 'remote edit' } }]
+   inventory.state.services = [{ id: 'service', endpointObservation: { state: 'loaded', fetchedAt: Date.now() } }]
+   loadInventory.mockClear()
+   await data.refreshDomainDependencies('domain', ['service'])
+   expect(loadInventory).toHaveBeenCalledWith(false, expect.objectContaining({ fresh: true, domainID: 'domain', endpointServiceIDs: ['service'] }))
+   expect(data.state.domains[0]).toBe(domain)
+   expect(context.work.serverSnippet).toBe('unsaved')
+   expect(data.state.services[0].endpointObservation.state).toBe('loaded')
+ })
+ it('propagates a failed validation refresh without treating old inventory as fresh', async () => {
+   loadInventory.mockRejectedValueOnce(new Error('unavailable'))
+   await expect(data.refreshDomainDependencies('domain', ['service'])).rejects.toThrow('unavailable')
+ })

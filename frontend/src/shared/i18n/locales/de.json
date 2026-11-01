@@ -3663,5 +3663,11 @@
   "dnsProfiles.reloadLatest": "Aktuelle Metadaten laden; Eingaben behalten",
   "dnsProfiles.reviewLatest": "Aktueller Feldstatus geladen. Prüfen Sie Ihre Eingaben vor dem Speichern; geänderte Felder ersetzen ihre aktuellen Werte.",
   "dnsProfiles.sourceChanged": "Dieses Profil wird jetzt durch eine andere Konfigurationsquelle verwaltet. Schließen Sie den Editor und laden Sie die Liste neu.",
-  "dnsProfiles.noChanges": "Ändern Sie vor dem Speichern ein Feld."
+  "dnsProfiles.noChanges": "Ändern Sie vor dem Speichern ein Feld.",
+  "domainPublication.serviceMissing": "Der Ziel-Service {target} fehlt oder wurde entfernt.",
+  "domainPublication.servicePool": "Der Ziel-Service {target} gehört zu einem anderen Gateway Pool oder sein Pool ist nicht bestätigt.",
+  "domainPublication.serviceDNS": "Der Ziel-Service {target} hat kein Service-DNS im Zustand READY.",
+  "domainPublication.serviceScope": "Ein neuer oder neu zugeordneter Service {target} muss zu diesem Projekt und dieser Umgebung gehören.",
+  "domainPublication.endpointsUnknown": "Ready-Endpoint-Status unbekannt: Instanzdaten fehlen, sind veraltet oder konnten nicht gelesen werden. Vor der Veröffentlichung erneut validieren.",
+  "domainPublication.retryValidation": "Aktualisieren und erneut validieren"
 }

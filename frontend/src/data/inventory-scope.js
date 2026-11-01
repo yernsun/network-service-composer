@@ -46,7 +46,8 @@ export function inventoryScope(path, { projects, environments, applications, ser
   const domainDetails = ['project', 'environments', 'overview', 'domains', 'routes', 'configs', 'gateways', 'compose', 'service', 'application'].includes(page)
   const selectedServiceIDs = new Set(selectedServices.map(service => service.id))
   const selectedDomainIDs = new Set(routes.filter(route => selectedServiceIDs.has(route.backend?.service_id)).map(route => route.domain_id))
-  const selectedDomains = globalScope ? domains : domains.filter(domain => selectedDomainIDs.has(domain.id))
+  const domainID = options.domainID || (['domains', 'routes', 'configs'].includes(page) ? parts[5] : undefined)
+  const selectedDomains = domainID ? domains.filter(domain => domain.id === domainID) : globalScope ? domains : domains.filter(domain => selectedDomainIDs.has(domain.id))
   const runtimeIDs = action === 'install'
     ? [...new Set(selectedEnvironments.map(env => env.runtime_id))].filter(Boolean)
     : page === 'runtimes'
@@ -65,6 +66,7 @@ export function inventoryScope(path, { projects, environments, applications, ser
     domainEnvironments: domainDetails ? selectedEnvironments : [],
     pools: domainDetails ? [...new Set([...selectedDomains.map(domain => domain.pool_id), ...selectedEnvironments.map(env => runtimes.find(runtime => runtime.id === env.runtime_id)?.pool_id)])].filter(Boolean) : [],
     endpointServices: domainDetails ? selectedServices : [],
+    domainIDs: domainDetails ? selectedDomains.map(domain => domain.id) : [],
     variableOwners: [
       ...variableProjects.map(project => ({ layer: 'project', id: project.id, path: '/projects/{id}/variables' })),
       ...(variables && !projectVariablesOnly ? variableEnvironments.map(env => ({ layer: 'environment', id: env.id, path: '/environments/{id}/variables' })) : []),
