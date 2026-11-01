@@ -1,10 +1,13 @@
 package api
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/yernsun/network-service-composer/internal/core"
 )
 
 func TestDNSProfileCredentialWritesRequireReauthenticationAndStayRedacted(t *testing.T) {
@@ -93,5 +96,59 @@ func TestDNSProfileHTTPRotationAndDeletionRequireCurrentRevision(t *testing.T) {
 	}
 	if response := managementRequest(t, handler, http.MethodGet, path, nil, nil); response.Code != http.StatusNotFound {
 		t.Fatalf("deleted profile still readable: %d %s", response.Code, response.Body)
+	}
+}
+
+func TestDNSProfilePatchRequiresReauthenticationAndRevision(t *testing.T) {
+	s, h := newTestServer(t)
+	responseData[struct {
+		Revision int64 `json:"revision"`
+	}](t, managementRequest(t, h, "POST", "/dns-provider-profiles", map[string]any{"reference": "patch-api", "provider": "cloudflare", "credentials": map[string]string{"api_token": "fixture-original", "zone_api_token": "fixture-zone"}}, map[string]string{"X-NSC-Reauthenticate": "test-admin-token"}), 201)
+	path := "/dns-provider-profiles/patch-api"
+	for _, tc := range []struct {
+		body    string
+		headers map[string]string
+		status  int
+	}{
+		{`{"credentials":{"api_token":"fixture-new"}}`, nil, 403},
+		{`{"credentials":{"api_token":"fixture-new"}}`, map[string]string{"X-NSC-Reauthenticate": "wrong", "If-Match": `"rev-1"`}, 403},
+		{`{"credentials":{"api_token":"fixture-new"}}`, map[string]string{"X-NSC-Reauthenticate": "test-admin-token"}, 428},
+		{`{`, map[string]string{"X-NSC-Reauthenticate": "test-admin-token", "If-Match": `"rev-1"`}, 400},
+		{`{"provider":"hurricane","credentials":{"api_token":"fixture-new"}}`, map[string]string{"X-NSC-Reauthenticate": "test-admin-token", "If-Match": `"rev-1"`}, 400},
+		{`{"credentials":{"api_token":"fixture-new"}}`, map[string]string{"X-NSC-Reauthenticate": "test-admin-token", "If-Match": `"rev-99"`}, 412},
+		{`{"credentials":{"api_token":"fixture-new"}}`, map[string]string{"X-NSC-Reauthenticate": "test-admin-token", "If-Match": `"rev-1"`}, 200},
+	} {
+		r := managementRequest(t, h, "PATCH", path, tc.body, tc.headers)
+		if r.Code != tc.status || strings.Contains(r.Body.String(), "fixture-new") {
+			t.Fatalf("patch response %d: %d %s", tc.status, r.Code, r.Body)
+		}
+	}
+	profile, err := s.core.DNSProfileEditDetail(context.Background(), "patch-api")
+	if err != nil || profile.Revision != 2 || len(profile.CredentialFields) != 2 {
+		t.Fatal("patch metadata missing", err)
+	}
+	r := managementRequest(t, h, "GET", path, nil, nil)
+	if r.Code != 200 || r.Header().Get("ETag") != `"rev-2"` || !strings.Contains(r.Body.String(), "credential_fields") || strings.Contains(r.Body.String(), "fixture-new") || strings.Contains(r.Body.String(), "fixture-zone") {
+		t.Fatal("admin metadata leaked credential values")
+	}
+	viewer, err := s.core.SaveUser(context.Background(), "", core.UserInput{Username: "dns-viewer", Role: "viewer", Enabled: true, Password: "fixture-password-for-viewer"}, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	token, err := s.core.RotateUserToken(context.Background(), viewer.ID, viewer.Revision)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, method := range []string{"GET", "PATCH"} {
+		req := httptest.NewRequest(method, "/api/v1"+path, strings.NewReader(`{"credentials":{"api_token":"fixture-denied"}}`))
+		req.Header.Set("Authorization", "Bearer "+token)
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("If-Match", `"rev-2"`)
+		req.Header.Set("X-NSC-Reauthenticate", "fixture-password-for-viewer")
+		w := httptest.NewRecorder()
+		h.ServeHTTP(w, req)
+		if method == "PATCH" && w.Code != 403 || method == "GET" && (w.Code != 200 || strings.Contains(w.Body.String(), "credential_fields")) {
+			t.Fatalf("viewer boundary failed: %d %s", w.Code, w.Body)
+		}
 	}
 }

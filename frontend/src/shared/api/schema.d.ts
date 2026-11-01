@@ -1870,7 +1870,8 @@ export interface paths {
         delete: operations["deleteDNSProviderProfile"];
         options?: never;
         head?: never;
-        patch?: never;
+        /** @description Administrator-only field update. Omitted fields retain their values; null clears a field. Hurricane token entries merge by exact domain key. The merged credential must remain valid. Reference and provider cannot change. */
+        patch: operations["patchDNSProviderProfile"];
         trace?: never;
     };
     "/environments/{id}/domain-drafts": {
@@ -3937,6 +3938,36 @@ export interface components {
             provider: "hurricane" | "cloudflare" | "alidns" | "tencentcloud" | "ovh";
             region?: string;
             credentials: components["schemas"]["DNSProviderCredentials"];
+        };
+        DNSProfilePatch: {
+            /** @description OVH endpoint only. Null selects the default endpoint. */
+            region?: string | null;
+            credentials?: {
+                access_key?: string | null;
+                secret_key?: string | null;
+                security_token?: string | null;
+                ram_role?: string | null;
+                api_token?: string | null;
+                zone_api_token?: string | null;
+                email?: string | null;
+                api_key?: string | null;
+                secret_id?: string | null;
+                session_token?: string | null;
+                application_key?: string | null;
+                application_secret?: string | null;
+                consumer_key?: string | null;
+                tokens?: {
+                    [key: string]: string | null;
+                };
+            };
+        };
+        DNSProfileDetailEnvelope: {
+            data: components["schemas"]["DNSProfile"] & {
+                /** @description Administrator-only names of configured fields. */
+                credential_fields?: string[];
+                /** @description Administrator-only Hurricane domain keys. */
+                token_domains?: string[];
+            };
         };
         DNSProfile: {
             reference: string;
@@ -9138,13 +9169,13 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Redacted profile */
+            /** @description Redacted profile. Administrators also receive credential field names and Hurricane domain keys, never credential values. */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["DNSProfileEnvelope"];
+                    "application/json": components["schemas"]["DNSProfileDetailEnvelope"];
                 };
             };
             default: components["responses"]["Problem"];
@@ -9202,6 +9233,37 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            default: components["responses"]["Problem"];
+        };
+    };
+    patchDNSProviderProfile: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Resource ETag returned by GET, for example `"rev-3"`. */
+                "If-Match": components["parameters"]["IfMatch"];
+                "X-NSC-Reauthenticate": string;
+            };
+            path: {
+                reference: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DNSProfilePatch"];
+            };
+        };
+        responses: {
+            /** @description Updated profile without credentials */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DNSProfileEnvelope"];
+                };
             };
             default: components["responses"]["Problem"];
         };

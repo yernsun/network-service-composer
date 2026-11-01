@@ -17,6 +17,11 @@ func (s *Server) registerDNSProfiles(r chi.Router) {
 		writeData(w, http.StatusOK, values)
 	})
 	r.Get("/dns-provider-profiles/{reference}", func(w http.ResponseWriter, r *http.Request) {
+		if user, ok := requestUser(r); ok && user.Role == "administrator" {
+			value, err := s.core.DNSProfileEditDetail(r.Context(), chi.URLParam(r, "reference"))
+			s.controlResponse(w, r, value, value.Revision, err, http.StatusOK)
+			return
+		}
 		value, err := s.core.GetDNSProfile(r.Context(), chi.URLParam(r, "reference"))
 		s.controlResponse(w, r, value, value.Revision, err, http.StatusOK)
 	})
@@ -48,6 +53,22 @@ func (s *Server) registerDNSProfiles(r chi.Router) {
 			return
 		}
 		value, err := s.core.SaveDNSProfile(r.Context(), chi.URLParam(r, "reference"), input, expected)
+		s.controlResponse(w, r, value, value.Revision, err, http.StatusOK)
+	})
+	r.Patch("/dns-provider-profiles/{reference}", func(w http.ResponseWriter, r *http.Request) {
+		if !s.reauthenticate(w, r) {
+			return
+		}
+		expected, err := parseIfMatch(r)
+		if err != nil {
+			s.handleError(w, r, err)
+			return
+		}
+		var input core.DNSProfilePatch
+		if !s.decodeJSON(w, r, &input, 16384) {
+			return
+		}
+		value, err := s.core.PatchDNSProfile(r.Context(), chi.URLParam(r, "reference"), input, expected)
 		s.controlResponse(w, r, value, value.Revision, err, http.StatusOK)
 	})
 	r.Delete("/dns-provider-profiles/{reference}", func(w http.ResponseWriter, r *http.Request) {

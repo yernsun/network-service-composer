@@ -1538,12 +1538,20 @@ paths:
     get:
       operationId: getDNSProviderProfile
       responses:
-        '200': { description: Redacted profile, content: { application/json: { schema: { $ref: '#/components/schemas/DNSProfileEnvelope' } } } }
+        '200': { description: "Redacted profile. Administrators also receive credential field names and Hurricane domain keys, never credential values.", content: { application/json: { schema: { $ref: '#/components/schemas/DNSProfileDetailEnvelope' } } } }
         default: { $ref: '#/components/responses/Problem' }
     put:
       operationId: updateDNSProviderProfile
       parameters: [{ $ref: '#/components/parameters/IfMatch' }, { name: X-NSC-Reauthenticate, in: header, required: true, schema: { type: string } }]
       requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/DNSProfileInput' } } } }
+      responses:
+        '200': { description: Updated profile without credentials, content: { application/json: { schema: { $ref: '#/components/schemas/DNSProfileEnvelope' } } } }
+        default: { $ref: '#/components/responses/Problem' }
+    patch:
+      operationId: patchDNSProviderProfile
+      description: Administrator-only field update. Omitted fields retain their values; null clears a field. Hurricane token entries merge by exact domain key. The merged credential must remain valid. Reference and provider cannot change.
+      parameters: [{ $ref: '#/components/parameters/IfMatch' }, { name: X-NSC-Reauthenticate, in: header, required: true, schema: { type: string } }]
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/DNSProfilePatch' } } } }
       responses:
         '200': { description: Updated profile without credentials, content: { application/json: { schema: { $ref: '#/components/schemas/DNSProfileEnvelope' } } } }
         default: { $ref: '#/components/responses/Problem' }
@@ -3382,6 +3390,45 @@ components:
         provider: { type: string, enum: [hurricane, cloudflare, alidns, tencentcloud, ovh] }
         region: { type: string }
         credentials: { $ref: '#/components/schemas/DNSProviderCredentials' }
+    DNSProfilePatch:
+      type: object
+      additionalProperties: false
+      minProperties: 1
+      properties:
+        region: { type: [string, 'null'], description: OVH endpoint only. Null selects the default endpoint. }
+        credentials:
+          type: object
+          additionalProperties: false
+          minProperties: 1
+          properties:
+            access_key: { type: [string, 'null'], minLength: 1, writeOnly: true }
+            secret_key: { type: [string, 'null'], minLength: 1, writeOnly: true }
+            security_token: { type: [string, 'null'], minLength: 1, writeOnly: true }
+            ram_role: { type: [string, 'null'], minLength: 1, writeOnly: true }
+            api_token: { type: [string, 'null'], minLength: 1, writeOnly: true }
+            zone_api_token: { type: [string, 'null'], minLength: 1, writeOnly: true }
+            email: { type: [string, 'null'], minLength: 1, writeOnly: true }
+            api_key: { type: [string, 'null'], minLength: 1, writeOnly: true }
+            secret_id: { type: [string, 'null'], minLength: 1, writeOnly: true }
+            session_token: { type: [string, 'null'], minLength: 1, writeOnly: true }
+            application_key: { type: [string, 'null'], minLength: 1, writeOnly: true }
+            application_secret: { type: [string, 'null'], minLength: 1, writeOnly: true }
+            consumer_key: { type: [string, 'null'], minLength: 1, writeOnly: true }
+            tokens:
+              type: object
+              minProperties: 1
+              additionalProperties: { type: [string, 'null'], minLength: 1, writeOnly: true }
+    DNSProfileDetailEnvelope:
+      type: object
+      required: [data]
+      properties:
+        data:
+          allOf:
+            - $ref: '#/components/schemas/DNSProfile'
+            - type: object
+              properties:
+                credential_fields: { type: array, items: { type: string }, description: Administrator-only names of configured fields. }
+                token_domains: { type: array, items: { type: string }, description: Administrator-only Hurricane domain keys. }
     DNSProfile:
       type: object
       required: [reference, provider, source, configured, revision]
